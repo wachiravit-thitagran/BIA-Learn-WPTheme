@@ -1,0 +1,344 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* =========================================================================
+   BIA Learn — base layer
+   ========================================================================= */
+@layer base {
+  :root {
+    --bia-header-h: 5rem;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  /* Hide Alpine-cloaked elements until Alpine initializes */
+  [x-cloak] {
+    display: none !important;
+  }
+
+  body {
+    @apply bg-paper-50 text-ink font-sans antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* Headings use the Thai serif display face */
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-serif text-ink;
+    text-wrap: balance;
+  }
+
+  a {
+    @apply transition-colors duration-200;
+  }
+
+  /* Visible, on-brand focus ring for keyboard users */
+  :focus-visible {
+    @apply outline-none ring-2 ring-crimson ring-offset-2 ring-offset-paper-50;
+  }
+
+  ::selection {
+    @apply bg-crimson text-white;
+  }
+
+  /* Tame the default WP admin-bar gap with sticky header */
+  .admin-bar .site-header--sticky {
+    top: 32px;
+  }
+  @media screen and (max-width: 782px) {
+    .admin-bar .site-header--sticky {
+      top: 46px;
+    }
+  }
+}
+
+/* =========================================================================
+   Components layer — reusable building blocks
+   ========================================================================= */
+@layer components {
+  .container-bia {
+    @apply container mx-auto;
+  }
+
+  .section {
+    @apply py-16 sm:py-20 lg:py-24;
+  }
+
+  .section-tight {
+    @apply py-10 sm:py-12;
+  }
+
+  /* Eyebrow / kicker label above section headings */
+  .eyebrow {
+    @apply inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.2em] text-crimson;
+  }
+  .eyebrow::before {
+    content: "";
+    @apply inline-block h-px w-8 bg-gold;
+  }
+
+  .section-title {
+    @apply font-serif text-3xl font-bold leading-tight text-ink sm:text-4xl;
+  }
+
+  .lead {
+    @apply text-lg leading-relaxed text-ink-light;
+  }
+
+  /* --- Buttons --------------------------------------------------------- */
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-semibold
+           transition-all duration-200 ease-out-expo focus-visible:ring-2 focus-visible:ring-offset-2;
+  }
+  .btn-primary {
+    @apply btn bg-crimson text-white shadow-soft hover:bg-crimson-600 hover:shadow-card-hover
+           active:translate-y-px;
+  }
+  .btn-outline {
+    @apply btn border border-crimson/30 bg-transparent text-crimson hover:border-crimson hover:bg-crimson hover:text-white;
+  }
+  .btn-ghost {
+    @apply btn text-ink hover:bg-paper-100;
+  }
+  .btn-gold {
+    @apply btn bg-gold text-plum-900 shadow-soft hover:bg-gold-light active:translate-y-px;
+  }
+  .btn-lg {
+    @apply px-8 py-4 text-base;
+  }
+
+  /* --- Cards ----------------------------------------------------------- */
+  .card {
+    @apply relative overflow-hidden rounded-2xl border border-paper-200 bg-white shadow-card
+           transition-all duration-300 ease-out-expo;
+  }
+  .card-hover {
+    @apply hover:-translate-y-1 hover:shadow-card-hover hover:border-paper-300;
+  }
+
+  .badge {
+    @apply inline-flex items-center gap-1 rounded-full bg-crimson-50 px-3 py-1 text-xs font-semibold text-crimson;
+  }
+  .badge-gold {
+    @apply inline-flex items-center gap-1 rounded-full bg-gold/15 px-3 py-1 text-xs font-semibold text-gold-dark;
+  }
+  .badge-muted {
+    @apply inline-flex items-center gap-1 rounded-full bg-paper-100 px-3 py-1 text-xs font-medium text-ink-light;
+  }
+
+  /* --- Forms ----------------------------------------------------------- */
+  .field {
+    @apply w-full rounded-xl border-paper-300 bg-white text-ink shadow-sm
+           placeholder:text-paper-500 focus:border-crimson focus:ring-crimson;
+  }
+  .field-label {
+    @apply mb-1.5 block text-sm font-semibold text-ink-soft;
+  }
+
+  /* --- Decorative dharma rule (thin gold divider with center mark) ----- */
+  .rule-dharma {
+    @apply flex items-center justify-center gap-3 text-gold;
+  }
+  .rule-dharma::before,
+  .rule-dharma::after {
+    content: "";
+    @apply h-px w-16 bg-gradient-to-r from-transparent to-gold;
+  }
+  .rule-dharma::after {
+    @apply bg-gradient-to-l;
+  }
+
+  /* --- Long-form content (posts, pages, lessons) ----------------------- */
+  .prose-bia {
+    @apply prose prose-lg max-w-prose prose-headings:font-serif prose-headings:text-ink
+           prose-a:text-crimson prose-a:no-underline hover:prose-a:underline
+           prose-blockquote:border-l-gold prose-blockquote:bg-paper-100 prose-blockquote:py-px
+           prose-blockquote:not-italic prose-strong:text-ink
+           prose-img:rounded-2xl prose-img:shadow-card marker:text-crimson;
+  }
+
+  /* Skip link for accessibility */
+  .skip-link {
+    @apply sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[100]
+           focus:rounded-lg focus:bg-crimson focus:px-4 focus:py-2 focus:text-white;
+  }
+
+  /* Nav link with animated gold underline */
+  .nav-link {
+    @apply relative py-2 text-sm font-medium text-ink-soft transition-colors hover:text-crimson;
+  }
+  .nav-link::after {
+    content: "";
+    @apply absolute inset-x-0 -bottom-0.5 h-0.5 origin-left scale-x-0 bg-crimson transition-transform duration-300 ease-out-expo;
+  }
+  .nav-link:hover::after,
+  .nav-link.current-menu-item::after,
+  .nav-link[aria-current="page"]::after {
+    @apply scale-x-100;
+  }
+}
+
+/* =========================================================================
+   Utilities layer
+   ========================================================================= */
+@layer utilities {
+  /* Warm paper grain overlay */
+  .bg-grain {
+    background-image: theme('backgroundImage.paper-texture');
+    background-size: theme('backgroundSize.grain');
+  }
+
+  /* Clamp helpers */
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .line-clamp-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  /* Honor reduced-motion preference */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.001ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+/* =========================================================================
+   WordPress core alignment / caption / gallery helpers
+   ========================================================================= */
+.screen-reader-text {
+  @apply sr-only;
+}
+.alignleft {
+  @apply float-left mr-6 mb-4;
+}
+.alignright {
+  @apply float-right ml-6 mb-4;
+}
+.aligncenter {
+  @apply mx-auto block;
+}
+.wp-caption-text,
+.gallery-caption {
+  @apply mt-2 text-sm text-ink-light;
+}
+.sticky-badge {
+  @apply badge-gold;
+}
+
+/* =========================================================================
+   Tutor LMS theming
+   Maps Tutor's (reasonably stable) class names onto the BIA Learn design
+   tokens so course/lesson/dashboard pages feel native. Wholesale template
+   overrides live in /tutor — this covers everything we don't copy.
+   ========================================================================= */
+
+/* Buttons */
+.tutor-btn,
+.bia-tutor-btn,
+.tutor-btn-primary {
+  @apply inline-flex items-center justify-center gap-2 rounded-full border-0 px-6 py-3 text-sm font-semibold
+         transition-all duration-200 !important;
+}
+.tutor-btn-primary,
+.tutor-enroll-course-button {
+  @apply bg-crimson text-white shadow-soft hover:bg-crimson-600 !important;
+}
+.tutor-btn-outline-primary {
+  @apply border border-crimson/30 bg-transparent text-crimson hover:bg-crimson hover:text-white !important;
+}
+.tutor-btn-ghost {
+  @apply bg-transparent text-ink hover:bg-paper-100 !important;
+}
+
+/* Course loop / cards */
+.tutor-course-listing-item,
+.tutor-card {
+  @apply overflow-hidden rounded-2xl border border-paper-200 bg-white shadow-card transition-all duration-300 !important;
+}
+.tutor-card:hover {
+  @apply -translate-y-1 shadow-card-hover !important;
+}
+.tutor-course-name a,
+.tutor-card-title a {
+  @apply font-serif font-bold text-ink !important;
+}
+.tutor-course-name a:hover,
+.tutor-card-title a:hover {
+  @apply text-crimson !important;
+}
+
+/* Section headings inside Tutor */
+.tutor-course-details-title,
+.tutor-segment-title,
+.tutor-fs-4,
+.tutor-fs-5 {
+  @apply font-serif text-ink !important;
+}
+
+/* Links / accents */
+.tutor-color-primary,
+.tutor-iconized a:hover {
+  @apply text-crimson !important;
+}
+.tutor-ratings-stars i.tutor-icon-star-bold,
+.tutor-ratings-average {
+  @apply text-gold !important;
+}
+
+/* Progress bars */
+.tutor-progress-bar span,
+.tutor-progress-value {
+  @apply bg-crimson !important;
+}
+
+/* Tabs / pills */
+.tutor-nav-link.is-active,
+.tutor-nav-tabs .is-active {
+  @apply border-crimson text-crimson !important;
+}
+
+/* Dashboard sidebar */
+.tutor-dashboard-permalinks a,
+.tutor-dashboard-menu-item a {
+  @apply rounded-lg text-ink-soft hover:bg-paper-100 hover:text-crimson !important;
+}
+.tutor-dashboard-menu-item.active a,
+.tutor-dashboard-permalinks .active a {
+  @apply bg-crimson-50 font-semibold text-crimson !important;
+}
+
+/* Form fields */
+.tutor-form-control,
+.tutor-input-group input,
+.tutor-input-group select,
+.tutor-input-group textarea {
+  @apply rounded-xl border-paper-300 focus:border-crimson focus:ring-crimson !important;
+}
+
+/* Badges / labels */
+.tutor-badge-label,
+.tutor-course-level {
+  @apply rounded-full bg-crimson-50 text-crimson !important;
+}
+
+/* Quiz + certificate accents */
+.tutor-quiz-answer-single.is-selected,
+.tutor-certificate-wrap .active {
+  @apply border-crimson !important;
+}

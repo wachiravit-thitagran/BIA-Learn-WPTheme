@@ -1,0 +1,70 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/theme.json",
+	"version": 2,
+	"settings": {
+		"appearanceTools": true,
+		"layout": {
+			"contentSize": "768px",
+			"wideSize": "1100px"
+		},
+		"color": {
+			"defaultPalette": false,
+			"defaultGradients": false,
+			"palette": [
+				{ "slug": "crimson", "color": "#9d1c2b", "name": "ครั่ง (Crimson)" },
+				{ "slug": "crimson-dark", "color": "#6b1414", "name": "ครั่งเข้ม (Crimson dark)" },
+				{ "slug": "plum", "color": "#3a0a24", "name": "พลัม (Plum)" },
+				{ "slug": "gold", "color": "#b8862b", "name": "ทอง (Gold)" },
+				{ "slug": "paper", "color": "#f0ece4", "name": "กระดาษสา (Paper)" },
+				{ "slug": "paper-light", "color": "#faf8f4", "name": "กระดาษอ่อน (Paper light)" },
+				{ "slug": "ink", "color": "#222222", "name": "หมึก (Ink)" },
+				{ "slug": "white", "color": "#ffffff", "name": "ขาว (White)" }
+			]
+		},
+		"typography": {
+			"fluid": true,
+			"fontFamilies": [
+				{
+					"fontFamily": "Sarabun, system-ui, sans-serif",
+					"slug": "sans",
+					"name": "Sarabun (เนื้อหา)"
+				},
+				{
+					"fontFamily": "\"Noto Serif Thai\", Georgia, serif",
+					"slug": "serif",
+					"name": "Noto Serif Thai (หัวข้อ)"
+				}
+			],
+			"fontSizes": [
+				{ "slug": "small", "size": "0.875rem", "name": "เล็ก" },
+				{ "slug": "medium", "size": "1.0625rem", "name": "ปกติ" },
+				{ "slug": "large", "size": "1.375rem", "name": "ใหญ่" },
+				{ "slug": "x-large", "size": "2rem", "name": "ใหญ่มาก" },
+				{ "slug": "xx-large", "size": "2.75rem", "name": "พาดหัว" }
+			]
+		},
+		"spacing": {
+			"units": [ "px", "em", "rem", "%", "vw", "vh" ]
+		}
+	},
+	"styles": {
+		"color": {
+			"background": "#faf8f4",
+			"text": "#222222"
+		},
+		"typography": {
+			"fontFamily": "var(--wp--preset--font-family--sans)",
+			"fontSize": "1.0625rem",
+			"lineHeight": "1.7"
+		},
+		"elements": {
+			"link": {
+				"color": { "text": "#9d1c2b" }
+			},
+			"h1": { "typography": { "fontFamily": "var(--wp--preset--font-family--serif)" } },
+			"h2": { "typography": { "fontFamily": "var(--wp--preset--font-family--serif)" } },
+			"h3": { "typography": { "fontFamily": "var(--wp--preset--font-family--serif)" } },
+			"h4": { "typography": { "fontFamily": "var(--wp--preset--font-family--serif)" } }
+		}
+	}
+}
