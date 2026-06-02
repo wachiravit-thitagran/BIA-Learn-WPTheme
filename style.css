@@ -1,0 +1,18 @@
+/*
+Theme Name: BIA Learn
+Theme URI: https://bia-learn.psu.ac.th
+Author: Buddhadasa Indapanno Archives / Prince of Songkla University
+Author URI: https://bia.psu.ac.th
+Description: ธีมแพลตฟอร์มเรียนรู้สำหรับ bia-learn.psu.ac.th ออกแบบเชิงวิชาการ/ธรรมะ โทนแดงครั่ง–กระดาษสา รองรับ Tutor LMS เต็มรูปแบบ พัฒนาด้วย TailwindCSS. A learning-platform theme for the Buddhadasa Indapanno Archives, with full Tutor LMS integration, built with TailwindCSS.
+Version: 1.0.0
+Requires at least: 6.4
+Tested up to: 6.7
+Requires PHP: 7.4
+License: GNU General Public License v2 or later
+License URI: http://www.gnu.org/licenses/gpl-2.0.html
+Text Domain: bia-learn
+Tags: education, lms, tutor-lms, custom-menu, featured-images, translation-ready, threaded-comments, two-columns, right-sidebar
+
+This theme's styles are compiled by TailwindCSS into assets/css/main.css.
+Do not edit assets/css/main.css directly — edit src/css/main.css and run `npm run build`.
+*/

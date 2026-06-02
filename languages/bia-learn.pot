@@ -1,0 +1,23 @@
+# Copyright (C) 2026 Buddhadasa Indapanno Archives / Prince of Songkla University
+# This file is distributed under the GNU General Public License v2 or later.
+msgid ""
+msgstr ""
+"Project-Id-Version: BIA Learn 1.0.0\n"
+"Report-Msgid-Bugs-To: https://bia-learn.psu.ac.th\n"
+"Last-Translator: \n"
+"Language-Team: Thai\n"
+"Language: th\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2026-05-29\n"
+"X-Domain: bia-learn\n"
+"X-Generator: Manual stub — regenerate with `wp i18n make-pot . languages/bia-learn.pot`\n"
+
+# This is a starter POT file. The theme's UI strings are already wrapped in the
+# `bia-learn` text domain throughout the PHP templates. To extract them all,
+# run from the theme root:
+#
+#   wp i18n make-pot . languages/bia-learn.pot --domain=bia-learn
+#
+# Then create translations, e.g. languages/bia-learn-th.po / .mo.
