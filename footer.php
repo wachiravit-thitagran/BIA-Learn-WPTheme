@@ -10,7 +10,8 @@ defined( 'ABSPATH' ) || exit;
 	</div><!-- #content -->
 
 	<?php
-	if ( ! is_page_template( 'page-templates/template-contact.php' ) ) {
+	// Pre-footer CTA shows on the homepage only — keeps inner pages uncluttered.
+	if ( is_front_page() ) {
 		get_template_part( 'template-parts/footer/cta' );
 	}
 	?>
