@@ -75,6 +75,7 @@ bia_learn_require( 'template-tags' );  // Reusable presentation helpers.
 bia_learn_require( 'widgets' );        // Sidebar + footer widget areas.
 bia_learn_require( 'customizer' );     // Brand / contact / social settings.
 bia_learn_require( 'structured-data' ); // JSON-LD (Organization, breadcrumb, article).
+bia_learn_require( 'updater' );        // Self-update from GitHub Releases.
 
 // Tutor LMS glue only loads when the plugin is active.
 if ( bia_learn_has_tutor_lms() ) {

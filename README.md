@@ -45,6 +45,27 @@ npm run build    # production — minify CSS + JS
 
 > หากต้องการเพิ่ม/เปลี่ยนน้ำหนักฟอนต์: ดึง CSS จาก Google Fonts (พร้อม User-Agent ของเบราว์เซอร์เพื่อให้ได้ `woff2`), ดาวน์โหลดไฟล์ลง `assets/fonts/` ด้วยชื่อ `{family}-{weight}[i]-{subset}.woff2` แล้วเพิ่มบล็อก `@font-face` ใน `src/css/main.css` ให้ชี้ `url(../fonts/...)` จากนั้น `npm run build`
 
+## อัปเดตธีมอัตโนมัติ (Auto-update จาก GitHub)
+
+ธีมเช็คอัปเดตจาก **GitHub Releases** ของ repo นี้โดยตรง (ผ่าน Plugin Update Checker ที่ฝังใน [inc/lib/plugin-update-checker/](inc/lib/plugin-update-checker/) + bootstrap ที่ [inc/updater.php](inc/updater.php)) — เมื่อมี release ใหม่ที่เวอร์ชันสูงกว่า จะขึ้นปุ่มอัปเดตใน **แดชบอร์ด → อัปเดต** และ **ธีม** กดอัปเดตได้ในคลิกเดียว (repo เป็น public จึงไม่ต้องใช้ token)
+
+### ปล่อยเวอร์ชันใหม่ — บนเครื่อง dev "แก้โค้ดแล้ว push" พอ
+
+```bash
+git push origin main
+```
+
+GitHub Action [.github/workflows/release.yml](.github/workflows/release.yml) จะทำให้อัตโนมัติทุกครั้งที่ push เข้า `main`:
+
+1. คำนวณเวอร์ชันถัดไป — **patch +1** จาก tag ล่าสุด (เช่น `v1.0.3` → `v1.0.4`)
+2. `npm ci && npm run build` (build CSS/JS สดในคลาวด์ — ไม่ต้อง build ในเครื่อง)
+3. แพ็ก `bia-learn.zip` (โครงสร้างถูกต้อง รวม assets/fonts/PUC; ตัด node_modules/src/configs)
+4. สร้าง tag + **GitHub Release** แนบ zip → ทุกไซต์ที่ใช้ธีมเห็นปุ่มอัปเดตภายใน ~12 ชม. (หรือกด “Check again”)
+
+> - อยาก bump **minor/major**: แก้ `Version:` ใน [style.css](style.css) ให้สูงกว่า tag ล่าสุด (เช่น `1.1.0`) แล้ว push — Action จะใช้เวอร์ชันนั้นเป็น release และ patch ต่อจากนั้นไปเอง
+> - ไม่อยากให้ push ครั้งนั้นออก release: ใส่ `[skip release]` ใน commit message
+> - push ที่แตะแค่ `**.md`, `docs/**`, `.github/**` จะไม่ทริก release
+
 ## โครงสร้าง (Structure)
 
 ```

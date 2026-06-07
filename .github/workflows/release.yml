@@ -1,0 +1,105 @@
+name: Release theme
+
+# Auto-release on every push to main. The dev workflow is simply: edit code,
+# push. This job bumps the patch version, builds the Tailwind/esbuild assets,
+# packages a ready-to-install bia-learn.zip and publishes a GitHub Release.
+# The theme's bundled update checker (inc/updater.php) then offers that release
+# to every site running the theme.
+
+on:
+  push:
+    branches: [ main ]
+    paths-ignore:
+      - '**.md'
+      - 'docs/**'
+      - '.github/**'
+
+# Queue runs so each one sees the previous release's tag (keeps versions unique).
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    if: ${{ !contains(github.event.head_commit.message, '[skip release]') }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # need full history + tags to compute the next version
+
+      - name: Compute next version
+        id: ver
+        run: |
+          set -euo pipefail
+          # Extract a strict semver token from the Version header. grep -oE only
+          # yields digits/dots, so a malformed (or malicious) header cannot leak
+          # shell metacharacters into later steps.
+          current=$(grep -iE '^[[:space:]]*Version:' style.css | head -1 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1 || true)
+          latest_tag=$(git tag --list 'v*' --sort=-v:refname | grep -oE '^v[0-9]+\.[0-9]+\.[0-9]+$' | head -1 | sed 's/^v//' || true)
+          echo "style.css=${current:-none}  latest_tag=${latest_tag:-none}"
+
+          if [ -z "${latest_tag}" ]; then
+            next="${current:-1.0.0}"                       # first release: use style.css as-is
+          else
+            higher=$(printf '%s\n%s\n' "$current" "$latest_tag" | sort -V | tail -1)
+            if [ -n "$current" ] && [ "$higher" = "$current" ] && [ "$current" != "$latest_tag" ]; then
+              next="$current"                              # dev manually bumped minor/major
+            else
+              IFS=. read -r MA MI PA <<< "$latest_tag"     # otherwise auto patch-bump
+              next="${MA}.${MI}.$((PA + 1))"
+            fi
+          fi
+
+          # Defence in depth: refuse anything that is not strict semver.
+          if ! printf '%s' "$next" | grep -qE '^[0-9]+\.[0-9]+\.[0-9]+$'; then
+            echo "Computed version '$next' is not valid semver; aborting." >&2
+            exit 1
+          fi
+
+          echo "next=$next" >> "$GITHUB_OUTPUT"
+          echo "tag=v$next" >> "$GITHUB_OUTPUT"
+          echo "Next version: $next (tag v$next)"
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Build assets
+        run: |
+          npm ci
+          npm run build
+
+      - name: Set version and package theme
+        env:
+          NEXT: ${{ steps.ver.outputs.next }}   # validated semver; read via env, never inlined into the script
+        run: |
+          set -euo pipefail
+          # Stamp the released version into the packaged style.css. The repo copy
+          # stays untouched — published releases are the source of truth.
+          sed -i -E "s/^([[:space:]]*Version:[[:space:]]*).*/\1${NEXT}/" style.css
+
+          mkdir -p dist/bia-learn
+          rsync -a ./ dist/bia-learn/ \
+            --exclude '.git' --exclude '.github' --exclude 'node_modules' \
+            --exclude 'src' --exclude 'dist' --exclude 'docs' \
+            --exclude 'package.json' --exclude 'package-lock.json' \
+            --exclude 'tailwind.config.js' --exclude 'postcss.config.js' \
+            --exclude '.gitignore' --exclude '*.log' --exclude '.DS_Store'
+          (cd dist && zip -rq bia-learn.zip bia-learn)
+          echo "Packaged:"; ls -la dist/bia-learn.zip
+
+      - name: Publish GitHub Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ steps.ver.outputs.tag }}     # validated semver tag, read via env
+        run: |
+          set -euo pipefail
+          gh release create "$TAG" dist/bia-learn.zip \
+            --target "$GITHUB_SHA" \
+            --title "$TAG" \
+            --generate-notes
