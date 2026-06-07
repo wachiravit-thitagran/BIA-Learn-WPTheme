@@ -12,12 +12,16 @@
 			"defaultGradients": false,
 			"palette": [
 				{ "slug": "crimson", "color": "#9d1c2b", "name": "ครั่ง (Crimson)" },
-				{ "slug": "crimson-dark", "color": "#6b1414", "name": "ครั่งเข้ม (Crimson dark)" },
-				{ "slug": "plum", "color": "#3a0a24", "name": "พลัม (Plum)" },
+				{ "slug": "crimson-dark", "color": "#7c2021", "name": "ครั่งเข้ม (Crimson dark)" },
+				{ "slug": "plum", "color": "#2f2b3d", "name": "พลัม (Slate-plum)" },
 				{ "slug": "gold", "color": "#b8862b", "name": "ทอง (Gold)" },
-				{ "slug": "paper", "color": "#f0ece4", "name": "กระดาษสา (Paper)" },
-				{ "slug": "paper-light", "color": "#faf8f4", "name": "กระดาษอ่อน (Paper light)" },
-				{ "slug": "ink", "color": "#222222", "name": "หมึก (Ink)" },
+				{ "slug": "paper", "color": "#f0f0f4", "name": "พื้นเทา (Paper)" },
+				{ "slug": "paper-light", "color": "#f8f7fa", "name": "พื้นอ่อน (Paper light)" },
+				{ "slug": "ink", "color": "#2f2b3d", "name": "หมึก (Ink)" },
+				{ "slug": "success", "color": "#28c76f", "name": "สำเร็จ (Success)" },
+				{ "slug": "warning", "color": "#ff9f43", "name": "เตือน (Warning)" },
+				{ "slug": "danger", "color": "#ff4c51", "name": "อันตราย (Danger)" },
+				{ "slug": "info", "color": "#00bad1", "name": "ข้อมูล (Info)" },
 				{ "slug": "white", "color": "#ffffff", "name": "ขาว (White)" }
 			]
 		},
@@ -25,14 +29,14 @@
 			"fluid": true,
 			"fontFamilies": [
 				{
-					"fontFamily": "Sarabun, system-ui, sans-serif",
+					"fontFamily": "Anuphan, Sarabun, system-ui, sans-serif",
 					"slug": "sans",
-					"name": "Sarabun (เนื้อหา)"
+					"name": "Anuphan (เนื้อหา)"
 				},
 				{
-					"fontFamily": "\"Noto Serif Thai\", Georgia, serif",
+					"fontFamily": "Anuphan, Sarabun, system-ui, sans-serif",
 					"slug": "serif",
-					"name": "Noto Serif Thai (หัวข้อ)"
+					"name": "Anuphan (หัวข้อ)"
 				}
 			],
 			"fontSizes": [
@@ -49,8 +53,8 @@
 	},
 	"styles": {
 		"color": {
-			"background": "#faf8f4",
-			"text": "#222222"
+			"background": "#f8f7fa",
+			"text": "#2f2b3d"
 		},
 		"typography": {
 			"fontFamily": "var(--wp--preset--font-family--sans)",

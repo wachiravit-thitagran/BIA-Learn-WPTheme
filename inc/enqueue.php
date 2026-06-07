@@ -22,8 +22,11 @@ function bia_learn_asset_version( $relative ) {
  * Front-end assets.
  */
 function bia_learn_enqueue_assets() {
-	// Compiled Tailwind stylesheet. Self-hosted webfonts (Sarabun + Noto Serif
-	// Thai) are declared with @font-face inside this file — see src/css/main.css.
+	// Compiled Tailwind stylesheet. Self-hosted webfonts (Anuphan — the
+	// bia.psu.ac.th display/UI face — plus Sarabun fallback) are declared with
+	// @font-face inside this file; see src/css/main.css. No external font CDN
+	// is used, keeping first paint fast and avoiding cross-origin requests
+	// (PDPA-friendly for a .ac.th site).
 	wp_enqueue_style(
 		'bia-learn-style',
 		BIA_LEARN_URI . '/assets/css/main.css',
@@ -54,7 +57,8 @@ add_action( 'wp_enqueue_scripts', 'bia_learn_enqueue_assets' );
  * @return array
  */
 function bia_learn_preload_fonts( $preload_resources ) {
-	foreach ( array( 'sarabun-400-thai', 'notoserifthai-700-thai' ) as $slug ) {
+	// Primary display/body face (Anuphan) + body fallback (Sarabun), Thai subset.
+	foreach ( array( 'anuphan-400-thai', 'anuphan-700-thai', 'sarabun-400-thai' ) as $slug ) {
 		$preload_resources[] = array(
 			'href'        => BIA_LEARN_URI . '/assets/fonts/' . $slug . '.woff2',
 			'as'          => 'font',

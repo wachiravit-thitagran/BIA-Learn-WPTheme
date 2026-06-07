@@ -1,6 +1,6 @@
 # BIA Learn — WordPress Theme
 
-ธีม WordPress สำหรับแพลตฟอร์มเรียนรู้ **bia-learn.psu.ac.th** ของหอจดหมายเหตุพุทธทาส อินทปัญโญ (BIA) — ออกแบบเชิงวิชาการ/ธรรมะ โทน **แดงครั่ง–กระดาษสา** พร้อม integration สำหรับ **Tutor LMS** (archive, course loop, dashboard styling, หน้า home ที่ดึงข้อมูลคอร์ส/ผู้สอน) พัฒนาด้วย **TailwindCSS** + **Alpine.js**
+ธีม WordPress สำหรับแพลตฟอร์มเรียนรู้ **bia-learn.psu.ac.th** ของหอจดหมายเหตุพุทธทาส อินทปัญโญ (BIA) — ออกแบบให้สอดคล้องกับ **bia.psu.ac.th** (ฟอนต์ Anuphan, โทน **แดงครั่ง–สเลตพลัม** บนพื้นเทาเย็น) พร้อม integration สำหรับ **Tutor LMS** (archive, course loop, dashboard styling, หน้า home ที่ดึงข้อมูลคอร์ส/ผู้สอน) พัฒนาด้วย **TailwindCSS** + **Alpine.js**
 
 A classic WordPress theme for the Buddhadasa Indapanno Archives learning platform, with Tutor LMS-aware archive, course loop, and dashboard integration, built with TailwindCSS and Alpine.js.
 
@@ -41,9 +41,13 @@ npm run build    # production — minify CSS + JS
 
 ## เว็บฟอนต์ (Self-hosted fonts)
 
-ฟอนต์ **Sarabun** (เนื้อหา) + **Noto Serif Thai** (หัวข้อ) เสิร์ฟจาก `assets/fonts/` เอง (ไม่พึ่ง Google Fonts CDN) — โหลดเร็วขึ้นและไม่เรียกข้ามโดเมน (เหมาะกับ PDPA). `@font-face` (subset ไทย+ละติน, `font-display: swap`) ฝังอยู่ต้นไฟล์ [src/css/main.css](src/css/main.css) และฟอนต์ไทยหลักถูก `preload` ใน [inc/enqueue.php](inc/enqueue.php)
+ฟอนต์หลักของ UI และหัวข้อคือ **Anuphan** — typeface เดียวกับที่ใช้บน **bia.psu.ac.th** เสิร์ฟจาก `assets/fonts/` เอง (น้ำหนัก 300–700, subset ไทย+ละติน) **ไม่พึ่ง Google Fonts CDN** โหลดเร็วขึ้นและไม่เรียกข้ามโดเมน (เหมาะกับ PDPA) `@font-face` (พร้อม `font-display: swap`) ฝังอยู่ต้นไฟล์ [src/css/main.css](src/css/main.css) และฟอนต์ไทยหลักถูก `preload` ใน [inc/enqueue.php](inc/enqueue.php)
 
-> หากต้องการเพิ่ม/เปลี่ยนน้ำหนักฟอนต์: ดึง CSS จาก Google Fonts (พร้อม User-Agent ของเบราว์เซอร์เพื่อให้ได้ `woff2`), ดาวน์โหลดไฟล์ลง `assets/fonts/` ด้วยชื่อ `{family}-{weight}[i]-{subset}.woff2` แล้วเพิ่มบล็อก `@font-face` ใน `src/css/main.css` ให้ชี้ `url(../fonts/...)` จากนั้น `npm run build`
+**Sarabun** ยังเสิร์ฟจาก `assets/fonts/` เองเป็นฟอนต์สำรอง (fallback) สำหรับเนื้อหา
+
+> วิธีอัปเดต/เพิ่มน้ำหนัก Anuphan: `npm pack @fontsource/anuphan` แล้วก๊อปไฟล์ใน `files/` (`anuphan-{thai|latin}-{weight}-normal.woff2`) มาไว้ที่ `assets/fonts/` ในชื่อ `anuphan-{weight}-{subset}.woff2` เพิ่มบล็อก `@font-face` ใน `src/css/main.css` แล้ว `npm run build`
+
+> Design tokens (สี/เงา/ฟอนต์) ดึงค่ามาจาก bia.psu.ac.th โดยตรง: แดงครั่ง `#9d1c2b` (hover `#7c2021`), สเลต-พลัม `#2f2b3d`, พื้นเทาเย็น `#f8f7fa`, เส้นขอบ `#dfdfe3`, ข้อความรอง `#6d6b77`, การ์ดมุมโค้ง 16px เงานุ่ม `0 10px 30px rgba(0,0,0,.1)`, ปุ่มมุมโค้ง 8px — แก้ที่ [tailwind.config.js](tailwind.config.js) + [theme.json](theme.json) แล้ว `npm run build`
 
 ## อัปเดตธีมอัตโนมัติ (Auto-update จาก GitHub)
 
