@@ -413,6 +413,22 @@
     @apply mb-1.5 block text-sm font-semibold text-ink-soft;
   }
 
+  /* Auth page — style the Tutor LMS / WP registration form internals so they
+     match the themed login form (template-auth.php). */
+  .bia-auth-register :is(input[type="text"], input[type="email"], input[type="password"], input[type="tel"], input:not([type])) {
+    @apply field;
+  }
+  .bia-auth-register label {
+    @apply field-label;
+  }
+  .bia-auth-register :is(button[type="submit"], input[type="submit"], .tutor-btn) {
+    @apply btn-primary mt-2 w-full;
+  }
+  .bia-auth-register > form > p,
+  .bia-auth-register .tutor-form-group {
+    @apply mb-4;
+  }
+
   /* --- Decorative dharma rule (thin gold divider with center mark) ----- */
   .rule-dharma {
     @apply flex items-center justify-center gap-3 text-gold;
