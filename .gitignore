@@ -1,5 +1,7 @@
 node_modules/
-vendor/
+# Only ignore a Composer vendor/ at the repo root — NOT the bundled
+# inc/lib/plugin-update-checker/vendor/ (ships Parsedown, required at runtime).
+/vendor/
 # Compiled assets are committed so the theme can be deployed without a build
 # step. Comment the lines below out if you prefer a build-on-deploy workflow.
 # assets/css/main.css

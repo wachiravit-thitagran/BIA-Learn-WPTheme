@@ -20,10 +20,14 @@ defined( 'ABSPATH' ) || exit;
  * Initialise the GitHub update checker once the library is present.
  */
 function bia_learn_init_updater() {
-	$loader = BIA_LEARN_DIR . '/inc/lib/plugin-update-checker/plugin-update-checker.php';
+	$lib    = BIA_LEARN_DIR . '/inc/lib/plugin-update-checker';
+	$loader = $lib . '/plugin-update-checker.php';
 
-	// Fail silently if the library was stripped from a custom distribution.
-	if ( ! is_readable( $loader ) ) {
+	// Require the loader AND a key vendored dependency (Parsedown, used by PUC to
+	// render GitHub release notes). If the library is incomplete — e.g. vendor/
+	// got stripped from a distribution — skip updates rather than risk a fatal
+	// during the update check. Defence in depth against the missing-Parsedown bug.
+	if ( ! is_readable( $loader ) || ! is_readable( $lib . '/vendor/Parsedown.php' ) ) {
 		return;
 	}
 	require_once $loader;
