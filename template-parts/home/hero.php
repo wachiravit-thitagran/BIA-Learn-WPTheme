@@ -15,10 +15,8 @@ $cta_url  = bia_learn_option( 'bia_hero_cta_url' ) ?: bia_learn_courses_url();
 $image_id = bia_learn_option( 'bia_hero_image' );
 ?>
 <section class="relative overflow-hidden bg-plum-wash">
-	<!-- atmosphere -->
-	<div class="absolute inset-0 bg-grain opacity-30" aria-hidden="true"></div>
-	<div class="pointer-events-none absolute -left-24 top-10 h-80 w-80 rounded-full bg-crimson/40 blur-3xl" aria-hidden="true"></div>
-	<div class="pointer-events-none absolute -right-20 bottom-0 h-96 w-96 rounded-full bg-gold/20 blur-3xl" aria-hidden="true"></div>
+	<!-- atmosphere (kept subtle — flat & clean, like bia.psu.ac.th) -->
+	<div class="pointer-events-none absolute -right-20 bottom-0 h-96 w-96 rounded-full bg-crimson/20 blur-3xl" aria-hidden="true"></div>
 
 	<div class="container-bia relative grid items-center gap-12 py-20 lg:grid-cols-2 lg:py-28">
 		<!-- copy -->
@@ -34,7 +32,19 @@ $image_id = bia_learn_option( 'bia_hero_image' );
 
 			<p class="mt-6 text-lg leading-relaxed text-paper-300"><?php echo wp_kses_post( $subtitle ); ?></p>
 
-			<div class="mt-9 flex flex-wrap items-center gap-4">
+			<!-- Course search — the primary "find a course" entry point -->
+			<form role="search" method="get" action="<?php echo esc_url( home_url( '/' ) ); ?>"
+				class="mt-8 flex max-w-xl items-center gap-2 rounded-full bg-white/95 p-1.5 shadow-card focus-within:ring-2 focus-within:ring-gold-light">
+				<input type="hidden" name="post_type" value="courses" />
+				<span class="grid h-9 w-9 shrink-0 place-items-center text-ink-light"><?php echo bia_learn_icon( 'search', 'h-5 w-5' ); // phpcs:ignore ?></span>
+				<label for="bia-hero-search" class="sr-only"><?php esc_html_e( 'ค้นหาคอร์ส', 'bia-learn' ); ?></label>
+				<input id="bia-hero-search" type="search" name="s" required
+					placeholder="<?php esc_attr_e( 'ค้นหาคอร์ส หัวข้อ หรือผู้สอน…', 'bia-learn' ); ?>"
+					class="min-w-0 flex-1 border-0 bg-transparent text-ink placeholder:text-ink-light focus:ring-0" />
+				<button type="submit" class="btn-primary shrink-0"><?php esc_html_e( 'ค้นหา', 'bia-learn' ); ?></button>
+			</form>
+
+			<div class="mt-6 flex flex-wrap items-center gap-4">
 				<a href="<?php echo esc_url( $cta_url ); ?>" class="btn-gold btn-lg">
 					<?php echo esc_html( $cta_text ); ?>
 					<?php echo bia_learn_icon( 'arrow', 'h-5 w-5' ); // phpcs:ignore ?>
