@@ -1,107 +1,100 @@
 /* =========================================================================
-   Self-hosted webfonts (Thai + Latin subsets) — Sarabun (body) +
-   Noto Serif Thai (display). Served from /assets/fonts to avoid the Google
-   Fonts CDN (faster first paint, no cross-origin font request — PDPA-friendly
-   for a .ac.th site). To refresh: re-run the download in the README.
+   Self-hosted webfonts (Thai + Latin subsets) — served from /assets/fonts to
+   avoid the Google Fonts CDN (faster first paint, no cross-origin request —
+   PDPA-friendly for a .ac.th site). Primary UI + display face: Anuphan (the
+   typeface used on bia.psu.ac.th). Sarabun is retained as a fallback body face.
+   `@font-face` uses Thai+Latin subsets with font-display: swap.
+   To refresh weights: npm pack @fontsource/anuphan, copy files/ woff2 into
+   assets/fonts as anuphan-{weight}-{subset}.woff2, then npm run build.
    ========================================================================= */
-/* Noto Serif Thai 400 — thai */
+/* Anuphan 300 — thai */
 @font-face {
-  font-family: 'Noto Serif Thai';
+  font-family: 'Anuphan';
+  font-style: normal;
+  font-weight: 300;
+  font-display: swap;
+  src: url(../fonts/anuphan-300-thai.woff2) format('woff2');
+  unicode-range: U+02D7, U+0303, U+0331, U+0E01-0E5B, U+200C-200D, U+25CC;
+}
+/* Anuphan 300 — latin */
+@font-face {
+  font-family: 'Anuphan';
+  font-style: normal;
+  font-weight: 300;
+  font-display: swap;
+  src: url(../fonts/anuphan-300-latin.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* Anuphan 400 — thai */
+@font-face {
+  font-family: 'Anuphan';
   font-style: normal;
   font-weight: 400;
-  font-stretch: 100%;
   font-display: swap;
-  src: url(../fonts/notoserifthai-400-thai.woff2) format('woff2');
+  src: url(../fonts/anuphan-400-thai.woff2) format('woff2');
   unicode-range: U+02D7, U+0303, U+0331, U+0E01-0E5B, U+200C-200D, U+25CC;
 }
-/* Noto Serif Thai 400 — latin */
+/* Anuphan 400 — latin */
 @font-face {
-  font-family: 'Noto Serif Thai';
+  font-family: 'Anuphan';
   font-style: normal;
   font-weight: 400;
-  font-stretch: 100%;
   font-display: swap;
-  src: url(../fonts/notoserifthai-400-latin.woff2) format('woff2');
+  src: url(../fonts/anuphan-400-latin.woff2) format('woff2');
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
-/* Noto Serif Thai 500 — thai */
+/* Anuphan 500 — thai */
 @font-face {
-  font-family: 'Noto Serif Thai';
+  font-family: 'Anuphan';
   font-style: normal;
   font-weight: 500;
-  font-stretch: 100%;
   font-display: swap;
-  src: url(../fonts/notoserifthai-500-thai.woff2) format('woff2');
+  src: url(../fonts/anuphan-500-thai.woff2) format('woff2');
   unicode-range: U+02D7, U+0303, U+0331, U+0E01-0E5B, U+200C-200D, U+25CC;
 }
-/* Noto Serif Thai 500 — latin */
+/* Anuphan 500 — latin */
 @font-face {
-  font-family: 'Noto Serif Thai';
+  font-family: 'Anuphan';
   font-style: normal;
   font-weight: 500;
-  font-stretch: 100%;
   font-display: swap;
-  src: url(../fonts/notoserifthai-500-latin.woff2) format('woff2');
+  src: url(../fonts/anuphan-500-latin.woff2) format('woff2');
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
-/* Noto Serif Thai 600 — thai */
+/* Anuphan 600 — thai */
 @font-face {
-  font-family: 'Noto Serif Thai';
+  font-family: 'Anuphan';
   font-style: normal;
   font-weight: 600;
-  font-stretch: 100%;
   font-display: swap;
-  src: url(../fonts/notoserifthai-600-thai.woff2) format('woff2');
+  src: url(../fonts/anuphan-600-thai.woff2) format('woff2');
   unicode-range: U+02D7, U+0303, U+0331, U+0E01-0E5B, U+200C-200D, U+25CC;
 }
-/* Noto Serif Thai 600 — latin */
+/* Anuphan 600 — latin */
 @font-face {
-  font-family: 'Noto Serif Thai';
+  font-family: 'Anuphan';
   font-style: normal;
   font-weight: 600;
-  font-stretch: 100%;
   font-display: swap;
-  src: url(../fonts/notoserifthai-600-latin.woff2) format('woff2');
+  src: url(../fonts/anuphan-600-latin.woff2) format('woff2');
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
-/* Noto Serif Thai 700 — thai */
+/* Anuphan 700 — thai */
 @font-face {
-  font-family: 'Noto Serif Thai';
+  font-family: 'Anuphan';
   font-style: normal;
   font-weight: 700;
-  font-stretch: 100%;
   font-display: swap;
-  src: url(../fonts/notoserifthai-700-thai.woff2) format('woff2');
+  src: url(../fonts/anuphan-700-thai.woff2) format('woff2');
   unicode-range: U+02D7, U+0303, U+0331, U+0E01-0E5B, U+200C-200D, U+25CC;
 }
-/* Noto Serif Thai 700 — latin */
+/* Anuphan 700 — latin */
 @font-face {
-  font-family: 'Noto Serif Thai';
+  font-family: 'Anuphan';
   font-style: normal;
   font-weight: 700;
-  font-stretch: 100%;
   font-display: swap;
-  src: url(../fonts/notoserifthai-700-latin.woff2) format('woff2');
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
-}
-/* Noto Serif Thai 900 — thai */
-@font-face {
-  font-family: 'Noto Serif Thai';
-  font-style: normal;
-  font-weight: 900;
-  font-stretch: 100%;
-  font-display: swap;
-  src: url(../fonts/notoserifthai-900-thai.woff2) format('woff2');
-  unicode-range: U+02D7, U+0303, U+0331, U+0E01-0E5B, U+200C-200D, U+25CC;
-}
-/* Noto Serif Thai 900 — latin */
-@font-face {
-  font-family: 'Noto Serif Thai';
-  font-style: normal;
-  font-weight: 900;
-  font-stretch: 100%;
-  font-display: swap;
-  src: url(../fonts/notoserifthai-900-latin.woff2) format('woff2');
+  src: url(../fonts/anuphan-700-latin.woff2) format('woff2');
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 /* Sarabun 400 italic — thai */
@@ -258,9 +251,9 @@
     text-rendering: optimizeLegibility;
   }
 
-  /* Headings use the Thai serif display face */
+  /* Headings use Anuphan (the bia.psu.ac.th display face), bold weight */
   h1, h2, h3, h4, h5, h6 {
-    @apply font-serif text-ink;
+    @apply font-sans font-bold text-ink;
     text-wrap: balance;
   }
 
@@ -314,7 +307,7 @@
   }
 
   .section-title {
-    @apply font-serif text-3xl font-bold leading-tight text-ink sm:text-4xl;
+    @apply font-sans text-3xl font-bold leading-tight text-ink sm:text-4xl;
   }
 
   .lead {
@@ -322,9 +315,14 @@
   }
 
   /* --- Buttons --------------------------------------------------------- */
+  /* bia.psu.ac.th uses 8px-radius solid buttons (not full pills). */
   .btn {
-    @apply inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-semibold
+    @apply inline-flex items-center justify-center gap-2 rounded-lg px-6 py-3 text-sm font-semibold
            transition-all duration-200 ease-out-expo focus-visible:ring-2 focus-visible:ring-offset-2;
+  }
+  /* Optional fully-rounded pill variant (used for chips / small CTAs) */
+  .btn-pill {
+    @apply rounded-full;
   }
   .btn-primary {
     @apply btn bg-crimson text-white shadow-soft hover:bg-crimson-600 hover:shadow-card-hover
@@ -361,6 +359,50 @@
   .badge-muted {
     @apply inline-flex items-center gap-1 rounded-full bg-paper-100 px-3 py-1 text-xs font-medium text-ink-light;
   }
+
+  /* --- Dashboard kit ---------------------------------------------------
+     Reusable pieces mirroring the bia.psu.ac.th user dashboard (/user/):
+     status pills, stat cards, tinted icon chips, progress bars and the
+     curved crimson welcome hero. Used by theme parts + the Tutor bridge. */
+
+  /* Status pills (soft tint + dark text) */
+  .pill {
+    @apply inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-semibold;
+  }
+  .pill-success { @apply bg-success-light text-success-dark; }
+  .pill-warning { @apply bg-warning-light text-warning-dark; }
+  .pill-danger  { @apply bg-danger-light text-danger-dark; }
+  .pill-info    { @apply bg-info-light text-info-dark; }
+  .pill-crimson { @apply bg-crimson-100 text-crimson; }
+
+  /* Dashboard stat card */
+  .stat-card {
+    @apply rounded-2xl border border-paper-200 bg-white p-5 shadow-stat
+           transition-shadow duration-200 hover:shadow-card;
+  }
+  .stat-card__num   { @apply font-sans text-3xl font-bold leading-none text-ink-soft; }
+  .stat-card__label { @apply text-sm text-ink-light; }
+
+  /* Tinted circular icon chip */
+  .icon-chip { @apply grid h-11 w-11 shrink-0 place-items-center rounded-full; }
+  .icon-chip-crimson { @apply bg-crimson-100 text-crimson; }
+  .icon-chip-success { @apply bg-success-light text-success; }
+  .icon-chip-warning { @apply bg-warning-light text-warning; }
+  .icon-chip-info    { @apply bg-info-light text-info; }
+
+  /* Progress bar (color variants) */
+  .progress { @apply h-1.5 w-full overflow-hidden rounded-full bg-paper-200; }
+  .progress__bar { @apply block h-full rounded-full bg-crimson transition-[width] duration-500 ease-out-expo; }
+  .progress__bar--success { @apply bg-success; }
+  .progress__bar--warning { @apply bg-warning; }
+  .progress__bar--info    { @apply bg-info; }
+
+  /* Curved crimson welcome hero */
+  .dashboard-hero {
+    @apply relative overflow-hidden rounded-3xl bg-crimson-wash px-6 py-10 text-white sm:px-10;
+  }
+  .dashboard-hero__title { @apply font-sans text-2xl font-bold text-white sm:text-3xl; }
+  .dashboard-hero__subtitle { @apply mt-1 text-sm text-white/80; }
 
   /* --- Forms ----------------------------------------------------------- */
   .field {
@@ -489,22 +531,22 @@
    from the admin colour preset) regardless of stylesheet load order. */
 :root {
   --tutor-color-primary: #9d1c2b !important;        /* crimson */
-  --tutor-color-primary-hover: #8b1a1a !important;  /* crimson-600 */
+  --tutor-color-primary-hover: #7c2021 !important;  /* crimson-600 */
   --tutor-color-primary-rgb: 157, 28, 43 !important;
-  --tutor-color-secondary: #3a0a24 !important;      /* plum */
+  --tutor-color-secondary: #2f2b3d !important;      /* slate-plum */
 }
 
 /* --- Thin bridge layer: shape / surface / type Tutor doesn't tokenize --- */
 
-/* Pill buttons (colour now flows from the brand tokens above). */
+/* 8px-radius buttons to match bia.psu.ac.th (colour flows from brand tokens). */
 .tutor-btn,
 .bia-tutor-btn,
 .tutor-btn-primary {
-  @apply inline-flex items-center justify-center gap-2 rounded-full border-0 px-6 py-3 text-sm font-semibold
+  @apply inline-flex items-center justify-center gap-2 rounded-lg border-0 px-6 py-3 text-sm font-semibold
          transition-all duration-200 !important;
 }
 .tutor-btn-outline-primary {
-  @apply rounded-full !important;
+  @apply rounded-lg !important;
 }
 
 /* Course loop / cards */
@@ -608,7 +650,8 @@
 .tutor-course-details-tab .tutor-tab-item,
 .tutor-review-summary,
 .tutor-review-individual-item {
-  @apply rounded-2xl border border-paper-200 bg-white shadow-soft !important;
+  /* shadow-stat = the light 0 4px 6px elevation used on the bia /user/ cards */
+  @apply rounded-2xl border border-paper-200 bg-white shadow-stat !important;
 }
 .tutor-dashboard .tutor-dashboard-content,
 .tutor-dashboard .tutor-dashboard-left-menu,
@@ -637,4 +680,40 @@
 .tutor-quiz-answer-single.is-selected,
 .tutor-certificate-wrap .active {
   @apply border-crimson !important;
+}
+
+/* --- Semantic status colors on Tutor states ---------------------------
+   Maps Tutor badges, alerts, progress and quiz results onto the semantic
+   palette sampled from the bia.psu.ac.th user dashboard (/user/). */
+.tutor-badge-success,
+.tutor-alert.tutor-success,
+.tutor-text-success {
+  @apply bg-success-light text-success-dark !important;
+}
+.tutor-badge-warning,
+.tutor-alert.tutor-warning {
+  @apply bg-warning-light text-warning-dark !important;
+}
+.tutor-badge-danger,
+.tutor-alert.tutor-danger {
+  @apply bg-danger-light text-danger-dark !important;
+}
+.tutor-badge-info,
+.tutor-alert.tutor-info {
+  @apply bg-info-light text-info-dark !important;
+}
+
+/* Completed course progress turns success-green */
+.tutor-progress-bar .tutor-progress-value.is-completed,
+.tutor-course-completed-badge,
+.is-completed > .tutor-progress-value {
+  @apply bg-success !important;
+}
+
+/* Quiz answer correctness */
+.tutor-quiz-answer-single.is-correct {
+  @apply border-success !important;
+}
+.tutor-quiz-answer-single.is-incorrect {
+  @apply border-danger !important;
 }
