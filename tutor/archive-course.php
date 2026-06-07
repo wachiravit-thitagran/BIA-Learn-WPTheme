@@ -18,6 +18,11 @@ if ( $tutils && method_exists( $tutils, 'tutor_custom_header' ) ) {
 	get_header();
 }
 
+// Themed catalog header (title, count, search, category chips) above the grid.
+// Rendered before any Course_Filter query_posts() so archive conditionals and
+// the queried term resolve correctly.
+get_template_part( 'template-parts/courses/catalog-header' );
+
 $get = array();
 if ( isset( $_GET['course_filter'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 	$get = array_map(
