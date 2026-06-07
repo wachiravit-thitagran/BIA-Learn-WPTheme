@@ -16,14 +16,28 @@ get_header();
 
 <main id="main">
 	<?php
+	// Lead with the core "find a course" path: hero → browse by category →
+	// featured courses. Secondary sections below are toggleable in the
+	// Customizer (BIA Learn → เนื้อหาหน้าแรก) so the page can stay lean.
 	get_template_part( 'template-parts/home/hero' );
-	get_template_part( 'template-parts/home/stats' );
-	get_template_part( 'template-parts/home/featured-courses' );
 	get_template_part( 'template-parts/home/categories' );
-	get_template_part( 'template-parts/home/how-it-works' );
-	get_template_part( 'template-parts/home/instructors' );
-	get_template_part( 'template-parts/home/latest-news' );
-	get_template_part( 'template-parts/home/partners' );
+	get_template_part( 'template-parts/home/featured-courses' );
+
+	if ( bia_learn_option( 'bia_show_stats', true ) ) {
+		get_template_part( 'template-parts/home/stats' );
+	}
+	if ( bia_learn_option( 'bia_show_how_it_works', true ) ) {
+		get_template_part( 'template-parts/home/how-it-works' );
+	}
+	if ( bia_learn_option( 'bia_show_instructors', true ) ) {
+		get_template_part( 'template-parts/home/instructors' );
+	}
+	if ( bia_learn_option( 'bia_show_news', true ) ) {
+		get_template_part( 'template-parts/home/latest-news' );
+	}
+	if ( bia_learn_option( 'bia_show_partners', true ) ) {
+		get_template_part( 'template-parts/home/partners' );
+	}
 
 	// Render static front-page content beneath the designed sections, if present.
 	if ( is_page() && have_posts() ) :

@@ -12,7 +12,7 @@ $button = bia_learn_option( 'bia_cta_button', __( 'สมัครเรีย�
 $url    = bia_learn_option( 'bia_cta_url' ) ?: bia_learn_courses_url();
 ?>
 <section class="relative overflow-hidden bg-crimson-wash">
-	<div class="absolute inset-0 bg-grain opacity-30" aria-hidden="true"></div>
+	<div class="absolute inset-0 bg-grain opacity-[0.08]" aria-hidden="true"></div>
 	<div class="container-bia relative flex flex-col items-center gap-6 py-14 text-center sm:py-16">
 		<?php echo bia_learn_icon( 'lotus', 'h-10 w-10 text-gold-light' ); // phpcs:ignore ?>
 		<h2 class="max-w-2xl font-serif text-3xl font-bold text-white sm:text-4xl"><?php echo wp_kses_post( $title ); ?></h2>

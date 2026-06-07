@@ -47,6 +47,28 @@ function bia_learn_customize_register( $wp_customize ) {
 		);
 	};
 
+	/**
+	 * Helper to add a boolean (checkbox) setting + control.
+	 */
+	$add_toggle = function ( $id, $label, $section, $default = true ) use ( $wp_customize ) {
+		$wp_customize->add_setting(
+			$id,
+			array(
+				'default'           => $default,
+				'sanitize_callback' => 'wp_validate_boolean',
+				'transport'         => 'refresh',
+			)
+		);
+		$wp_customize->add_control(
+			$id,
+			array(
+				'label'   => $label,
+				'section' => $section,
+				'type'    => 'checkbox',
+			)
+		);
+	};
+
 	// --- Hero ------------------------------------------------------------
 	$wp_customize->add_section(
 		'bia_hero',
@@ -76,6 +98,21 @@ function bia_learn_customize_register( $wp_customize ) {
 			)
 		)
 	);
+
+	// --- Homepage sections (show/hide) -----------------------------------
+	$wp_customize->add_section(
+		'bia_home_sections',
+		array(
+			'title'       => __( 'เนื้อหาหน้าแรก', 'bia-learn' ),
+			'description' => __( 'เปิด/ปิดแต่ละส่วนของหน้าแรก เพื่อให้หน้ากระชับตามต้องการ (Hero และคอร์สแนะนำแสดงเสมอ)', 'bia-learn' ),
+			'panel'       => 'bia_learn_panel',
+		)
+	);
+	$add_toggle( 'bia_show_stats', __( 'แสดงแถบสถิติ', 'bia-learn' ), 'bia_home_sections', true );
+	$add_toggle( 'bia_show_how_it_works', __( 'แสดง "เริ่มเรียนใน 3 ขั้นตอน"', 'bia-learn' ), 'bia_home_sections', true );
+	$add_toggle( 'bia_show_instructors', __( 'แสดงผู้สอน', 'bia-learn' ), 'bia_home_sections', true );
+	$add_toggle( 'bia_show_news', __( 'แสดงข่าวสารล่าสุด', 'bia-learn' ), 'bia_home_sections', true );
+	$add_toggle( 'bia_show_partners', __( 'แสดงพันธมิตร/คำคม', 'bia-learn' ), 'bia_home_sections', true );
 
 	// --- Contact ---------------------------------------------------------
 	$wp_customize->add_section(
