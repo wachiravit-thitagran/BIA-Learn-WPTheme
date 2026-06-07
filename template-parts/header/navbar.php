@@ -17,8 +17,8 @@ $courses_url = bia_learn_courses_url();
 			<div class="bia-logo flex items-center [&_img]:h-12 [&_img]:w-auto"><?php the_custom_logo(); ?></div>
 		<?php else : ?>
 			<a href="<?php echo esc_url( home_url( '/' ) ); ?>" class="flex items-center gap-3" rel="home">
-				<span class="grid h-12 w-12 place-items-center rounded-xl bg-crimson-wash shadow-soft">
-					<img src="<?php echo esc_url( BIA_LEARN_URI . '/assets/images/pagoda-logo.png' ); ?>" alt="<?php echo esc_attr( get_bloginfo( 'name' ) ); ?>" width="83" height="83" class="h-8 w-8 object-contain" loading="eager" />
+				<span class="inline-flex items-center rounded-lg bg-white px-2 py-1 shadow-soft">
+					<img src="<?php echo esc_url( BIA_LEARN_URI . '/assets/images/biaxpsu-logo.png' ); ?>" alt="<?php echo esc_attr( 'BIA × PSU — ' . get_bloginfo( 'name' ) ); ?>" width="273" height="142" class="h-10 w-auto" loading="eager" />
 				</span>
 				<span class="leading-tight">
 					<span class="bia-site-title block font-serif text-lg font-bold text-crimson"><?php bloginfo( 'name' ); ?></span>
