@@ -13,9 +13,9 @@ if ( ! $user instanceof WP_User ) {
 }
 
 $bio      = get_the_author_meta( 'description', $user->ID );
-$profile  = function_exists( 'tutor_utils' ) ? tutor_utils()->profile_url( $user->ID, true ) : get_author_posts_url( $user->ID );
-$courses  = function_exists( 'tutor_utils' ) ? (int) tutor_utils()->get_course_count_by_instructor( $user->ID ) : 0;
-$students = 0;
+$tutils   = bia_learn_tutor_utils();
+$profile  = $tutils && method_exists( $tutils, 'profile_url' ) ? $tutils->profile_url( $user->ID, true ) : get_author_posts_url( $user->ID );
+$courses  = $tutils && method_exists( $tutils, 'get_course_count_by_instructor' ) ? (int) $tutils->get_course_count_by_instructor( $user->ID ) : 0;
 ?>
 <article class="card card-hover group flex flex-col items-center p-8 text-center">
 	<a href="<?php echo esc_url( $profile ); ?>" class="relative">

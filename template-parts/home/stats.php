@@ -26,7 +26,7 @@ $items = array(
 		'label' => __( 'ผู้สอน/วิทยากร', 'bia-learn' ),
 	),
 	array(
-		'icon'  => 'cert',
+		'icon'  => 'play',
 		'value' => max( $stats['lessons'], 1 ),
 		'label' => __( 'บทเรียน', 'bia-learn' ),
 	),

@@ -22,28 +22,13 @@ function bia_learn_asset_version( $relative ) {
  * Front-end assets.
  */
 function bia_learn_enqueue_assets() {
-	// Google Fonts — Noto Serif Thai (display) + Sarabun (body).
-	wp_enqueue_style(
-		'bia-learn-fonts',
-		'https://fonts.googleapis.com/css2?family=Sarabun:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Noto+Serif+Thai:wght@400;500;600;700;900&display=swap',
-		array(),
-		null
-	);
-
-	// Compiled Tailwind stylesheet.
+	// Compiled Tailwind stylesheet. Self-hosted webfonts (Sarabun + Noto Serif
+	// Thai) are declared with @font-face inside this file — see src/css/main.css.
 	wp_enqueue_style(
 		'bia-learn-style',
 		BIA_LEARN_URI . '/assets/css/main.css',
-		array( 'bia-learn-fonts' ),
+		array(),
 		bia_learn_asset_version( 'assets/css/main.css' )
-	);
-
-	// The theme's style.css header (kept for tooling / child themes).
-	wp_enqueue_style(
-		'bia-learn-theme',
-		get_stylesheet_uri(),
-		array( 'bia-learn-style' ),
-		BIA_LEARN_VERSION
 	);
 
 	// Bundled Alpine.js + interactions.
@@ -55,17 +40,6 @@ function bia_learn_enqueue_assets() {
 		true
 	);
 
-	// Expose a few values to JS.
-	wp_localize_script(
-		'bia-learn-main',
-		'biaLearn',
-		array(
-			'ajaxUrl' => admin_url( 'admin-ajax.php' ),
-			'restUrl' => esc_url_raw( rest_url() ),
-			'nonce'   => wp_create_nonce( 'wp_rest' ),
-		)
-	);
-
 	if ( is_singular() && comments_open() && get_option( 'thread_comments' ) ) {
 		wp_enqueue_script( 'comment-reply' );
 	}
@@ -73,23 +47,24 @@ function bia_learn_enqueue_assets() {
 add_action( 'wp_enqueue_scripts', 'bia_learn_enqueue_assets' );
 
 /**
- * Preconnect to the font CDN for faster first paint.
+ * Preload the primary Thai webfonts (body + display) to reduce layout shift /
+ * flash of unstyled text. Other weights/subsets load on demand via @font-face.
  *
- * @param array  $urls           URLs to print.
- * @param string $relation_type  Relation type.
+ * @param array $preload_resources Existing preload entries.
  * @return array
  */
-function bia_learn_resource_hints( $urls, $relation_type ) {
-	if ( 'preconnect' === $relation_type ) {
-		$urls[] = array(
-			'href'        => 'https://fonts.gstatic.com',
+function bia_learn_preload_fonts( $preload_resources ) {
+	foreach ( array( 'sarabun-400-thai', 'notoserifthai-700-thai' ) as $slug ) {
+		$preload_resources[] = array(
+			'href'        => BIA_LEARN_URI . '/assets/fonts/' . $slug . '.woff2',
+			'as'          => 'font',
+			'type'        => 'font/woff2',
 			'crossorigin' => 'anonymous',
 		);
-		$urls[] = 'https://fonts.googleapis.com';
 	}
-	return $urls;
+	return $preload_resources;
 }
-add_filter( 'wp_resource_hints', 'bia_learn_resource_hints', 10, 2 );
+add_filter( 'wp_preload_resources', 'bia_learn_preload_fonts' );
 
 /**
  * Mark the bundled script as a module (Alpine ships as ESM via esbuild IIFE).

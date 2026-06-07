@@ -272,9 +272,9 @@ function bia_learn_get_stats() {
 	);
 
 	$user_counts = count_users();
+	$tutils      = bia_learn_tutor_utils();
 
-	if ( function_exists( 'tutor_utils' ) ) {
-		$tutils           = tutor_utils();
+	if ( $tutils ) {
 		$courses_counts   = wp_count_posts( 'courses' );
 		$lesson_counts    = wp_count_posts( 'lesson' );
 		$stats['courses'] = $courses_counts ? (int) $courses_counts->publish : 0;
@@ -314,7 +314,9 @@ function bia_learn_get_stats() {
  * @return WP_User[]
  */
 function bia_learn_get_instructors( $limit = -1 ) {
-	if ( ! function_exists( 'tutor_utils' ) ) {
+	$tutils = bia_learn_tutor_utils();
+
+	if ( ! $tutils ) {
 		return array();
 	}
 
@@ -331,11 +333,21 @@ function bia_learn_get_instructors( $limit = -1 ) {
 	$users = $query->get_results();
 
 	// Fallback to Tutor's own API if the role query comes back empty.
-	if ( empty( $users ) && method_exists( tutor_utils(), 'get_instructors' ) ) {
-		$raw = tutor_utils()->get_instructors( 0, $limit > 0 ? $limit : 1000 );
+	if ( empty( $users ) && method_exists( $tutils, 'get_instructors' ) ) {
+		$raw = $tutils->get_instructors( 0, $limit > 0 ? $limit : 1000 );
 		if ( is_array( $raw ) ) {
 			foreach ( $raw as $row ) {
-				$u = get_user_by( 'id', $row->ID );
+				$user_id = null;
+
+				if ( is_object( $row ) && isset( $row->ID ) ) {
+					$user_id = (int) $row->ID;
+				} elseif ( $row instanceof WP_User ) {
+					$user_id = (int) $row->ID;
+				} elseif ( is_numeric( $row ) ) {
+					$user_id = (int) $row;
+				}
+
+				$u = $user_id ? get_user_by( 'id', $user_id ) : false;
 				if ( $u ) {
 					$users[] = $u;
 				}
@@ -344,4 +356,68 @@ function bia_learn_get_instructors( $limit = -1 ) {
 	}
 
 	return $users;
+}
+
+/**
+ * Resolve a course's lead instructor as a WP_User (Tutor first, post author as
+ * a fallback). Returns null when neither is available.
+ *
+ * @param int $course_id Course post ID.
+ * @return WP_User|null
+ */
+function bia_learn_course_instructor( $course_id ) {
+	$tutils = bia_learn_tutor_utils();
+	$user   = null;
+
+	if ( $tutils && method_exists( $tutils, 'get_instructors_by_course' ) ) {
+		$list = $tutils->get_instructors_by_course( $course_id );
+		if ( is_array( $list ) && ! empty( $list ) ) {
+			$row = $list[0];
+			$uid = ( is_object( $row ) && isset( $row->ID ) ) ? (int) $row->ID : ( is_numeric( $row ) ? (int) $row : 0 );
+			if ( $uid ) {
+				$user = get_user_by( 'id', $uid );
+			}
+		}
+	}
+
+	if ( ! $user ) {
+		$author = (int) get_post_field( 'post_author', $course_id );
+		if ( $author ) {
+			$user = get_user_by( 'id', $author );
+		}
+	}
+
+	return $user instanceof WP_User ? $user : null;
+}
+
+/**
+ * Completion percentage for the current (or given) user on a course — but only
+ * when they are enrolled. Returns null when Tutor is inactive, the user is a
+ * guest, not enrolled, or the data is unavailable (so callers can branch on
+ * "is this an enrolled learner?").
+ *
+ * @param int $course_id Course post ID.
+ * @param int $user_id   User ID (0 = current user).
+ * @return int|null Percentage 0-100, or null.
+ */
+function bia_learn_course_progress( $course_id, $user_id = 0 ) {
+	$tutils = bia_learn_tutor_utils();
+	if ( ! $tutils ) {
+		return null;
+	}
+
+	$user_id = $user_id ? (int) $user_id : get_current_user_id();
+	if ( ! $user_id ) {
+		return null;
+	}
+
+	if ( method_exists( $tutils, 'is_enrolled' ) && ! $tutils->is_enrolled( $course_id, $user_id ) ) {
+		return null;
+	}
+
+	if ( method_exists( $tutils, 'get_course_completed_percent' ) ) {
+		return (int) $tutils->get_course_completed_percent( $course_id, $user_id );
+	}
+
+	return null;
 }

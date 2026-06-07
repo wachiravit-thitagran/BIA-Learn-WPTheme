@@ -29,6 +29,7 @@ defined( 'ABSPATH' ) || exit;
 	x-transition:leave="transition ease-in duration-200"
 	x-transition:leave-start="translate-x-0"
 	x-transition:leave-end="translate-x-full"
+	x-trap="mobileOpen"
 	class="fixed inset-y-0 right-0 z-50 flex w-[88%] max-w-sm flex-col bg-paper-50 shadow-2xl lg:hidden"
 	style="display:none"
 	role="dialog"
@@ -62,7 +63,7 @@ defined( 'ABSPATH' ) || exit;
 
 	<div class="border-t border-paper-200 p-6">
 		<?php if ( is_user_logged_in() ) : ?>
-			<a href="<?php echo esc_url( function_exists( 'tutor_utils' ) ? tutor_utils()->tutor_dashboard_url() : admin_url() ); ?>" class="btn-primary w-full">
+			<a href="<?php echo esc_url( bia_learn_tutor_dashboard_url( admin_url() ) ); ?>" class="btn-primary w-full">
 				<?php echo bia_learn_icon( 'user', 'h-4 w-4' ); // phpcs:ignore ?>
 				<?php esc_html_e( 'แดชบอร์ดของฉัน', 'bia-learn' ); ?>
 			</a>

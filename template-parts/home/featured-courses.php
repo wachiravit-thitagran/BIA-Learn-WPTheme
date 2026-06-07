@@ -7,30 +7,63 @@
 
 defined( 'ABSPATH' ) || exit;
 
-$post_type = function_exists( 'tutor_utils' ) ? 'courses' : 'post';
+$post_type    = function_exists( 'tutor_utils' ) ? 'courses' : 'post';
+$per_page     = 6;
+$featured_key = apply_filters( 'bia_learn_featured_meta_key', '_tutor_course_featured' );
+
+// Pass 1 — featured courses first (newest featured). Using meta_key directly
+// would INNER JOIN and *exclude* every non-featured course, so we gather IDs
+// in two passes instead and merge, keeping order.
+$ids = get_posts(
+	array(
+		'post_type'      => $post_type,
+		'posts_per_page' => $per_page,
+		'fields'         => 'ids',
+		'no_found_rows'  => true,
+		'orderby'        => 'date',
+		'order'          => 'DESC',
+		'meta_query'     => array(
+			array(
+				'key'     => $featured_key,
+				'value'   => array( '1', 'yes', 'on', 'true' ),
+				'compare' => 'IN',
+			),
+		),
+	)
+);
+
+// Pass 2 — fill the remaining slots with the latest courses, excluding any
+// already picked. Runs even when no course is flagged featured.
+if ( count( $ids ) < $per_page ) {
+	$fill = get_posts(
+		array(
+			'post_type'           => $post_type,
+			'posts_per_page'      => $per_page - count( $ids ),
+			'fields'              => 'ids',
+			'no_found_rows'       => true,
+			'ignore_sticky_posts' => true,
+			'orderby'             => 'date',
+			'order'               => 'DESC',
+			'post__not_in'        => $ids ? $ids : array( 0 ),
+		)
+	);
+	$ids = array_merge( $ids, $fill );
+}
+
+if ( empty( $ids ) ) {
+	return;
+}
 
 $courses = new WP_Query(
 	array(
 		'post_type'           => $post_type,
-		'posts_per_page'      => 6,
+		'post__in'            => $ids,
+		'orderby'             => 'post__in',
+		'posts_per_page'      => $per_page,
 		'ignore_sticky_posts' => true,
 		'no_found_rows'       => true,
-		'meta_key'            => '_tutor_course_featured', // featured first when set.
-		'orderby'             => array( 'meta_value' => 'DESC', 'date' => 'DESC' ),
 	)
 );
-
-// If the featured meta query returned nothing, fall back to latest.
-if ( ! $courses->have_posts() ) {
-	$courses = new WP_Query(
-		array(
-			'post_type'           => $post_type,
-			'posts_per_page'      => 6,
-			'ignore_sticky_posts' => true,
-			'no_found_rows'       => true,
-		)
-	);
-}
 
 if ( ! $courses->have_posts() ) {
 	return;

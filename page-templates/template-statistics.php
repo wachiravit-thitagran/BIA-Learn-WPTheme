@@ -29,7 +29,7 @@ endwhile;
 
 $cards = array(
 	array( 'book', $stats['courses'], __( 'คอร์สเรียนทั้งหมด', 'bia-learn' ), 'bg-crimson-50 text-crimson' ),
-	array( 'cert', $stats['lessons'], __( 'บทเรียน', 'bia-learn' ), 'bg-gold/15 text-gold-dark' ),
+	array( 'play', $stats['lessons'], __( 'บทเรียน', 'bia-learn' ), 'bg-gold/15 text-gold-dark' ),
 	array( 'users', $stats['students'], __( 'ผู้เรียน', 'bia-learn' ), 'bg-plum/10 text-plum' ),
 	array( 'user', $stats['instructors'], __( 'ผู้สอน/วิทยากร', 'bia-learn' ), 'bg-crimson-50 text-crimson' ),
 );
@@ -56,7 +56,8 @@ $cards = array(
 
 		<!-- Top courses by enrolment -->
 		<?php
-		if ( function_exists( 'tutor_utils' ) ) :
+		$tutils = bia_learn_tutor_utils();
+		if ( $tutils ) :
 			$top = new WP_Query(
 				array(
 					'post_type'      => 'courses',
@@ -86,7 +87,7 @@ $cards = array(
 								while ( $top->have_posts() ) :
 									$top->the_post();
 									$rank++;
-									$enrolled = function_exists( 'tutor_utils' ) ? (int) tutor_utils()->count_enrolled_users_by_course( get_the_ID() ) : 0;
+									$enrolled = method_exists( $tutils, 'count_enrolled_users_by_course' ) ? (int) $tutils->count_enrolled_users_by_course( get_the_ID() ) : 0;
 									?>
 									<tr class="transition hover:bg-paper-50">
 										<td class="px-6 py-4 font-serif font-bold text-gold"><?php echo esc_html( $rank ); ?></td>
