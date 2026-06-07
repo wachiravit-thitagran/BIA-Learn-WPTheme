@@ -76,6 +76,23 @@ add_filter( 'wp_preload_resources', 'bia_learn_preload_fonts' );
  */
 
 /**
+ * Default favicon / touch icon (the BIA pagoda mark on a crimson tile).
+ *
+ * Only emitted when the site owner has NOT set a Site Icon in the Customizer,
+ * so an explicit Site Icon always wins.
+ */
+function bia_learn_default_site_icon() {
+	if ( function_exists( 'has_site_icon' ) && has_site_icon() ) {
+		return;
+	}
+	$base = BIA_LEARN_URI . '/assets/images/';
+	printf( '<link rel="icon" type="image/png" sizes="32x32" href="%s">' . "\n", esc_url( $base . 'favicon-32.png' ) );
+	printf( '<link rel="icon" type="image/png" sizes="192x192" href="%s">' . "\n", esc_url( $base . 'favicon-192.png' ) );
+	printf( '<link rel="apple-touch-icon" sizes="180x180" href="%s">' . "\n", esc_url( $base . 'favicon-180.png' ) );
+}
+add_action( 'wp_head', 'bia_learn_default_site_icon' );
+
+/**
  * Editor styles so the block editor roughly matches the front end.
  */
 function bia_learn_editor_assets() {
