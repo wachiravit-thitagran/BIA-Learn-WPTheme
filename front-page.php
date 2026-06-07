@@ -40,6 +40,9 @@ get_header();
 			endif;
 		endwhile;
 	endif;
+
+	// Closing call-to-action (homepage only — lives here, not in footer.php).
+	get_template_part( 'template-parts/footer/cta' );
 	?>
 </main>
 
