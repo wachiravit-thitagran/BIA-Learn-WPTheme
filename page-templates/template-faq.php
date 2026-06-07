@@ -61,6 +61,8 @@ while ( have_posts() ) :
 					<div class="card overflow-hidden">
 						<button
 							type="button"
+							id="faq-q-<?php echo (int) $i; ?>"
+							aria-controls="faq-a-<?php echo (int) $i; ?>"
 							class="flex w-full items-center justify-between gap-4 px-6 py-5 text-left"
 							@click="open === <?php echo (int) $i; ?> ? open = null : open = <?php echo (int) $i; ?>"
 							:aria-expanded="(open === <?php echo (int) $i; ?>).toString()"
@@ -70,7 +72,7 @@ while ( have_posts() ) :
 								<?php echo bia_learn_icon( 'chevron', 'h-5 w-5' ); // phpcs:ignore ?>
 							</span>
 						</button>
-						<div x-show="open === <?php echo (int) $i; ?>" x-collapse x-cloak>
+						<div id="faq-a-<?php echo (int) $i; ?>" role="region" aria-labelledby="faq-q-<?php echo (int) $i; ?>" x-show="open === <?php echo (int) $i; ?>" x-collapse x-cloak>
 							<div class="border-t border-paper-100 px-6 py-5 text-ink-light leading-relaxed"><?php echo esc_html( $faq['a'] ); ?></div>
 						</div>
 					</div>

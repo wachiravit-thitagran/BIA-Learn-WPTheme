@@ -101,7 +101,7 @@ add_filter( 'image_size_names_choose', 'bia_learn_image_size_names' );
  */
 function bia_learn_body_classes( $classes ) {
 	$classes[] = 'bia-learn';
-	if ( function_exists( 'tutor' ) ) {
+	if ( bia_learn_has_tutor_lms() ) {
 		$classes[] = 'has-tutor-lms';
 	}
 	return $classes;
@@ -136,7 +136,7 @@ function bia_learn_default_menu() {
 		home_url( '/' )            => __( 'หน้าแรก', 'bia-learn' ),
 		bia_learn_courses_url()    => __( 'คอร์สเรียน', 'bia-learn' ),
 		home_url( '/instructors/' ) => __( 'ผู้สอน', 'bia-learn' ),
-		home_url( '/news/' )       => __( 'ข่าวสาร', 'bia-learn' ),
+		bia_learn_news_url()       => __( 'ข่าวสาร', 'bia-learn' ),
 		home_url( '/about/' )      => __( 'เกี่ยวกับเรา', 'bia-learn' ),
 		home_url( '/contact/' )    => __( 'ติดต่อ', 'bia-learn' ),
 	);
@@ -153,13 +153,27 @@ function bia_learn_default_menu() {
  * @return string
  */
 function bia_learn_courses_url() {
-	if ( function_exists( 'tutor_utils' ) ) {
+	if ( bia_learn_has_tutor_lms() ) {
 		$archive = get_post_type_archive_link( 'courses' );
 		if ( $archive ) {
 			return $archive;
 		}
 	}
 	return home_url( '/courses/' );
+}
+
+/**
+ * Resolve the news / blog index URL: the assigned Posts page when set,
+ * otherwise a sensible /news/ fallback. Avoids hard-coding the slug.
+ *
+ * @return string
+ */
+function bia_learn_news_url() {
+	$posts_page = (int) get_option( 'page_for_posts' );
+	if ( $posts_page ) {
+		return (string) get_permalink( $posts_page );
+	}
+	return home_url( '/news/' );
 }
 
 /**

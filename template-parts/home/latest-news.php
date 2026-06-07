@@ -20,7 +20,7 @@ if ( ! $news->have_posts() ) {
 	return;
 }
 
-$news_url = ( $page = get_option( 'page_for_posts' ) ) ? get_permalink( $page ) : home_url( '/news/' );
+$news_url = bia_learn_news_url();
 ?>
 <section class="section">
 	<div class="container-bia">

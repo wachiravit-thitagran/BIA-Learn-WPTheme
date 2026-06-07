@@ -1,15 +1,15 @@
 # BIA Learn — WordPress Theme
 
-ธีม WordPress สำหรับแพลตฟอร์มเรียนรู้ **bia-learn.psu.ac.th** ของหอจดหมายเหตุพุทธทาส อินทปัญโญ (BIA) — ออกแบบเชิงวิชาการ/ธรรมะ โทน **แดงครั่ง–กระดาษสา** รองรับ **Tutor LMS** เต็มรูปแบบ พัฒนาด้วย **TailwindCSS** + **Alpine.js**
+ธีม WordPress สำหรับแพลตฟอร์มเรียนรู้ **bia-learn.psu.ac.th** ของหอจดหมายเหตุพุทธทาส อินทปัญโญ (BIA) — ออกแบบเชิงวิชาการ/ธรรมะ โทน **แดงครั่ง–กระดาษสา** พร้อม integration สำหรับ **Tutor LMS** (archive, course loop, dashboard styling, หน้า home ที่ดึงข้อมูลคอร์ส/ผู้สอน) พัฒนาด้วย **TailwindCSS** + **Alpine.js**
 
-A classic WordPress theme for the Buddhadasa Indapanno Archives learning platform, with full Tutor LMS integration, built with TailwindCSS and Alpine.js.
+A classic WordPress theme for the Buddhadasa Indapanno Archives learning platform, with Tutor LMS-aware archive, course loop, and dashboard integration, built with TailwindCSS and Alpine.js.
 
 ---
 
 ## ความต้องการระบบ (Requirements)
 
 - WordPress ≥ 6.4, PHP ≥ 7.4
-- ปลั๊กอิน **Tutor LMS** (สำหรับคอร์ส/บทเรียน/แบบทดสอบ/ใบเกียรติบัตร) — ธีมทำงานได้แม้ไม่มี แต่ส่วนที่เป็น LMS จะถูกซ่อน
+- ปลั๊กอิน **Tutor LMS** (สำหรับคอร์ส/บทเรียน/แบบทดสอบ/ใบเกียรติบัตร) — ธีมทำงานได้แม้ไม่มี แต่ส่วนที่เป็น LMS จะถูกซ่อน และบางหน้า/การ์ดจะ fallback เป็น WordPress ปกติ
 - Node.js ≥ 18 + npm (สำหรับ build CSS/JS)
 
 ## การติดตั้ง (Install)
@@ -39,6 +39,12 @@ npm run build    # production — minify CSS + JS
 
 > Tailwind สแกนคลาสจากไฟล์ `**/*.php` ทั้งหมด ถ้าเพิ่มคลาสใหม่ในเทมเพลตต้องรัน build ใหม่
 
+## เว็บฟอนต์ (Self-hosted fonts)
+
+ฟอนต์ **Sarabun** (เนื้อหา) + **Noto Serif Thai** (หัวข้อ) เสิร์ฟจาก `assets/fonts/` เอง (ไม่พึ่ง Google Fonts CDN) — โหลดเร็วขึ้นและไม่เรียกข้ามโดเมน (เหมาะกับ PDPA). `@font-face` (subset ไทย+ละติน, `font-display: swap`) ฝังอยู่ต้นไฟล์ [src/css/main.css](src/css/main.css) และฟอนต์ไทยหลักถูก `preload` ใน [inc/enqueue.php](inc/enqueue.php)
+
+> หากต้องการเพิ่ม/เปลี่ยนน้ำหนักฟอนต์: ดึง CSS จาก Google Fonts (พร้อม User-Agent ของเบราว์เซอร์เพื่อให้ได้ `woff2`), ดาวน์โหลดไฟล์ลง `assets/fonts/` ด้วยชื่อ `{family}-{weight}[i]-{subset}.woff2` แล้วเพิ่มบล็อก `@font-face` ใน `src/css/main.css` ให้ชี้ `url(../fonts/...)` จากนั้น `npm run build`
+
 ## โครงสร้าง (Structure)
 
 ```
@@ -56,7 +62,7 @@ assets/         CSS/JS ที่ build แล้ว
 - **เมนู**: `Primary`, `Footer`, `Footer legal`, `Social`
 - **โลโก้**: Customize → Site Identity → Logo
 - **หน้าแรก**: ตั้ง Settings → Reading → "หน้าแรกแบบคงที่" (front-page.php ทำงานอัตโนมัติ); หน้า Posts สำหรับข่าวจะใช้ home.php
-- **คอร์ส/ผู้สอน/เกียรติบัตร**: จัดการผ่าน Tutor LMS — ธีม restyle ให้อัตโนมัติ (ดู `tutor/README.md`)
+- **คอร์ส/ผู้สอน/เกียรติบัตร**: จัดการผ่าน Tutor LMS — ธีมมี archive override, course card override, dashboard styling และ helper data พร้อมใช้งาน (ดู `tutor/README.md`)
 - **FAQ / Partners**: ปรับผ่าน filter `bia_learn_faq_items`, `bia_learn_partner_logos`
 
 ## i18n

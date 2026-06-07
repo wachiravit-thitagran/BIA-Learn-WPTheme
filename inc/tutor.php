@@ -13,8 +13,10 @@
  *   1. Hooks/filters here — wrap content in our container, set loop columns,
  *      register the supporting WP pages, and replace the loop course card so
  *      the listing matches the homepage cards.
- *   2. A Tailwind layer (src/css/tutor.css, imported into main.css) that maps
- *      Tutor's stable `.tutor-*` classes onto the BIA Learn palette / buttons.
+ *   2. A Tailwind layer at the end of src/css/main.css ("Tutor LMS — design
+ *      system harmony") that overrides Tutor's own CSS custom properties
+ *      (--tutor-color-primary etc.) so its native UI adopts the BIA Learn
+ *      brand automatically, plus a thin bridge for shape/typography.
  *
  * To override a Tutor template wholesale, copy it from
  * `wp-content/plugins/tutor/templates/<path>` into this theme's
@@ -80,8 +82,13 @@ add_action( 'tutor_course/archive/after_loop', 'bia_learn_tutor_archive_after', 
  * @return array
  */
 function bia_learn_tutor_btn_classes( $classes ) {
+	if ( ! is_array( $classes ) ) {
+		$classes = preg_split( '/\s+/', trim( (string) $classes ) );
+	}
+
 	$classes[] = 'bia-tutor-btn';
-	return $classes;
+
+	return array_values( array_unique( array_filter( $classes ) ) );
 }
 add_filter( 'tutor_button_class', 'bia_learn_tutor_btn_classes' );
 

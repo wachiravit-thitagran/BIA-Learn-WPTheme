@@ -1,3 +1,236 @@
+/* =========================================================================
+   Self-hosted webfonts (Thai + Latin subsets) — Sarabun (body) +
+   Noto Serif Thai (display). Served from /assets/fonts to avoid the Google
+   Fonts CDN (faster first paint, no cross-origin font request — PDPA-friendly
+   for a .ac.th site). To refresh: re-run the download in the README.
+   ========================================================================= */
+/* Noto Serif Thai 400 — thai */
+@font-face {
+  font-family: 'Noto Serif Thai';
+  font-style: normal;
+  font-weight: 400;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url(../fonts/notoserifthai-400-thai.woff2) format('woff2');
+  unicode-range: U+02D7, U+0303, U+0331, U+0E01-0E5B, U+200C-200D, U+25CC;
+}
+/* Noto Serif Thai 400 — latin */
+@font-face {
+  font-family: 'Noto Serif Thai';
+  font-style: normal;
+  font-weight: 400;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url(../fonts/notoserifthai-400-latin.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* Noto Serif Thai 500 — thai */
+@font-face {
+  font-family: 'Noto Serif Thai';
+  font-style: normal;
+  font-weight: 500;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url(../fonts/notoserifthai-500-thai.woff2) format('woff2');
+  unicode-range: U+02D7, U+0303, U+0331, U+0E01-0E5B, U+200C-200D, U+25CC;
+}
+/* Noto Serif Thai 500 — latin */
+@font-face {
+  font-family: 'Noto Serif Thai';
+  font-style: normal;
+  font-weight: 500;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url(../fonts/notoserifthai-500-latin.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* Noto Serif Thai 600 — thai */
+@font-face {
+  font-family: 'Noto Serif Thai';
+  font-style: normal;
+  font-weight: 600;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url(../fonts/notoserifthai-600-thai.woff2) format('woff2');
+  unicode-range: U+02D7, U+0303, U+0331, U+0E01-0E5B, U+200C-200D, U+25CC;
+}
+/* Noto Serif Thai 600 — latin */
+@font-face {
+  font-family: 'Noto Serif Thai';
+  font-style: normal;
+  font-weight: 600;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url(../fonts/notoserifthai-600-latin.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* Noto Serif Thai 700 — thai */
+@font-face {
+  font-family: 'Noto Serif Thai';
+  font-style: normal;
+  font-weight: 700;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url(../fonts/notoserifthai-700-thai.woff2) format('woff2');
+  unicode-range: U+02D7, U+0303, U+0331, U+0E01-0E5B, U+200C-200D, U+25CC;
+}
+/* Noto Serif Thai 700 — latin */
+@font-face {
+  font-family: 'Noto Serif Thai';
+  font-style: normal;
+  font-weight: 700;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url(../fonts/notoserifthai-700-latin.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* Noto Serif Thai 900 — thai */
+@font-face {
+  font-family: 'Noto Serif Thai';
+  font-style: normal;
+  font-weight: 900;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url(../fonts/notoserifthai-900-thai.woff2) format('woff2');
+  unicode-range: U+02D7, U+0303, U+0331, U+0E01-0E5B, U+200C-200D, U+25CC;
+}
+/* Noto Serif Thai 900 — latin */
+@font-face {
+  font-family: 'Noto Serif Thai';
+  font-style: normal;
+  font-weight: 900;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url(../fonts/notoserifthai-900-latin.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* Sarabun 400 italic — thai */
+@font-face {
+  font-family: 'Sarabun';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url(../fonts/sarabun-400i-thai.woff2) format('woff2');
+  unicode-range: U+02D7, U+0303, U+0331, U+0E01-0E5B, U+200C-200D, U+25CC;
+}
+/* Sarabun 400 italic — latin */
+@font-face {
+  font-family: 'Sarabun';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url(../fonts/sarabun-400i-latin.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* Sarabun 300 — thai */
+@font-face {
+  font-family: 'Sarabun';
+  font-style: normal;
+  font-weight: 300;
+  font-display: swap;
+  src: url(../fonts/sarabun-300-thai.woff2) format('woff2');
+  unicode-range: U+02D7, U+0303, U+0331, U+0E01-0E5B, U+200C-200D, U+25CC;
+}
+/* Sarabun 300 — latin */
+@font-face {
+  font-family: 'Sarabun';
+  font-style: normal;
+  font-weight: 300;
+  font-display: swap;
+  src: url(../fonts/sarabun-300-latin.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* Sarabun 400 — thai */
+@font-face {
+  font-family: 'Sarabun';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url(../fonts/sarabun-400-thai.woff2) format('woff2');
+  unicode-range: U+02D7, U+0303, U+0331, U+0E01-0E5B, U+200C-200D, U+25CC;
+}
+/* Sarabun 400 — latin */
+@font-face {
+  font-family: 'Sarabun';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url(../fonts/sarabun-400-latin.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* Sarabun 500 — thai */
+@font-face {
+  font-family: 'Sarabun';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url(../fonts/sarabun-500-thai.woff2) format('woff2');
+  unicode-range: U+02D7, U+0303, U+0331, U+0E01-0E5B, U+200C-200D, U+25CC;
+}
+/* Sarabun 500 — latin */
+@font-face {
+  font-family: 'Sarabun';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url(../fonts/sarabun-500-latin.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* Sarabun 600 — thai */
+@font-face {
+  font-family: 'Sarabun';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url(../fonts/sarabun-600-thai.woff2) format('woff2');
+  unicode-range: U+02D7, U+0303, U+0331, U+0E01-0E5B, U+200C-200D, U+25CC;
+}
+/* Sarabun 600 — latin */
+@font-face {
+  font-family: 'Sarabun';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url(../fonts/sarabun-600-latin.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* Sarabun 700 — thai */
+@font-face {
+  font-family: 'Sarabun';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url(../fonts/sarabun-700-thai.woff2) format('woff2');
+  unicode-range: U+02D7, U+0303, U+0331, U+0E01-0E5B, U+200C-200D, U+25CC;
+}
+/* Sarabun 700 — latin */
+@font-face {
+  font-family: 'Sarabun';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url(../fonts/sarabun-700-latin.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* Sarabun 800 — thai */
+@font-face {
+  font-family: 'Sarabun';
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+  src: url(../fonts/sarabun-800-thai.woff2) format('woff2');
+  unicode-range: U+02D7, U+0303, U+0331, U+0E01-0E5B, U+200C-200D, U+25CC;
+}
+/* Sarabun 800 — latin */
+@font-face {
+  font-family: 'Sarabun';
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+  src: url(../fonts/sarabun-800-latin.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -242,34 +475,60 @@
 }
 
 /* =========================================================================
-   Tutor LMS theming
-   Maps Tutor's (reasonably stable) class names onto the BIA Learn design
-   tokens so course/lesson/dashboard pages feel native. Wholesale template
-   overrides live in /tutor — this covers everything we don't copy.
+   Tutor LMS — design-system harmony (verified against Tutor LMS 3.9.11)
+   Strategy: drive Tutor's own CSS custom properties so its native course /
+   lesson / dashboard / checkout UI adopts the BIA Learn brand automatically,
+   without chasing individual Tutor class names. The thin bridge layer below
+   only covers shape / surface / typography that Tutor does not tokenize.
    ========================================================================= */
 
-/* Buttons */
+/* Brand tokens. Tutor paints buttons, links, active tabs, progress bars,
+   focus rings, checked inputs, spinners and pagination from these vars, so
+   overriding them re-skins all of it at once — no per-class chasing. The
+   `!important` flag beats Tutor's inline `:root` colour settings (printed
+   from the admin colour preset) regardless of stylesheet load order. */
+:root {
+  --tutor-color-primary: #9d1c2b !important;        /* crimson */
+  --tutor-color-primary-hover: #8b1a1a !important;  /* crimson-600 */
+  --tutor-color-primary-rgb: 157, 28, 43 !important;
+  --tutor-color-secondary: #3a0a24 !important;      /* plum */
+}
+
+/* --- Thin bridge layer: shape / surface / type Tutor doesn't tokenize --- */
+
+/* Pill buttons (colour now flows from the brand tokens above). */
 .tutor-btn,
 .bia-tutor-btn,
 .tutor-btn-primary {
   @apply inline-flex items-center justify-center gap-2 rounded-full border-0 px-6 py-3 text-sm font-semibold
          transition-all duration-200 !important;
 }
-.tutor-btn-primary,
-.tutor-enroll-course-button {
-  @apply bg-crimson text-white shadow-soft hover:bg-crimson-600 !important;
-}
 .tutor-btn-outline-primary {
-  @apply border border-crimson/30 bg-transparent text-crimson hover:bg-crimson hover:text-white !important;
-}
-.tutor-btn-ghost {
-  @apply bg-transparent text-ink hover:bg-paper-100 !important;
+  @apply rounded-full !important;
 }
 
 /* Course loop / cards */
 .tutor-course-listing-item,
 .tutor-card {
   @apply overflow-hidden rounded-2xl border border-paper-200 bg-white shadow-card transition-all duration-300 !important;
+}
+.bia-tutor-archive-shell {
+  @apply rounded-[2rem] border border-paper-200 bg-paper-50/80 p-4 sm:p-6 !important;
+}
+.bia-tutor-archive-shell .tutor-course-filter-container,
+.bia-tutor-archive-shell .tutor-course-filter {
+  @apply rounded-2xl border border-paper-200 bg-white p-4 shadow-soft !important;
+}
+.bia-tutor-archive-shell .tutor-course-filter-container {
+  @apply mb-6 xl:mb-0 !important;
+}
+.bia-tutor-archive-shell .tutor-course-filter-loop-container,
+.bia-tutor-archive-shell .tutor-pagination-wrapper-replaceable {
+  @apply rounded-3xl !important;
+}
+.bia-tutor-archive-shell .tutor-course-filter-form-title,
+.bia-tutor-archive-shell .tutor-course-filter-form-title span {
+  @apply font-serif text-lg font-bold text-ink !important;
 }
 .tutor-card:hover {
   @apply -translate-y-1 shadow-card-hover !important;
@@ -278,39 +537,17 @@
 .tutor-card-title a {
   @apply font-serif font-bold text-ink !important;
 }
-.tutor-course-name a:hover,
-.tutor-card-title a:hover {
-  @apply text-crimson !important;
-}
 
-/* Section headings inside Tutor */
+/* Serif section headings inside Tutor (font bridge only). */
 .tutor-course-details-title,
-.tutor-segment-title,
-.tutor-fs-4,
-.tutor-fs-5 {
+.tutor-segment-title {
   @apply font-serif text-ink !important;
 }
 
-/* Links / accents */
-.tutor-color-primary,
-.tutor-iconized a:hover {
-  @apply text-crimson !important;
-}
+/* Rating stars use the manuscript gold accent. */
 .tutor-ratings-stars i.tutor-icon-star-bold,
 .tutor-ratings-average {
   @apply text-gold !important;
-}
-
-/* Progress bars */
-.tutor-progress-bar span,
-.tutor-progress-value {
-  @apply bg-crimson !important;
-}
-
-/* Tabs / pills */
-.tutor-nav-link.is-active,
-.tutor-nav-tabs .is-active {
-  @apply border-crimson text-crimson !important;
 }
 
 /* Dashboard sidebar */
@@ -330,11 +567,70 @@
 .tutor-input-group textarea {
   @apply rounded-xl border-paper-300 focus:border-crimson focus:ring-crimson !important;
 }
+.tutor-form-check-input:checked,
+.tutor-form-radio:checked {
+  @apply border-crimson bg-crimson !important;
+}
 
 /* Badges / labels */
 .tutor-badge-label,
 .tutor-course-level {
   @apply rounded-full bg-crimson-50 text-crimson !important;
+}
+
+/* Pagination / archive controls */
+.tutor-pagination,
+.tutor-pagination-wrapper {
+  @apply mt-8 flex flex-wrap items-center gap-2 !important;
+}
+.tutor-pagination .page-numbers,
+.tutor-pagination-wrapper .page-numbers {
+  @apply inline-flex min-h-11 min-w-11 items-center justify-center rounded-full border border-paper-200 bg-white px-4 text-sm font-semibold text-ink transition hover:border-crimson hover:text-crimson !important;
+}
+.tutor-pagination .page-numbers.current,
+.tutor-pagination-wrapper .page-numbers.current {
+  @apply border-crimson bg-crimson text-white !important;
+}
+
+/* Dashboard / layout surfaces */
+.tutor-dashboard,
+.tutor-frontend-dashboard,
+.tutor-course-details-page,
+.tutor-course-topic-item,
+.tutor-course-details-widget {
+  @apply text-ink !important;
+}
+.tutor-dashboard .tutor-dashboard-content,
+.tutor-dashboard .tutor-dashboard-left-menu,
+.tutor-dashboard .tutor-profile-completion,
+.tutor-course-details-widget,
+.tutor-course-topic-item,
+.tutor-course-details-tab .tutor-tab-item,
+.tutor-review-summary,
+.tutor-review-individual-item {
+  @apply rounded-2xl border border-paper-200 bg-white shadow-soft !important;
+}
+.tutor-dashboard .tutor-dashboard-content,
+.tutor-dashboard .tutor-dashboard-left-menu,
+.tutor-course-details-widget,
+.tutor-course-details-tab .tutor-tab-item {
+  @apply p-4 sm:p-6 !important;
+}
+.tutor-course-details-page {
+  @apply gap-8 !important;
+}
+
+/* Lesson / quiz */
+.tutor-single-lesson-wrap,
+.tutor-quiz-wrapper,
+.tutor-quiz-single-wrap,
+.tutor-course-single-sidebar-wrapper {
+  @apply rounded-2xl border border-paper-200 bg-white shadow-soft !important;
+}
+.tutor-single-lesson-wrap,
+.tutor-quiz-wrapper,
+.tutor-quiz-single-wrap {
+  @apply overflow-hidden !important;
 }
 
 /* Quiz + certificate accents */

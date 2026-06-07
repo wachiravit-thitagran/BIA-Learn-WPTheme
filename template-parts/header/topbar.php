@@ -18,7 +18,7 @@ $socials = array_filter(
 	)
 );
 
-$dashboard_url = function_exists( 'tutor_utils' ) ? tutor_utils()->tutor_dashboard_url() : wp_login_url();
+$dashboard_url = bia_learn_tutor_dashboard_url( wp_login_url() );
 ?>
 <div class="hidden bg-plum text-paper-200 lg:block">
 	<div class="container-bia flex h-10 items-center justify-between text-xs">

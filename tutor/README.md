@@ -13,7 +13,16 @@ wp-content/plugins/tutor/templates/<path>.php   →   <theme>/tutor/<path>.php
 > between Tutor releases, so a file copied from the docs may not match. After
 > upgrading Tutor, diff your overrides against the new plugin templates.
 
-## High-value templates to override
+## Shipped overrides in this theme
+
+ตอนนี้ธีมมี override ที่ commit มาแล้ว:
+
+| Template | Purpose |
+|------|---------|
+| `archive-course.php` | ใช้ shell ของธีมกับหน้า archive และคง course filter/pagination ของ Tutor |
+| `loop/course.php` | ใช้ [template-parts/cards/course-card.php](template-parts/cards/course-card.php) เป็นการ์ดคอร์สหลักของ Tutor loop |
+
+## High-value templates to override next
 
 | Page | Plugin template path |
 |------|----------------------|
