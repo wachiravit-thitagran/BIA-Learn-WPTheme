@@ -200,6 +200,48 @@ function bia_learn_schema_article() {
 }
 
 /**
+ * Build the FAQPage node from the shared FAQ items, for pages using the FAQ
+ * template. Enables FAQ rich results in search.
+ *
+ * @return array|null
+ */
+function bia_learn_schema_faq() {
+	if ( ! function_exists( 'bia_learn_get_faqs' ) ) {
+		return null;
+	}
+
+	$faqs = bia_learn_get_faqs();
+	if ( empty( $faqs ) ) {
+		return null;
+	}
+
+	$entities = array();
+	foreach ( $faqs as $faq ) {
+		if ( empty( $faq['q'] ) || empty( $faq['a'] ) ) {
+			continue;
+		}
+		$entities[] = array(
+			'@type'          => 'Question',
+			'name'           => wp_strip_all_tags( $faq['q'] ),
+			'acceptedAnswer' => array(
+				'@type' => 'Answer',
+				'text'  => wp_strip_all_tags( $faq['a'] ),
+			),
+		);
+	}
+
+	if ( empty( $entities ) ) {
+		return null;
+	}
+
+	return array(
+		'@type'      => 'FAQPage',
+		'@id'        => get_permalink() . '#faq',
+		'mainEntity' => $entities,
+	);
+}
+
+/**
  * Print the assembled JSON-LD graph in the document head.
  */
 function bia_learn_print_schema() {
@@ -218,6 +260,13 @@ function bia_learn_print_schema() {
 		$article = bia_learn_schema_article();
 		if ( $article ) {
 			$graph[] = $article;
+		}
+	}
+
+	if ( is_page_template( 'page-templates/template-faq.php' ) ) {
+		$faq = bia_learn_schema_faq();
+		if ( $faq ) {
+			$graph[] = $faq;
 		}
 	}
 

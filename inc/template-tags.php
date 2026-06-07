@@ -421,3 +421,37 @@ function bia_learn_course_progress( $course_id, $user_id = 0 ) {
 
 	return null;
 }
+
+/**
+ * Frequently-asked questions. Single source of truth shared by the FAQ page
+ * template and the FAQPage structured data. Override via the
+ * `bia_learn_faq_items` filter. Each item: array( 'q' => ..., 'a' => ... ).
+ *
+ * @return array<int, array{q:string,a:string}>
+ */
+function bia_learn_get_faqs() {
+	$defaults = array(
+		array(
+			'q' => __( 'การสมัครเรียนมีค่าใช้จ่ายหรือไม่?', 'bia-learn' ),
+			'a' => __( 'คอร์สส่วนใหญ่บนแพลตฟอร์มเปิดให้เรียนฟรี เพียงสมัครสมาชิกก็เริ่มเรียนได้ทันที บางคอร์สอาจมีค่าใช้จ่ายซึ่งจะระบุไว้อย่างชัดเจนในหน้าคอร์ส', 'bia-learn' ),
+		),
+		array(
+			'q' => __( 'ต้องเรียนตามเวลาที่กำหนดไหม?', 'bia-learn' ),
+			'a' => __( 'ไม่จำเป็น คุณสามารถเรียนได้ทุกที่ทุกเวลาตามจังหวะของตัวเอง ระบบจะบันทึกความคืบหน้าให้อัตโนมัติ', 'bia-learn' ),
+		),
+		array(
+			'q' => __( 'เรียนจบแล้วได้รับเกียรติบัตรหรือไม่?', 'bia-learn' ),
+			'a' => __( 'คอร์สที่เปิดให้มีเกียรติบัตร เมื่อคุณเรียนและทำแบบทดสอบครบตามเงื่อนไข ระบบจะออกเกียรติบัตรให้ดาวน์โหลดได้จากแดชบอร์ด “เกียรติบัตรของฉัน”', 'bia-learn' ),
+		),
+		array(
+			'q' => __( 'ลืมรหัสผ่านต้องทำอย่างไร?', 'bia-learn' ),
+			'a' => __( 'คลิก “เข้าสู่ระบบ” แล้วเลือก “ลืมรหัสผ่าน” กรอกอีเมลที่ใช้สมัคร ระบบจะส่งลิงก์สำหรับตั้งรหัสผ่านใหม่ให้ทางอีเมล', 'bia-learn' ),
+		),
+		array(
+			'q' => __( 'ดูประวัติการเรียนได้ที่ไหน?', 'bia-learn' ),
+			'a' => __( 'เข้าสู่ระบบแล้วไปที่แดชบอร์ดของฉัน จะเห็นคอร์สที่ลงทะเบียน ความคืบหน้า และเกียรติบัตรทั้งหมด', 'bia-learn' ),
+		),
+	);
+
+	return (array) apply_filters( 'bia_learn_faq_items', $defaults );
+}
