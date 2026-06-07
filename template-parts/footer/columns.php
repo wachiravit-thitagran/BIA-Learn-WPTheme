@@ -25,8 +25,8 @@ $socials = array_filter(
 	<!-- Brand + about -->
 	<div class="lg:col-span-4">
 		<div class="flex items-center gap-3">
-			<span class="grid h-12 w-12 place-items-center rounded-xl bg-white/10 text-gold-light">
-				<?php echo bia_learn_icon( 'lotus', 'h-7 w-7' ); // phpcs:ignore ?>
+			<span class="grid h-12 w-12 place-items-center rounded-xl bg-white/10">
+				<img src="<?php echo esc_url( BIA_LEARN_URI . '/assets/images/pagoda-logo.png' ); ?>" alt="<?php echo esc_attr( get_bloginfo( 'name' ) ); ?>" width="83" height="83" class="h-8 w-8 object-contain" loading="lazy" />
 			</span>
 			<span class="font-serif text-xl font-bold text-white"><?php bloginfo( 'name' ); ?></span>
 		</div>
