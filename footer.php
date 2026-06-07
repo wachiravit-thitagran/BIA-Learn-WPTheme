@@ -9,13 +9,6 @@ defined( 'ABSPATH' ) || exit;
 ?>
 	</div><!-- #content -->
 
-	<?php
-	// Pre-footer CTA shows on the homepage only — keeps inner pages uncluttered.
-	if ( is_front_page() ) {
-		get_template_part( 'template-parts/footer/cta' );
-	}
-	?>
-
 	<footer id="colophon" class="site-footer relative overflow-hidden bg-plum-wash text-paper-200">
 		<div class="absolute inset-0 bg-grain opacity-40" aria-hidden="true"></div>
 		<div class="relative">
