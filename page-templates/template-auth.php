@@ -28,6 +28,10 @@ $bia_can_register = $bia_has_tutor || (bool) get_option( 'users_can_register' );
 // is disabled.
 $bia_default_tab = ( isset( $_GET['tab'] ) && 'login' === $_GET['tab'] ) || ! $bia_can_register ? 'login' : 'register'; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 
+// Where to send the learner after login: an explicit ?redirect_to (e.g. when
+// sent here from a gated lesson) wins, otherwise the dashboard.
+$bia_redirect = isset( $_GET['redirect_to'] ) ? esc_url_raw( wp_unslash( $_GET['redirect_to'] ) ) : $bia_dashboard; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+
 get_header();
 ?>
 
@@ -102,7 +106,7 @@ get_header();
 						<h2 class="font-sans text-2xl font-bold text-ink"><?php esc_html_e( 'เข้าสู่ระบบ', 'bia-learn' ); ?></h2>
 						<p class="mt-1 text-sm text-ink-light"><?php esc_html_e( 'เข้าสู่ระบบเพื่อเรียนต่อและจัดการคอร์สของคุณ', 'bia-learn' ); ?></p>
 
-						<form method="post" action="<?php echo esc_url( wp_login_url( $bia_dashboard ) ); ?>" class="mt-6 space-y-4">
+						<form method="post" action="<?php echo esc_url( wp_login_url( $bia_redirect ) ); ?>" class="mt-6 space-y-4">
 							<div>
 								<label for="bia-log" class="field-label"><?php esc_html_e( 'ชื่อผู้ใช้ หรืออีเมล', 'bia-learn' ); ?></label>
 								<input id="bia-log" type="text" name="log" autocomplete="username" required class="field" />
@@ -118,7 +122,7 @@ get_header();
 								</label>
 								<a href="<?php echo esc_url( wp_lostpassword_url() ); ?>" class="font-semibold text-crimson hover:underline"><?php esc_html_e( 'ลืมรหัสผ่าน?', 'bia-learn' ); ?></a>
 							</div>
-							<input type="hidden" name="redirect_to" value="<?php echo esc_url( $bia_dashboard ); ?>" />
+							<input type="hidden" name="redirect_to" value="<?php echo esc_url( $bia_redirect ); ?>" />
 							<button type="submit" class="btn-primary w-full"><?php esc_html_e( 'เข้าสู่ระบบ', 'bia-learn' ); ?></button>
 						</form>
 

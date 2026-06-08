@@ -69,8 +69,8 @@ defined( 'ABSPATH' ) || exit;
 			</a>
 		<?php else : ?>
 			<div class="grid grid-cols-2 gap-3">
-				<a href="<?php echo esc_url( wp_login_url() ); ?>" class="btn-outline w-full"><?php esc_html_e( 'เข้าสู่ระบบ', 'bia-learn' ); ?></a>
-				<a href="<?php echo esc_url( wp_registration_url() ); ?>" class="btn-primary w-full"><?php esc_html_e( 'สมัคร', 'bia-learn' ); ?></a>
+				<a href="<?php echo esc_url( bia_learn_auth_url( 'login' ) ); ?>" class="btn-outline w-full"><?php esc_html_e( 'เข้าสู่ระบบ', 'bia-learn' ); ?></a>
+				<a href="<?php echo esc_url( bia_learn_auth_url( 'register' ) ); ?>" class="btn-primary w-full"><?php esc_html_e( 'สมัคร', 'bia-learn' ); ?></a>
 			</div>
 		<?php endif; ?>
 	</div>

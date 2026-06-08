@@ -99,9 +99,7 @@ add_filter( 'tutor_button_class', 'bia_learn_tutor_btn_classes' );
  * Runs once; safe to re-run (checks by slug).
  */
 function bia_learn_register_supporting_pages() {
-	if ( get_option( 'bia_learn_pages_created' ) ) {
-		return;
-	}
+	$created = (array) get_option( 'bia_learn_created_pages', array() );
 
 	$pages = array(
 		'about'       => array( __( 'เกี่ยวกับเรา', 'bia-learn' ), 'page-templates/template-about.php' ),
@@ -109,29 +107,69 @@ function bia_learn_register_supporting_pages() {
 		'faq'         => array( __( 'คำถามที่พบบ่อย', 'bia-learn' ), 'page-templates/template-faq.php' ),
 		'instructors' => array( __( 'ผู้สอนและวิทยากร', 'bia-learn' ), 'page-templates/template-instructors.php' ),
 		'statistics'  => array( __( 'สถิติการเรียนรู้', 'bia-learn' ), 'page-templates/template-statistics.php' ),
+		'auth'        => array( __( 'เข้าสู่ระบบ', 'bia-learn' ), 'page-templates/template-auth.php' ),
+		'tutorial'    => array( __( 'วิธีใช้งาน', 'bia-learn' ), 'page-templates/template-tutorial.php' ),
 	);
 
+	$changed = false;
 	foreach ( $pages as $slug => $data ) {
-		if ( get_page_by_path( $slug ) ) {
+		// Create each supporting page at most once ever (tracked in the option)
+		// so deleting one in the admin won't have it reappear.
+		if ( in_array( $slug, $created, true ) ) {
 			continue;
 		}
-		$page_id = wp_insert_post(
-			array(
-				'post_title'   => $data[0],
-				'post_name'    => $slug,
-				'post_status'  => 'publish',
-				'post_type'    => 'page',
-				'post_content' => '',
-			)
-		);
-		if ( $page_id && ! is_wp_error( $page_id ) ) {
-			update_post_meta( $page_id, '_wp_page_template', $data[1] );
+		if ( ! get_page_by_path( $slug ) ) {
+			$page_id = wp_insert_post(
+				array(
+					'post_title'   => $data[0],
+					'post_name'    => $slug,
+					'post_status'  => 'publish',
+					'post_type'    => 'page',
+					'post_content' => '',
+				)
+			);
+			if ( $page_id && ! is_wp_error( $page_id ) ) {
+				update_post_meta( $page_id, '_wp_page_template', $data[1] );
+			}
 		}
+		$created[] = $slug;
+		$changed   = true;
 	}
 
-	update_option( 'bia_learn_pages_created', 1 );
+	if ( $changed ) {
+		update_option( 'bia_learn_created_pages', $created );
+	}
 }
 add_action( 'after_switch_theme', 'bia_learn_register_supporting_pages' );
+// Self-heal on existing installs (e.g. theme deployed via git, not re-activated):
+// creates any newly-added supporting page on the next admin visit, once each.
+add_action( 'admin_init', 'bia_learn_register_supporting_pages' );
+
+/**
+ * Send the default WordPress login / registration screen to the branded Auth
+ * page (template-auth.php) when one exists. Only intercepts GET display of the
+ * login/register screens — never form posts, logout, or password resets — so
+ * authentication keeps working normally.
+ */
+function bia_learn_redirect_wp_login() {
+	if ( 'GET' !== strtoupper( isset( $_SERVER['REQUEST_METHOD'] ) ? $_SERVER['REQUEST_METHOD'] : 'GET' ) ) {
+		return;
+	}
+	$action = isset( $_GET['action'] ) ? sanitize_key( wp_unslash( $_GET['action'] ) ) : 'login'; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+	if ( ! in_array( $action, array( 'login', 'register' ), true ) ) {
+		return; // leave logout / lostpassword / rp / resetpass to WordPress.
+	}
+	if ( is_user_logged_in() && 'login' === $action ) {
+		return;
+	}
+	if ( ! get_page_by_path( 'auth' ) ) {
+		return; // no branded page yet — keep the default screen.
+	}
+	$redirect = isset( $_GET['redirect_to'] ) ? wp_unslash( $_GET['redirect_to'] ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+	wp_safe_redirect( bia_learn_auth_url( 'register' === $action ? 'register' : 'login', $redirect ) );
+	exit;
+}
+add_action( 'login_init', 'bia_learn_redirect_wp_login' );
 
 /**
  * Flush the cached stats whenever a course / enrolment changes.
