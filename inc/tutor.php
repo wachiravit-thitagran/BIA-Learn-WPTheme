@@ -360,3 +360,19 @@ function bia_learn_enqueue_course_reviews() {
 	wp_add_inline_script( 'bia-learn-main', $script );
 }
 add_action( 'wp_enqueue_scripts', 'bia_learn_enqueue_course_reviews', 20 );
+
+/**
+ * Render ความต้องการ, แท็ก, กลุ่มเป้าหมาย inside the "ข้อมูลคอร์ส" (info) tab.
+ *
+ * These three sections were removed from the sidebar in tutor/single-course.php
+ * and are surfaced here so they appear below the curriculum within the info tab.
+ */
+function bia_learn_course_info_extra_sections() {
+	if ( ! is_singular( 'courses' ) ) {
+		return;
+	}
+	tutor_course_requirements_html();
+	tutor_course_target_audience_html();
+	tutor_course_tags_html();
+}
+add_action( 'tutor_course/single/tab/info/after', 'bia_learn_course_info_extra_sections' );
