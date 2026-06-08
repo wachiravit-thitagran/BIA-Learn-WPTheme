@@ -7,7 +7,6 @@
 
 defined( 'ABSPATH' ) || exit;
 
-$eyebrow  = bia_learn_option( 'bia_hero_eyebrow', __( 'หอจดหมายเหตุพุทธทาส อินทปัญโญ', 'bia-learn' ) );
 $title    = bia_learn_option( 'bia_hero_title', __( 'เรียนรู้ธรรมะ ภาวนา และปัญญา จากสวนโมกข์สู่โลกดิจิทัล', 'bia-learn' ) );
 $subtitle = bia_learn_option( 'bia_hero_subtitle', __( 'คอร์สเรียนออนไลน์ บทเรียน และคลังความรู้ เพื่อการเรียนรู้ตลอดชีวิตอย่างเป็นอิสระ', 'bia-learn' ) );
 $cta_text = bia_learn_option( 'bia_hero_cta_text', __( 'เริ่มเรียนรู้', 'bia-learn' ) );
@@ -21,12 +20,7 @@ $image_id = bia_learn_option( 'bia_hero_image' );
 	<div class="container-bia relative grid items-center gap-12 py-20 lg:grid-cols-2 lg:py-28">
 		<!-- copy -->
 		<div class="max-w-xl animate-fade-up">
-			<span class="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-gold-light">
-				<?php echo bia_learn_icon( 'lotus', 'h-4 w-4' ); // phpcs:ignore ?>
-				<?php echo esc_html( $eyebrow ); ?>
-			</span>
-
-			<h1 class="mt-6 font-serif text-4xl font-bold leading-[1.15] text-white sm:text-5xl lg:text-[3.25rem]">
+			<h1 class="font-serif text-4xl font-bold leading-[1.15] text-white sm:text-5xl lg:text-[3.25rem]">
 				<?php echo wp_kses_post( $title ); ?>
 			</h1>
 
