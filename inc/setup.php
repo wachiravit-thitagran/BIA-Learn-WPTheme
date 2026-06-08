@@ -132,13 +132,12 @@ add_filter( 'nav_menu_link_attributes', 'bia_learn_nav_link_atts', 10, 3 );
  * the core pages so the header is never empty on a fresh install.
  */
 function bia_learn_default_menu() {
+	// "เกี่ยวกับเรา" and "ติดต่อ" intentionally live in the footer, not here.
 	$items = array(
-		home_url( '/' )                       => __( 'หน้าแรก', 'bia-learn' ),
-		bia_learn_courses_url()               => __( 'คอร์สเรียน', 'bia-learn' ),
-		bia_learn_page_url( 'instructors' )   => __( 'ผู้สอน', 'bia-learn' ),
-		bia_learn_news_url()                  => __( 'ข่าวสาร', 'bia-learn' ),
-		bia_learn_page_url( 'about' )         => __( 'เกี่ยวกับเรา', 'bia-learn' ),
-		bia_learn_page_url( 'contact' )       => __( 'ติดต่อ', 'bia-learn' ),
+		home_url( '/' )                     => __( 'หน้าแรก', 'bia-learn' ),
+		bia_learn_courses_url()             => __( 'คอร์สเรียน', 'bia-learn' ),
+		bia_learn_page_url( 'instructors' ) => __( 'ผู้สอน', 'bia-learn' ),
+		bia_learn_news_url()                => __( 'ข่าวสาร', 'bia-learn' ),
 	);
 	echo '<ul class="flex items-center gap-7">';
 	foreach ( $items as $url => $label ) {
