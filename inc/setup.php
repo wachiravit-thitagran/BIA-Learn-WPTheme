@@ -167,6 +167,35 @@ function bia_learn_page_url( $slug, $fallback = '' ) {
 }
 
 /**
+ * URL of the branded auth (login / register) page.
+ *
+ * Returns the page using the Auth template when it exists, with ?tab and an
+ * optional redirect_to; otherwise falls back to the default WordPress login /
+ * registration URLs so links always work.
+ *
+ * @param string $tab      'login' or 'register'.
+ * @param string $redirect Optional URL to return to after authenticating.
+ * @return string
+ */
+function bia_learn_auth_url( $tab = 'login', $redirect = '' ) {
+	$auth = get_page_by_path( 'auth' );
+	if ( $auth ) {
+		$url = get_permalink( $auth );
+		if ( 'register' === $tab ) {
+			$url = add_query_arg( 'tab', 'register', $url );
+		}
+		if ( $redirect ) {
+			$url = add_query_arg( 'redirect_to', rawurlencode( $redirect ), $url );
+		}
+		return $url;
+	}
+	if ( 'register' === $tab ) {
+		return wp_registration_url();
+	}
+	return $redirect ? wp_login_url( $redirect ) : wp_login_url();
+}
+
+/**
  * Resolve the courses archive URL (Tutor LMS course archive, else /courses/).
  *
  * @return string

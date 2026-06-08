@@ -52,8 +52,8 @@ $dashboard_url = bia_learn_tutor_dashboard_url( wp_login_url() );
 					<?php esc_html_e( 'แดชบอร์ดของฉัน', 'bia-learn' ); ?>
 				</a>
 			<?php else : ?>
-				<a href="<?php echo esc_url( wp_login_url() ); ?>" class="font-medium hover:text-white"><?php esc_html_e( 'เข้าสู่ระบบ', 'bia-learn' ); ?></a>
-				<a href="<?php echo esc_url( wp_registration_url() ); ?>" class="font-medium text-gold-light hover:text-white"><?php esc_html_e( 'สมัครสมาชิก', 'bia-learn' ); ?></a>
+				<a href="<?php echo esc_url( bia_learn_auth_url( 'login' ) ); ?>" class="font-medium hover:text-white"><?php esc_html_e( 'เข้าสู่ระบบ', 'bia-learn' ); ?></a>
+				<a href="<?php echo esc_url( bia_learn_auth_url( 'register' ) ); ?>" class="font-medium text-gold-light hover:text-white"><?php esc_html_e( 'สมัครสมาชิก', 'bia-learn' ); ?></a>
 			<?php endif; ?>
 		</div>
 	</div>
