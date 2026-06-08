@@ -127,41 +127,53 @@ function bia_learn_reading_time() {
  * @return string SVG markup (already escaped/safe).
  */
 function bia_learn_icon( $name, $classes = 'h-5 w-5' ) {
-	$paths = array(
-		'calendar'  => '<rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>',
-		'clock'     => '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
-		'user'      => '<circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/>',
-		'book'      => '<path d="M4 5a2 2 0 0 1 2-2h12v16H6a2 2 0 0 0-2 2z"/><path d="M18 3v16"/>',
-		'play'      => '<circle cx="12" cy="12" r="9"/><path d="M10 9l5 3-5 3z" fill="currentColor" stroke="none"/>',
-		'arrow'     => '<path d="M5 12h14M13 6l6 6-6 6"/>',
-		'arrow-ul'  => '<path d="M7 17L17 7M9 7h8v8"/>',
-		'search'    => '<circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/>',
-		'menu'      => '<path d="M4 6h16M4 12h16M4 18h16"/>',
-		'close'     => '<path d="M6 6l12 12M18 6L6 18"/>',
-		'check'     => '<path d="M20 6 9 17l-5-5"/>',
-		'star'      => '<path d="m12 2 3 6.5 7 .9-5 4.8 1.3 7L12 18l-6.6 3.2L6.7 14l-5-4.8 7-.9z" fill="currentColor" stroke="none"/>',
-		'users'     => '<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c0-3.3 3-5 6.5-5s6.5 1.7 6.5 5"/><path d="M16 5.2A3.5 3.5 0 0 1 16 12M22 20c0-2.4-1.6-3.9-4-4.6"/>',
-		'cert'      => '<circle cx="12" cy="9" r="5"/><path d="M9 13.5 8 22l4-2 4 2-1-8.5"/>',
-		'chart'     => '<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>',
-		'mail'      => '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/>',
-		'phone'     => '<path d="M5 4h4l2 5-3 2a14 14 0 0 0 6 6l2-3 5 2v4a2 2 0 0 1-2 2A17 17 0 0 1 3 6a2 2 0 0 1 2-2z"/>',
-		'pin'       => '<path d="M12 22s7-6.5 7-12a7 7 0 1 0-14 0c0 5.5 7 12 7 12z"/><circle cx="12" cy="10" r="2.5"/>',
-		'quote'     => '<path d="M7 7H4v6h3l-2 4h3l2-4V7zm10 0h-3v6h3l-2 4h3l2-4V7z" fill="currentColor" stroke="none"/>',
-		'lotus'     => '<path d="M12 4c1.5 2 1.5 4 0 6-1.5-2-1.5-4 0-6z"/><path d="M12 10c3-1 5 0 6 2-2 2-5 2-6 0zm0 0c-3-1-5 0-6 2 2 2 5 2 6 0z"/><path d="M5 13c-1 2 0 4 2 5 3 1 7 1 10 0 2-1 3-3 2-5"/>',
-		'chevron'   => '<path d="m6 9 6 6 6-6"/>',
-		'facebook'  => '<path d="M14 9h3V6h-3c-2 0-3 1-3 3v2H8v3h3v7h3v-7h2.5l.5-3H14v-2c0-.6.4-1 1-1z" fill="currentColor" stroke="none"/>',
-		'youtube'   => '<rect x="2" y="5" width="20" height="14" rx="4"/><path d="m10 9 5 3-5 3z" fill="currentColor" stroke="none"/>',
-		'line'      => '<path d="M12 4c5 0 9 3.2 9 7.2 0 4.4-5 8-9 8-1 0-1.6.3-3 1-1 .4-1.2.1-1-1 .2-1-.4-1.2-1.6-2C3.4 16 3 13.8 3 11.2 3 7.2 7 4 12 4z"/>',
+	// Icons from Tabler Icons (MIT) — inline & self-hosted, no icon font/CDN.
+	// 'lotus' is a custom brand mark. To add an icon: copy its inner SVG from
+	// the @tabler/icons package (icons/outline or icons/filled) below.
+	$outline = array(
+		'calendar' => '<path d="M4 7a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12" />  <path d="M16 3v4" />  <path d="M8 3v4" />  <path d="M4 11h16" />  <path d="M11 15h1" />  <path d="M12 15v3" />',
+		'clock' => '<path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0" />  <path d="M12 7v5l3 3" />',
+		'user' => '<path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0" />  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />',
+		'book' => '<path d="M3 19a9 9 0 0 1 9 0a9 9 0 0 1 9 0" />  <path d="M3 6a9 9 0 0 1 9 0a9 9 0 0 1 9 0" />  <path d="M3 6l0 13" />  <path d="M12 6l0 13" />  <path d="M21 6l0 13" />',
+		'arrow' => '<path d="M5 12l14 0" />  <path d="M13 18l6 -6" />  <path d="M13 6l6 6" />',
+		'arrow-ul' => '<path d="M17 7l-10 10" />  <path d="M8 7l9 0l0 9" />',
+		'search' => '<path d="M3 10a7 7 0 1 0 14 0a7 7 0 1 0 -14 0" />  <path d="M21 21l-6 -6" />',
+		'menu' => '<path d="M4 6l16 0" />  <path d="M4 12l16 0" />  <path d="M4 18l16 0" />',
+		'close' => '<path d="M18 6l-12 12" />  <path d="M6 6l12 12" />',
+		'check' => '<path d="M5 12l5 5l10 -10" />',
+		'users' => '<path d="M5 7a4 4 0 1 0 8 0a4 4 0 1 0 -8 0" />  <path d="M3 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />  <path d="M16 3.13a4 4 0 0 1 0 7.75" />  <path d="M21 21v-2a4 4 0 0 0 -3 -3.85" />',
+		'cert' => '<path d="M12 15a3 3 0 1 0 6 0a3 3 0 1 0 -6 0" />  <path d="M13 17.5v4.5l2 -1.5l2 1.5v-4.5" />  <path d="M10 19h-5a2 2 0 0 1 -2 -2v-10c0 -1.1 .9 -2 2 -2h14a2 2 0 0 1 2 2v10a2 2 0 0 1 -1 1.73" />  <path d="M6 9l12 0" />  <path d="M6 12l3 0" />  <path d="M6 15l2 0" />',
+		'chart' => '<path d="M3 13a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v6a1 1 0 0 1 -1 1h-4a1 1 0 0 1 -1 -1l0 -6" />  <path d="M15 9a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v10a1 1 0 0 1 -1 1h-4a1 1 0 0 1 -1 -1l0 -10" />  <path d="M9 5a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v14a1 1 0 0 1 -1 1h-4a1 1 0 0 1 -1 -1l0 -14" />  <path d="M4 20h14" />',
+		'mail' => '<path d="M3 7a2 2 0 0 1 2 -2h14a2 2 0 0 1 2 2v10a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2v-10" />  <path d="M3 7l9 6l9 -6" />',
+		'phone' => '<path d="M5 4h4l2 5l-2.5 1.5a11 11 0 0 0 5 5l1.5 -2.5l5 2v4a2 2 0 0 1 -2 2a16 16 0 0 1 -15 -15a2 2 0 0 1 2 -2" />',
+		'pin' => '<path d="M9 11a3 3 0 1 0 6 0a3 3 0 0 0 -6 0" />  <path d="M17.657 16.657l-4.243 4.243a2 2 0 0 1 -2.827 0l-4.244 -4.243a8 8 0 1 1 11.314 0" />',
+		'quote' => '<path d="M10 11h-4a1 1 0 0 1 -1 -1v-3a1 1 0 0 1 1 -1h3a1 1 0 0 1 1 1v6c0 2.667 -1.333 4.333 -4 5" />  <path d="M19 11h-4a1 1 0 0 1 -1 -1v-3a1 1 0 0 1 1 -1h3a1 1 0 0 1 1 1v6c0 2.667 -1.333 4.333 -4 5" />',
+		'chevron' => '<path d="M6 9l6 6l6 -6" />',
+		'line' => '<path d="M21 10.663c0 -4.224 -4.041 -7.663 -9 -7.663s-9 3.439 -9 7.663c0 3.783 3.201 6.958 7.527 7.56c1.053 .239 .932 .644 .696 2.133c-.039 .238 -.184 .932 .777 .512c.96 -.42 5.18 -3.201 7.073 -5.48c1.304 -1.504 1.927 -3.029 1.927 -4.715v-.01" />',
+		'lotus' => '<path d="M12 4c1.5 2 1.5 4 0 6-1.5-2-1.5-4 0-6z"/><path d="M12 10c3-1 5 0 6 2-2 2-5 2-6 0zm0 0c-3-1-5 0-6 2 2 2 5 2 6 0z"/><path d="M5 13c-1 2 0 4 2 5 3 1 7 1 10 0 2-1 3-3 2-5"/>',
+	);
+	$filled = array(
+		'play' => '<path d="M6 4v16a1 1 0 0 0 1.524 .852l13 -8a1 1 0 0 0 0 -1.704l-13 -8a1 1 0 0 0 -1.524 .852z" />',
+		'star' => '<path d="M8.243 7.34l-6.38 .925l-.113 .023a1 1 0 0 0 -.44 1.684l4.622 4.499l-1.09 6.355l-.013 .11a1 1 0 0 0 1.464 .944l5.706 -3l5.693 3l.1 .046a1 1 0 0 0 1.352 -1.1l-1.091 -6.355l4.624 -4.5l.078 -.085a1 1 0 0 0 -.633 -1.62l-6.38 -.926l-2.852 -5.78a1 1 0 0 0 -1.794 0l-2.853 5.78z" />',
+		'facebook' => '<path d="M18 2a1 1 0 0 1 .993 .883l.007 .117v4a1 1 0 0 1 -.883 .993l-.117 .007h-3v1h3a1 1 0 0 1 .991 1.131l-.02 .112l-1 4a1 1 0 0 1 -.858 .75l-.113 .007h-2v6a1 1 0 0 1 -.883 .993l-.117 .007h-4a1 1 0 0 1 -.993 -.883l-.007 -.117v-6h-2a1 1 0 0 1 -.993 -.883l-.007 -.117v-4a1 1 0 0 1 .883 -.993l.117 -.007h2v-1a6 6 0 0 1 5.775 -5.996l.225 -.004h3z" />',
+		'youtube' => '<path d="M18 3a5 5 0 0 1 5 5v8a5 5 0 0 1 -5 5h-12a5 5 0 0 1 -5 -5v-8a5 5 0 0 1 5 -5zm-9 6v6a1 1 0 0 0 1.514 .857l5 -3a1 1 0 0 0 0 -1.714l-5 -3a1 1 0 0 0 -1.514 .857z" />',
 	);
 
-	$path = isset( $paths[ $name ] ) ? $paths[ $name ] : '';
-	$fill = in_array( $name, array( 'star', 'play', 'facebook', 'youtube', 'quote' ), true ) ? 'currentColor' : 'none';
+	if ( isset( $filled[ $name ] ) ) {
+		$inner = $filled[ $name ];
+		$attrs = 'fill="currentColor" stroke="none"';
+	} elseif ( isset( $outline[ $name ] ) ) {
+		$inner = $outline[ $name ];
+		$attrs = 'fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"';
+	} else {
+		return '';
+	}
 
 	return sprintf(
-		'<svg class="%1$s" viewBox="0 0 24 24" fill="%2$s" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">%3$s</svg>',
+		'<svg class="%1$s" viewBox="0 0 24 24" %2$s aria-hidden="true" focusable="false">%3$s</svg>',
 		esc_attr( $classes ),
-		esc_attr( $fill ),
-		$path // phpcs:ignore -- static, trusted SVG path data.
+		$attrs, // phpcs:ignore -- static, trusted attribute string.
+		$inner  // phpcs:ignore -- static, trusted SVG markup.
 	);
 }
 
