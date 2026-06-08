@@ -225,6 +225,25 @@ function bia_learn_news_url() {
 }
 
 /**
+ * Shortcodes that expose live stats from bia_learn_get_stats() for use in
+ * page content and Customizer text fields.
+ *
+ * [actual_course_count]   → published course count
+ * [actual_student_count]  → enrolled / registered learner count
+ */
+function bia_learn_shortcode_course_count() {
+	$stats = bia_learn_get_stats();
+	return number_format_i18n( $stats['courses'] );
+}
+add_shortcode( 'actual_course_count', 'bia_learn_shortcode_course_count' );
+
+function bia_learn_shortcode_student_count() {
+	$stats = bia_learn_get_stats();
+	return number_format_i18n( $stats['students'] );
+}
+add_shortcode( 'actual_student_count', 'bia_learn_shortcode_student_count' );
+
+/**
  * Trim the default excerpt and use a softer ellipsis.
  */
 add_filter(
