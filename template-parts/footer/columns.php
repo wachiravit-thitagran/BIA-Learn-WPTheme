@@ -64,6 +64,8 @@ $socials = array_filter(
 				printf( '<li><a href="%s">%s</a></li>', esc_url( bia_learn_page_url( 'instructors' ) ), esc_html__( 'ผู้สอน', 'bia-learn' ) );
 				printf( '<li><a href="%s">%s</a></li>', esc_url( bia_learn_news_url() ), esc_html__( 'ข่าวสาร', 'bia-learn' ) );
 				printf( '<li><a href="%s">%s</a></li>', esc_url( bia_learn_page_url( 'faq' ) ), esc_html__( 'คำถามที่พบบ่อย', 'bia-learn' ) );
+				printf( '<li><a href="%s">%s</a></li>', esc_url( bia_learn_page_url( 'about' ) ), esc_html__( 'เกี่ยวกับเรา', 'bia-learn' ) );
+				printf( '<li><a href="%s">%s</a></li>', esc_url( bia_learn_page_url( 'contact' ) ), esc_html__( 'ติดต่อเรา', 'bia-learn' ) );
 				echo '</ul></div>';
 			}
 		}
