@@ -88,11 +88,9 @@ $level_labels = array(
 			</span>
 		<?php endif; ?>
 
-		<?php if ( ! $is_free ) : ?>
-			<span class="absolute left-4 top-4 badge bg-white/90 backdrop-blur">
-				<?php echo wp_kses_post( $price_html ?: __( 'มีค่าใช้จ่าย', 'bia-learn' ) ); ?>
-			</span>
-		<?php endif; ?>
+		<span class="absolute left-4 top-4 <?php echo $is_free ? 'badge-gold' : 'badge'; ?> bg-white/90 backdrop-blur">
+			<?php echo $is_free ? esc_html__( 'เรียนฟรี', 'bia-learn' ) : wp_kses_post( $price_html ?: __( 'มีค่าใช้จ่าย', 'bia-learn' ) ); ?>
+		</span>
 		<?php if ( $category ) : ?>
 			<span class="absolute right-4 top-4 badge bg-white/90 backdrop-blur"><?php echo esc_html( $category->name ); ?></span>
 		<?php endif; ?>
