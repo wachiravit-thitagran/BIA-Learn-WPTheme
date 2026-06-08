@@ -738,3 +738,32 @@
 .tutor-quiz-answer-single.is-incorrect {
   @apply border-danger !important;
 }
+
+/* --- Q&A (Tutor LMS built-in) -----------------------------------------
+   We use Tutor's native Question & Answer (course Q&A tab + dashboard
+   "คำถาม-คำตอบ") rather than a custom forum. Most of it already inherits the
+   bridge above (forms, buttons, dashboard cards, brand tokens). These rules
+   are matched by attribute so they apply regardless of Tutor's exact class
+   names across versions. */
+[class*="tutor-qna"],
+[class*="tutor-quesion-answer"],
+[class*="tutor-question-answer"] {
+  @apply text-ink !important;
+}
+/* Question titles */
+[class*="qna-question"] a,
+[class*="qna-title"],
+[class*="question-title"] {
+  @apply font-sans font-semibold text-ink hover:text-crimson !important;
+}
+/* Answer / reply bubbles */
+[class*="qna-reply"],
+[class*="qna-answer"],
+[class*="tutor-qna"] [class*="reply"] {
+  @apply rounded-xl border border-paper-100 bg-paper-50 !important;
+}
+/* Unread / new question marker uses the success accent */
+[class*="qna"] [class*="unread"],
+[class*="qna"] [class*="badge"] {
+  @apply bg-success-light text-success-dark !important;
+}
