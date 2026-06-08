@@ -56,7 +56,7 @@ $bia_cats = get_terms(
 				<input id="bia-catalog-search" type="search" name="s"
 					placeholder="<?php esc_attr_e( 'ค้นหาคอร์ส…', 'bia-learn' ); ?>"
 					class="min-w-0 flex-1 border-0 bg-transparent text-ink placeholder:text-ink-light focus:ring-0" />
-				<button type="submit" class="btn-primary shrink-0"><?php esc_html_e( 'ค้นหา', 'bia-learn' ); ?></button>
+				<button type="submit" class="btn-primary shrink-0 rounded-full"><?php esc_html_e( 'ค้นหา', 'bia-learn' ); ?></button>
 			</form>
 		</div>
 
