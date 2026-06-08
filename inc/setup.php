@@ -133,18 +133,38 @@ add_filter( 'nav_menu_link_attributes', 'bia_learn_nav_link_atts', 10, 3 );
  */
 function bia_learn_default_menu() {
 	$items = array(
-		home_url( '/' )            => __( 'หน้าแรก', 'bia-learn' ),
-		bia_learn_courses_url()    => __( 'คอร์สเรียน', 'bia-learn' ),
-		home_url( '/instructors/' ) => __( 'ผู้สอน', 'bia-learn' ),
-		bia_learn_news_url()       => __( 'ข่าวสาร', 'bia-learn' ),
-		home_url( '/about/' )      => __( 'เกี่ยวกับเรา', 'bia-learn' ),
-		home_url( '/contact/' )    => __( 'ติดต่อ', 'bia-learn' ),
+		home_url( '/' )                       => __( 'หน้าแรก', 'bia-learn' ),
+		bia_learn_courses_url()               => __( 'คอร์สเรียน', 'bia-learn' ),
+		bia_learn_page_url( 'instructors' )   => __( 'ผู้สอน', 'bia-learn' ),
+		bia_learn_news_url()                  => __( 'ข่าวสาร', 'bia-learn' ),
+		bia_learn_page_url( 'about' )         => __( 'เกี่ยวกับเรา', 'bia-learn' ),
+		bia_learn_page_url( 'contact' )       => __( 'ติดต่อ', 'bia-learn' ),
 	);
 	echo '<ul class="flex items-center gap-7">';
 	foreach ( $items as $url => $label ) {
 		echo '<li><a class="nav-link" href="' . esc_url( $url ) . '">' . esc_html( $label ) . '</a></li>';
 	}
 	echo '</ul>';
+}
+
+/**
+ * Resolve a supporting page's URL by slug, falling back to a pretty path.
+ *
+ * Uses the page's real permalink when it exists, so links keep working under
+ * any permalink structure — including the "/index.php/…" prefix WordPress
+ * adds when mod_rewrite is unavailable. Avoids hard-coded "/about/" links
+ * that 404 when the actual page lives at "/index.php/about/".
+ *
+ * @param string $slug     Page slug (path).
+ * @param string $fallback Optional fallback path if the page doesn't exist.
+ * @return string
+ */
+function bia_learn_page_url( $slug, $fallback = '' ) {
+	$page = get_page_by_path( $slug );
+	if ( $page ) {
+		return get_permalink( $page );
+	}
+	return home_url( '/' . ltrim( $fallback ? $fallback : $slug, '/' ) . '/' );
 }
 
 /**

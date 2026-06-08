@@ -183,8 +183,8 @@ $bia_videos = apply_filters( 'bia_learn_tutorial_videos', array() );
 					<p class="mt-1 text-ink-light"><?php esc_html_e( 'ดูคำถามที่พบบ่อย หรือติดต่อทีมงานของเราได้เลย', 'bia-learn' ); ?></p>
 				</div>
 				<div class="flex flex-wrap items-center justify-center gap-3">
-					<a href="<?php echo esc_url( home_url( '/faq/' ) ); ?>" class="btn-outline"><?php esc_html_e( 'คำถามที่พบบ่อย', 'bia-learn' ); ?></a>
-					<a href="<?php echo esc_url( home_url( '/contact/' ) ); ?>" class="btn-primary"><?php esc_html_e( 'ติดต่อเรา', 'bia-learn' ); ?><?php echo bia_learn_icon( 'arrow', 'h-5 w-5' ); // phpcs:ignore ?></a>
+					<a href="<?php echo esc_url( bia_learn_page_url( 'faq' ) ); ?>" class="btn-outline"><?php esc_html_e( 'คำถามที่พบบ่อย', 'bia-learn' ); ?></a>
+					<a href="<?php echo esc_url( bia_learn_page_url( 'contact' ) ); ?>" class="btn-primary"><?php esc_html_e( 'ติดต่อเรา', 'bia-learn' ); ?><?php echo bia_learn_icon( 'arrow', 'h-5 w-5' ); // phpcs:ignore ?></a>
 				</div>
 			</div>
 		</div>

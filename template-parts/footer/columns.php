@@ -61,9 +61,9 @@ $socials = array_filter(
 				echo '<h3 class="mb-4 font-serif text-base font-bold text-white/90">' . esc_html__( 'ลิงก์ด่วน', 'bia-learn' ) . '</h3>';
 				echo '<ul class="space-y-2.5 text-sm">';
 				printf( '<li><a href="%s">%s</a></li>', esc_url( bia_learn_courses_url() ), esc_html__( 'คอร์สเรียนทั้งหมด', 'bia-learn' ) );
-				printf( '<li><a href="%s">%s</a></li>', esc_url( home_url( '/instructors/' ) ), esc_html__( 'ผู้สอน', 'bia-learn' ) );
+				printf( '<li><a href="%s">%s</a></li>', esc_url( bia_learn_page_url( 'instructors' ) ), esc_html__( 'ผู้สอน', 'bia-learn' ) );
 				printf( '<li><a href="%s">%s</a></li>', esc_url( bia_learn_news_url() ), esc_html__( 'ข่าวสาร', 'bia-learn' ) );
-				printf( '<li><a href="%s">%s</a></li>', esc_url( home_url( '/faq/' ) ), esc_html__( 'คำถามที่พบบ่อย', 'bia-learn' ) );
+				printf( '<li><a href="%s">%s</a></li>', esc_url( bia_learn_page_url( 'faq' ) ), esc_html__( 'คำถามที่พบบ่อย', 'bia-learn' ) );
 				echo '</ul></div>';
 			}
 		}

@@ -30,7 +30,7 @@ if ( empty( $instructors ) ) {
 				)
 			);
 			?>
-			<a href="<?php echo esc_url( home_url( '/instructors/' ) ); ?>" class="btn-outline shrink-0">
+			<a href="<?php echo esc_url( bia_learn_page_url( 'instructors' ) ); ?>" class="btn-outline shrink-0">
 				<?php esc_html_e( 'ดูทั้งหมด', 'bia-learn' ); ?>
 				<?php echo bia_learn_icon( 'arrow', 'h-4 w-4' ); // phpcs:ignore ?>
 			</a>

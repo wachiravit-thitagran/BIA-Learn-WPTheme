@@ -58,7 +58,7 @@ while ( have_posts() ) :
 			<div class="mt-12 rounded-2xl bg-crimson-wash p-8 text-center text-paper-50">
 				<h3 class="font-serif text-xl font-bold text-white"><?php esc_html_e( 'ยังไม่พบคำตอบที่ต้องการ?', 'bia-learn' ); ?></h3>
 				<p class="mt-2 text-paper-200"><?php esc_html_e( 'ติดต่อทีมงานของเราได้โดยตรง', 'bia-learn' ); ?></p>
-				<a href="<?php echo esc_url( home_url( '/contact/' ) ); ?>" class="btn-gold mt-5"><?php esc_html_e( 'ติดต่อเรา', 'bia-learn' ); ?></a>
+				<a href="<?php echo esc_url( bia_learn_page_url( 'contact' ) ); ?>" class="btn-gold mt-5"><?php esc_html_e( 'ติดต่อเรา', 'bia-learn' ); ?></a>
 			</div>
 		</div>
 	</section>
