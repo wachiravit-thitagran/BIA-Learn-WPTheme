@@ -142,3 +142,31 @@ function bia_learn_flush_stats_cache() {
 add_action( 'save_post_courses', 'bia_learn_flush_stats_cache' );
 add_action( 'tutor_after_enroll', 'bia_learn_flush_stats_cache' );
 add_action( 'tutor_course_complete_after', 'bia_learn_flush_stats_cache' );
+
+/**
+ * Hide the "free" price label that Tutor LMS prints on free courses
+ * (Thai: "เข้าถึงได้ฟรี", English source "Free" / "Free Access"). Scoped to the
+ * 'tutor' text domain so other "Free" wording elsewhere is untouched.
+ *
+ * Adjust or remove this filter to restore / re-label the free indicator.
+ *
+ * @param string $translation Translated text.
+ * @param string $text        Original (untranslated) text.
+ * @param string $domain      Text domain.
+ * @return string
+ */
+function bia_learn_hide_tutor_free_label( $translation, $text, $domain ) {
+	if ( 'tutor' !== $domain ) {
+		return $translation;
+	}
+
+	// Match the rendered label only (avoids blanking other "Free" strings such
+	// as the price-filter option).
+	$free_labels = array( 'เข้าถึงได้ฟรี', 'Free Access', 'Free access' );
+	if ( in_array( $translation, $free_labels, true ) ) {
+		return '';
+	}
+
+	return $translation;
+}
+add_filter( 'gettext', 'bia_learn_hide_tutor_free_label', 20, 3 );
