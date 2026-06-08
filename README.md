@@ -75,7 +75,7 @@ GitHub Action [.github/workflows/release.yml](.github/workflows/release.yml) จ
 ```
 inc/            setup, enqueue, template-tags, widgets, customizer, tutor
 template-parts/ header/ footer/ home/ cards/  (ชิ้นส่วนใช้ซ้ำ)
-page-templates/ about, contact, faq, instructors, statistics
+page-templates/ about, contact, faq, instructors, statistics, tutorial, auth
 tutor/          override templates ของ Tutor LMS (ดู tutor/README.md)
 src/            ซอร์ส CSS/JS (ก่อน build)
 assets/         CSS/JS ที่ build แล้ว
@@ -83,12 +83,43 @@ assets/         CSS/JS ที่ build แล้ว
 
 ## การปรับแต่งเนื้อหา (Customizing)
 
-- **Appearance → Customize → ตั้งค่า BIA Learn**: Hero, ข้อมูลติดต่อ, โซเชียล, แถบ CTA, ส่วนท้าย
+- **Appearance → Customize → ตั้งค่า BIA Learn**: Hero, เนื้อหาหน้าแรก, หน้าเข้าสู่ระบบ (Auth), ข้อมูลติดต่อ, โซเชียล, แถบ CTA, ส่วนท้าย
 - **เมนู**: `Primary`, `Footer`, `Footer legal`, `Social`
 - **โลโก้**: Customize → Site Identity → Logo
 - **หน้าแรก**: ตั้ง Settings → Reading → "หน้าแรกแบบคงที่" (front-page.php ทำงานอัตโนมัติ); หน้า Posts สำหรับข่าวจะใช้ home.php
 - **คอร์ส/ผู้สอน/เกียรติบัตร**: จัดการผ่าน Tutor LMS — ธีมมี archive override, course card override, dashboard styling และ helper data พร้อมใช้งาน (ดู `tutor/README.md`)
 - **FAQ / Partners**: ปรับผ่าน filter `bia_learn_faq_items`, `bia_learn_partner_logos`
+
+## หน้าเข้าสู่ระบบ (Auth page)
+
+ธีมมีเทมเพลต **“เข้าสู่ระบบ / สมัครเรียน (Auth)”** ([page-templates/template-auth.php](page-templates/template-auth.php)) ที่ให้ฟอร์มเข้าสู่ระบบ/สมัครเรียนในตัว (รองรับ WordPress login + Tutor LMS registration) — ใช้งานได้ทันทีโดยไม่ต้องตั้งค่าอะไร
+
+ถ้าใช้ **ปลั๊กอิน auth ที่ให้มาเป็น shortcode** (เช่น `[plugin_login]`) สามารถเสียบเข้ามาแทนฟอร์มในตัวได้ โดย**ไม่ต้องแก้ไฟล์ธีม**:
+
+1. **Appearance → Customize → ตั้งค่า BIA Learn → หน้าเข้าสู่ระบบ (Auth)** → ใส่ shortcode ในช่อง **Auth shortcode**
+2. สร้าง Page (เช่นชื่อ `Login`, slug `auth`) แล้วเลือก **Template: เข้าสู่ระบบ / สมัครเรียน (Auth)**
+
+shortcode ถูกเก็บใน **ฐานข้อมูล** (theme mod) ไม่ใช่ในไฟล์ธีม จึง **ไม่หายเมื่ออัปเดตธีมจาก GitHub Release** และยังได้ layout/CSS/JS/เมนูจากธีมเวอร์ชันล่าสุดตามปกติ เว้นช่องนี้ว่างไว้เพื่อกลับไปใช้ฟอร์มในตัวของธีม
+
+> ผู้ดูแลที่อยากวาง shortcode เองในเนื้อหาเพจก็ยังทำได้ตามปกติ — ธีมไม่ยุ่งเกี่ยว
+
+### ⚠️ อย่าแก้ parent theme โดยตรง
+
+ทุกครั้งที่ธีมอัปเดตจาก GitHub Release ไฟล์ในธีมจะถูกเขียนทับ การแก้ไฟล์ parent theme โดยตรงจะ**หายทั้งหมด** ให้ปรับแต่งผ่านช่องทางที่ปลอดภัยแทน:
+
+- **ผู้ใช้ทั่วไป** → ตั้งค่าใน Customizer (ค่าอยู่ในฐานข้อมูล)
+- **Developer** → ใช้ filter/hook ใน **child theme** หรือปลั๊กอินเสริม:
+
+```php
+// เปลี่ยน/บังคับ shortcode ที่จะแสดงในหน้า Auth
+add_filter( 'bia_learn_auth_shortcode', function ( $shortcode ) {
+    return '[my_custom_auth_form]';
+} );
+
+// แทรกเนื้อหาก่อน/หลังฟอร์ม auth
+add_action( 'bia_learn_before_auth_shortcode', function () { /* ... */ } );
+add_action( 'bia_learn_after_auth_shortcode',  function () { /* ... */ } );
+```
 
 ## i18n
 

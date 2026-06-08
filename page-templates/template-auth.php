@@ -32,6 +32,13 @@ $bia_default_tab = ( isset( $_GET['tab'] ) && 'login' === $_GET['tab'] ) || ! $b
 // sent here from a gated lesson) wins, otherwise the dashboard.
 $bia_redirect = isset( $_GET['redirect_to'] ) ? esc_url_raw( wp_unslash( $_GET['redirect_to'] ) ) : $bia_dashboard; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 
+// Optional auth shortcode from a login/registration plugin, set at Appearance →
+// Customize → ตั้งค่า BIA Learn → หน้าเข้าสู่ระบบ. When present it replaces the
+// theme's built-in login/register forms — so a plugin can be dropped in without
+// editing the parent theme, and the value (a theme mod in the database) survives
+// theme updates. Developers can override it via the bia_learn_auth_shortcode filter.
+$bia_auth_shortcode = trim( (string) apply_filters( 'bia_learn_auth_shortcode', get_theme_mod( 'bia_learn_auth_shortcode', '' ) ) );
+
 get_header();
 ?>
 
@@ -68,7 +75,21 @@ get_header();
 		<!-- Form panel -->
 		<div class="flex flex-col justify-center rounded-3xl border border-paper-200 bg-white p-6 shadow-card sm:p-10 lg:rounded-l-none">
 
-			<?php if ( is_user_logged_in() ) : ?>
+			<?php if ( '' !== $bia_auth_shortcode ) : ?>
+
+				<div class="mx-auto w-full max-w-md">
+					<?php
+					/** Fires inside the auth form panel, before the Customizer auth shortcode. */
+					do_action( 'bia_learn_before_auth_shortcode' );
+
+					echo do_shortcode( $bia_auth_shortcode ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- shortcode output from a trusted plugin.
+
+					/** Fires inside the auth form panel, after the Customizer auth shortcode. */
+					do_action( 'bia_learn_after_auth_shortcode' );
+					?>
+				</div>
+
+			<?php elseif ( is_user_logged_in() ) : ?>
 
 				<?php $bia_user = wp_get_current_user(); ?>
 				<div class="mx-auto w-full max-w-md text-center">
