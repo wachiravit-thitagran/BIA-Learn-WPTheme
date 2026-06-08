@@ -43,7 +43,7 @@ $image_id = bia_learn_option( 'bia_hero_image' );
 					<?php echo esc_html( $cta_text ); ?>
 					<?php echo bia_learn_icon( 'arrow', 'h-5 w-5' ); // phpcs:ignore ?>
 				</a>
-				<a href="<?php echo esc_url( home_url( '/about/' ) ); ?>" class="btn-lg inline-flex items-center gap-2 text-sm font-semibold text-white hover:text-gold-light">
+				<a href="<?php echo esc_url( bia_learn_page_url( 'about' ) ); ?>" class="btn-lg inline-flex items-center gap-2 text-sm font-semibold text-white hover:text-gold-light">
 					<span class="grid h-11 w-11 place-items-center rounded-full border border-white/20"><?php echo bia_learn_icon( 'play', 'h-5 w-5' ); // phpcs:ignore ?></span>
 					<?php esc_html_e( 'รู้จักเรา', 'bia-learn' ); ?>
 				</a>
