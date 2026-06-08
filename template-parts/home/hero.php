@@ -11,7 +11,8 @@ $title    = bia_learn_option( 'bia_hero_title', __( 'เรียนรู้ธ
 $subtitle = bia_learn_option( 'bia_hero_subtitle', __( 'คอร์สเรียนออนไลน์ บทเรียน และคลังความรู้ เพื่อการเรียนรู้ตลอดชีวิตอย่างเป็นอิสระ', 'bia-learn' ) );
 $cta_text = bia_learn_option( 'bia_hero_cta_text', __( 'เริ่มเรียนรู้', 'bia-learn' ) );
 $cta_url  = bia_learn_option( 'bia_hero_cta_url' ) ?: bia_learn_courses_url();
-$image_id = bia_learn_option( 'bia_hero_image' );
+
+$stats = bia_learn_get_stats();
 ?>
 <section class="relative overflow-hidden bg-plum-wash">
 	<!-- atmosphere (kept subtle — flat & clean, like bia.psu.ac.th) -->
@@ -50,26 +51,19 @@ $image_id = bia_learn_option( 'bia_hero_image' );
 			</div>
 		</div>
 
-		<!-- visual -->
-		<div class="relative hidden lg:block">
-			<div class="relative mx-auto aspect-[4/5] w-full max-w-md overflow-hidden rounded-[2rem] border border-white/10 shadow-2xl">
-				<?php if ( $image_id ) : ?>
-					<?php echo wp_get_attachment_image( $image_id, 'bia-hero', false, array( 'class' => 'h-full w-full object-cover' ) ); ?>
-				<?php else : ?>
-					<div class="flex h-full w-full items-center justify-center bg-crimson-wash">
-						<?php echo bia_learn_icon( 'lotus', 'h-32 w-32 text-paper-50/40' ); // phpcs:ignore ?>
-					</div>
-				<?php endif; ?>
-				<div class="absolute inset-0 bg-gradient-to-t from-plum-900/60 to-transparent"></div>
+		<!-- stat cards -->
+		<div class="hidden flex-col gap-4 lg:flex">
+			<div class="rounded-2xl border border-white/15 bg-white/10 px-8 py-6 backdrop-blur-sm">
+				<p class="font-serif text-4xl font-bold text-white"><?php echo number_format_i18n( $stats['courses'] ); ?>+</p>
+				<p class="mt-1 text-base text-paper-300"><?php esc_html_e( 'คอร์สเรียน', 'bia-learn' ); ?></p>
 			</div>
-
-			<!-- floating accent card -->
-			<div class="absolute -bottom-6 -left-6 flex items-center gap-3 rounded-2xl border border-paper-200 bg-white/95 p-4 shadow-card backdrop-blur">
-				<span class="grid h-12 w-12 place-items-center rounded-xl bg-gold/15 text-gold-dark"><?php echo bia_learn_icon( 'cert', 'h-6 w-6' ); // phpcs:ignore ?></span>
-				<div>
-					<p class="font-serif text-sm font-bold text-ink"><?php esc_html_e( 'เรียนจบรับเกียรติบัตร', 'bia-learn' ); ?></p>
-					<p class="text-xs text-ink-light"><?php esc_html_e( 'ออนไลน์ ทุกที่ ทุกเวลา', 'bia-learn' ); ?></p>
-				</div>
+			<div class="rounded-2xl border border-white/15 bg-white/10 px-8 py-6 backdrop-blur-sm">
+				<p class="font-serif text-4xl font-bold text-white"><?php echo number_format_i18n( $stats['students'] ); ?>+</p>
+				<p class="mt-1 text-base text-paper-300"><?php esc_html_e( 'ผู้เรียน', 'bia-learn' ); ?></p>
+			</div>
+			<div class="rounded-2xl border border-white/15 bg-white/10 px-8 py-6 backdrop-blur-sm">
+				<p class="font-serif text-4xl font-bold text-gold-light"><?php esc_html_e( 'FREE', 'bia-learn' ); ?></p>
+				<p class="mt-1 text-base text-paper-300"><?php esc_html_e( 'เข้าถึงได้ฟรี', 'bia-learn' ); ?></p>
 			</div>
 		</div>
 	</div>
