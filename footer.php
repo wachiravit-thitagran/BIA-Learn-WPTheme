@@ -9,7 +9,7 @@ defined( 'ABSPATH' ) || exit;
 ?>
 	</div><!-- #content -->
 
-	<footer id="colophon" class="site-footer relative overflow-hidden bg-plum-wash text-paper-200">
+	<footer id="colophon" class="site-footer relative mt-16 overflow-hidden bg-plum-wash text-paper-200 sm:mt-20">
 		<div class="absolute inset-0 bg-grain opacity-[0.08]" aria-hidden="true"></div>
 		<div class="relative">
 			<?php get_template_part( 'template-parts/footer/columns' ); ?>
