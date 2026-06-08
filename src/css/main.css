@@ -767,3 +767,15 @@
 [class*="qna"] [class*="badge"] {
   @apply bg-success-light text-success-dark !important;
 }
+
+/* --- Lesson nav clearance ---------------------------------------------
+   The single-lesson (spotlight) Prev/Next buttons sit at the very bottom of
+   the content. A site-wide fixed bottom bar — e.g. the PSU cookie-consent
+   banner (.psu-consent-banner-bottom, z-index 2147483647) — can sit on top of
+   them and swallow the click. Give the lesson content a bottom buffer so the
+   nav can scroll clear of such bars and stay clickable. */
+body.single-lesson .tutor-course-single-content-wrapper,
+body.single-lesson .tutor-quiz-single-entry-wrap,
+body.single-lesson .tutor-course-topic-single-footer {
+  padding-bottom: 6rem !important;
+}
