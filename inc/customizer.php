@@ -114,6 +114,37 @@ function bia_learn_customize_register( $wp_customize ) {
 	$add_toggle( 'bia_show_news', __( 'แสดงข่าวสารล่าสุด', 'bia-learn' ), 'bia_home_sections', true );
 	$add_toggle( 'bia_show_partners', __( 'แสดงพันธมิตร/คำคม', 'bia-learn' ), 'bia_home_sections', true );
 
+	// --- Auth page -------------------------------------------------------
+	// A plugin-provided login/registration shortcode, stored in the database as
+	// a theme mod so it survives theme updates (e.g. from GitHub Releases) and
+	// never needs the parent theme's files to be edited. Rendered by the
+	// "เข้าสู่ระบบ / สมัครเรียน (Auth)" page template.
+	$wp_customize->add_section(
+		'bia_auth',
+		array(
+			'title'       => __( 'หน้าเข้าสู่ระบบ (Auth)', 'bia-learn' ),
+			'description' => __( 'ใส่ shortcode จากปลั๊กอินเพื่อใช้เป็นฟอร์มเข้าสู่ระบบ/สมัครเรียน ในหน้าที่เลือกเทมเพลต “เข้าสู่ระบบ / สมัครเรียน (Auth)”. เว้นว่างไว้เพื่อใช้ฟอร์มในตัวของธีม', 'bia-learn' ),
+			'panel'       => 'bia_learn_panel',
+		)
+	);
+	$wp_customize->add_setting(
+		'bia_learn_auth_shortcode',
+		array(
+			'default'           => '',
+			'sanitize_callback' => 'sanitize_text_field',
+			'transport'         => 'refresh',
+		)
+	);
+	$wp_customize->add_control(
+		'bia_learn_auth_shortcode',
+		array(
+			'label'       => __( 'Auth shortcode', 'bia-learn' ),
+			'description' => __( 'ใส่ shortcode จากปลั๊กอิน เช่น [plugin_login]', 'bia-learn' ),
+			'section'     => 'bia_auth',
+			'type'        => 'text',
+		)
+	);
+
 	// --- Contact ---------------------------------------------------------
 	$wp_customize->add_section(
 		'bia_contact',
