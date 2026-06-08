@@ -36,17 +36,13 @@ $stats = bia_learn_get_stats();
 				<input id="bia-hero-search" type="search" name="s" required
 					placeholder="<?php esc_attr_e( 'ค้นหาคอร์ส หัวข้อ หรือผู้สอน…', 'bia-learn' ); ?>"
 					class="min-w-0 flex-1 border-0 bg-transparent text-ink placeholder:text-ink-light focus:ring-0" />
-				<button type="submit" class="btn-primary shrink-0"><?php esc_html_e( 'ค้นหา', 'bia-learn' ); ?></button>
+				<button type="submit" class="btn-primary shrink-0 rounded-full"><?php esc_html_e( 'ค้นหา', 'bia-learn' ); ?></button>
 			</form>
 
 			<div class="mt-6 flex flex-wrap items-center gap-4">
 				<a href="<?php echo esc_url( $cta_url ); ?>" class="btn-gold btn-lg">
 					<?php echo esc_html( $cta_text ); ?>
 					<?php echo bia_learn_icon( 'arrow', 'h-5 w-5' ); // phpcs:ignore ?>
-				</a>
-				<a href="<?php echo esc_url( bia_learn_page_url( 'about' ) ); ?>" class="btn-lg inline-flex items-center gap-2 text-sm font-semibold text-white hover:text-gold-light">
-					<span class="grid h-11 w-11 place-items-center rounded-full border border-white/20"><?php echo bia_learn_icon( 'play', 'h-5 w-5' ); // phpcs:ignore ?></span>
-					<?php esc_html_e( 'รู้จักเรา', 'bia-learn' ); ?>
 				</a>
 			</div>
 		</div>
