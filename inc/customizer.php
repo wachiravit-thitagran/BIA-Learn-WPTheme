@@ -78,7 +78,7 @@ function bia_learn_customize_register( $wp_customize ) {
 		)
 	);
 	$add_text( 'bia_hero_eyebrow', __( 'ข้อความนำ', 'bia-learn' ), 'bia_hero', 'text', __( 'หอจดหมายเหตุพุทธทาส อินทปัญโญ', 'bia-learn' ) );
-	$add_text( 'bia_hero_title', __( 'พาดหัว', 'bia-learn' ), 'bia_hero', 'textarea', __( 'เรียนรู้ธรรมะ ภาวนา และปัญญา จากสวนโมกข์สู่โลกดิจิทัล', 'bia-learn' ) );
+	$add_text( 'bia_hero_title', __( 'พาดหัว', 'bia-learn' ), 'bia_hero', 'textarea', __( 'เรียนรู้ธรรมะ ภาวนา และปัญญา ในยุคดิจิทัล', 'bia-learn' ) );
 	$add_text( 'bia_hero_subtitle', __( 'คำอธิบายใต้พาดหัว', 'bia-learn' ), 'bia_hero', 'textarea', __( 'คอร์สเรียนออนไลน์ บทเรียน และคลังความรู้ เพื่อการเรียนรู้ตลอดชีวิตอย่างเป็นอิสระ', 'bia-learn' ) );
 	$add_text( 'bia_hero_cta_text', __( 'ปุ่มหลัก — ข้อความ', 'bia-learn' ), 'bia_hero', 'text', __( 'เริ่มเรียนรู้', 'bia-learn' ) );
 	$add_text( 'bia_hero_cta_url', __( 'ปุ่มหลัก — ลิงก์', 'bia-learn' ), 'bia_hero', 'url', '' );
