@@ -7,7 +7,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-$title    = bia_learn_option( 'bia_hero_title', __( 'เรียนรู้ธรรมะ ภาวนา และปัญญา จากสวนโมกข์สู่โลกดิจิทัล', 'bia-learn' ) );
+$title    = bia_learn_option( 'bia_hero_title', __( 'เรียนรู้ธรรมะ ภาวนา และปัญญา ในยุคดิจิทัล', 'bia-learn' ) );
 $subtitle = bia_learn_option( 'bia_hero_subtitle', __( 'คอร์สเรียนออนไลน์ บทเรียน และคลังความรู้ เพื่อการเรียนรู้ตลอดชีวิตอย่างเป็นอิสระ', 'bia-learn' ) );
 $cta_text = bia_learn_option( 'bia_hero_cta_text', __( 'เริ่มเรียนรู้', 'bia-learn' ) );
 $cta_url  = bia_learn_option( 'bia_hero_cta_url' ) ?: bia_learn_courses_url();
