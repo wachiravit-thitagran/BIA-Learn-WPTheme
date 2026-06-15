@@ -64,7 +64,9 @@ while ( have_posts() ) :
 			<div class="lg:col-span-3">
 				<div class="card p-8">
 					<?php
-					if ( trim( get_the_content() ) ) {
+					$bia_content = get_the_content();
+					$bia_is_elementor = class_exists( '\Elementor\Plugin' ) && \Elementor\Plugin::$instance->editor->is_edit_mode();
+					if ( trim( $bia_content ) || $bia_is_elementor ) {
 						// Allow Contact Form 7 / WPForms shortcode placed in the page body.
 						echo '<div class="bia-contact-form [&_input]:field [&_textarea]:field [&_label]:field-label">';
 						the_content();

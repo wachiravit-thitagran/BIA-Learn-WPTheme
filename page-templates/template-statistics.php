@@ -50,8 +50,18 @@ $cards = array(
 		</div>
 
 		<!-- Page content (editable notes / charts shortcode) -->
-		<?php if ( trim( $page_content ) ) : ?>
-			<div class="prose-bia mx-auto mt-16"><?php echo apply_filters( 'the_content', $page_content ); // phpcs:ignore WordPress.Security.EscapeOutput ?></div>
+		<?php
+		$bia_is_elementor = class_exists( '\Elementor\Plugin' ) && \Elementor\Plugin::$instance->editor->is_edit_mode();
+		if ( trim( $page_content ) || $bia_is_elementor ) : ?>
+			<div class="prose-bia mx-auto mt-16">
+				<?php
+				rewind_posts();
+				while ( have_posts() ) :
+					the_post();
+					the_content();
+				endwhile;
+				?>
+			</div>
 		<?php endif; ?>
 
 		<!-- Top courses by enrolment -->

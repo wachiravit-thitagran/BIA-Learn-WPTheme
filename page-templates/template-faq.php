@@ -28,7 +28,11 @@ while ( have_posts() ) :
 
 	<section class="section-tight">
 		<div class="container-bia max-w-3xl">
-			<?php if ( trim( get_the_content() ) ) : ?>
+			<?php
+			$bia_content = get_the_content();
+			$bia_is_elementor = class_exists( '\Elementor\Plugin' ) && \Elementor\Plugin::$instance->editor->is_edit_mode();
+			if ( trim( $bia_content ) || $bia_is_elementor ) :
+				?>
 				<div class="prose-bia mb-10"><?php the_content(); ?></div>
 			<?php endif; ?>
 
