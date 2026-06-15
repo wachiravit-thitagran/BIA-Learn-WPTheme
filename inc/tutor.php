@@ -107,6 +107,8 @@ function bia_learn_register_supporting_pages() {
 		'statistics'  => array( __( 'สถิติการเรียนรู้', 'bia-learn' ), 'page-templates/template-statistics.php' ),
 		'auth'        => array( __( 'เข้าสู่ระบบ', 'bia-learn' ), 'page-templates/template-auth.php' ),
 		'tutorial'    => array( __( 'วิธีใช้งาน', 'bia-learn' ), 'page-templates/template-tutorial.php' ),
+		'home'        => array( __( 'หน้าแรก', 'bia-learn' ), '' ),
+		'news'        => array( __( 'ข่าวสารและบทความ', 'bia-learn' ), '' ),
 	);
 
 	foreach ( $pages as $slug => $data ) {
@@ -122,7 +124,15 @@ function bia_learn_register_supporting_pages() {
 				)
 			);
 			if ( $page_id && ! is_wp_error( $page_id ) ) {
-				update_post_meta( $page_id, '_wp_page_template', $data[1] );
+				if ( ! empty( $data[1] ) ) {
+					update_post_meta( $page_id, '_wp_page_template', $data[1] );
+				}
+				if ( 'home' === $slug ) {
+					update_option( 'show_on_front', 'page' );
+					update_option( 'page_on_front', $page_id );
+				} elseif ( 'news' === $slug ) {
+					update_option( 'page_for_posts', $page_id );
+				}
 			}
 		}
 	}
