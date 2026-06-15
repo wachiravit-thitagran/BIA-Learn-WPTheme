@@ -99,8 +99,6 @@ add_filter( 'tutor_button_class', 'bia_learn_tutor_btn_classes' );
  * Runs once; safe to re-run (checks by slug).
  */
 function bia_learn_register_supporting_pages() {
-	$created = (array) get_option( 'bia_learn_created_pages', array() );
-
 	$pages = array(
 		'about'       => array( __( 'เกี่ยวกับเรา', 'bia-learn' ), 'page-templates/template-about.php' ),
 		'contact'     => array( __( 'ติดต่อเรา', 'bia-learn' ), 'page-templates/template-contact.php' ),
@@ -111,13 +109,8 @@ function bia_learn_register_supporting_pages() {
 		'tutorial'    => array( __( 'วิธีใช้งาน', 'bia-learn' ), 'page-templates/template-tutorial.php' ),
 	);
 
-	$changed = false;
 	foreach ( $pages as $slug => $data ) {
-		// Create each supporting page at most once ever (tracked in the option)
-		// so deleting one in the admin won't have it reappear.
-		if ( in_array( $slug, $created, true ) ) {
-			continue;
-		}
+		// Ensure the supporting page exists by checking its slug.
 		if ( ! get_page_by_path( $slug ) ) {
 			$page_id = wp_insert_post(
 				array(
@@ -132,12 +125,6 @@ function bia_learn_register_supporting_pages() {
 				update_post_meta( $page_id, '_wp_page_template', $data[1] );
 			}
 		}
-		$created[] = $slug;
-		$changed   = true;
-	}
-
-	if ( $changed ) {
-		update_option( 'bia_learn_created_pages', $created );
 	}
 }
 add_action( 'after_switch_theme', 'bia_learn_register_supporting_pages' );
