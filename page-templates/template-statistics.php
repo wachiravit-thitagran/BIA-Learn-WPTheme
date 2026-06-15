@@ -51,7 +51,7 @@ $cards = array(
 
 		<!-- Page content (editable notes / charts shortcode) -->
 		<?php
-		$bia_is_elementor = class_exists( '\Elementor\Plugin' ) && \Elementor\Plugin::$instance->editor->is_edit_mode();
+		$bia_is_elementor = isset( $_GET['elementor-preview'] ) || ( class_exists( '\Elementor\Plugin' ) && \Elementor\Plugin::$instance->preview->is_preview_mode() );
 		if ( trim( $page_content ) || $bia_is_elementor ) : ?>
 			<div class="prose-bia mx-auto mt-16">
 				<?php

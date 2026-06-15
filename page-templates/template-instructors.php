@@ -20,6 +20,15 @@ while ( have_posts() ) :
 			'subtitle' => __( 'พบกับผู้สอนและวิทยากรผู้เชี่ยวชาญที่พร้อมถ่ายทอดความรู้และประสบการณ์', 'bia-learn' ),
 		)
 	);
+	$bia_content = get_the_content();
+	$bia_is_elementor = isset( $_GET['elementor-preview'] ) || ( class_exists( '\Elementor\Plugin' ) && \Elementor\Plugin::$instance->preview->is_preview_mode() );
+	if ( trim( $bia_content ) || $bia_is_elementor ) :
+		?>
+		<div class="container-bia mt-8">
+			<div class="prose-bia mx-auto"><?php the_content(); ?></div>
+		</div>
+	<?php endif;
+
 endwhile;
 ?>
 
