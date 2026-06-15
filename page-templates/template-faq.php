@@ -30,7 +30,7 @@ while ( have_posts() ) :
 		<div class="container-bia max-w-3xl">
 			<?php
 			$bia_content = get_the_content();
-			$bia_is_elementor = class_exists( '\Elementor\Plugin' ) && \Elementor\Plugin::$instance->editor->is_edit_mode();
+			$bia_is_elementor = isset( $_GET['elementor-preview'] ) || ( class_exists( '\Elementor\Plugin' ) && \Elementor\Plugin::$instance->preview->is_preview_mode() );
 			if ( trim( $bia_content ) || $bia_is_elementor ) :
 				?>
 				<div class="prose-bia mb-10"><?php the_content(); ?></div>

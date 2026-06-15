@@ -163,7 +163,7 @@ $bia_videos = apply_filters( 'bia_learn_tutorial_videos', array() );
 	while ( have_posts() ) :
 		the_post();
 		$bia_content = get_the_content();
-		$bia_is_elementor = class_exists( '\Elementor\Plugin' ) && \Elementor\Plugin::$instance->editor->is_edit_mode();
+		$bia_is_elementor = isset( $_GET['elementor-preview'] ) || ( class_exists( '\Elementor\Plugin' ) && \Elementor\Plugin::$instance->preview->is_preview_mode() );
 		if ( trim( $bia_content ) || $bia_is_elementor ) :
 			?>
 			<section class="section-tight">

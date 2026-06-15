@@ -40,9 +40,22 @@ $bia_redirect = isset( $_GET['redirect_to'] ) ? esc_url_raw( wp_unslash( $_GET['
 $bia_auth_shortcode = trim( (string) apply_filters( 'bia_learn_auth_shortcode', get_theme_mod( 'bia_learn_auth_shortcode', '' ) ) );
 
 get_header();
-?>
 
-<main id="main" class="relative overflow-hidden">
+while ( have_posts() ) :
+	the_post();
+	?>
+
+	<main id="main" class="relative overflow-hidden">
+
+		<?php
+		$bia_content = get_the_content();
+		$bia_is_elementor = isset( $_GET['elementor-preview'] ) || ( class_exists( '\Elementor\Plugin' ) && \Elementor\Plugin::$instance->preview->is_preview_mode() );
+		if ( trim( $bia_content ) || $bia_is_elementor ) :
+			?>
+			<div class="container-bia mt-8">
+				<div class="prose-bia mx-auto"><?php the_content(); ?></div>
+			</div>
+		<?php endif; ?>
 	<section class="container-bia grid min-h-[70vh] items-stretch gap-0 py-12 lg:grid-cols-2 lg:py-16">
 
 		<!-- Brand panel -->
@@ -201,4 +214,6 @@ get_header();
 </main>
 
 <?php
+endwhile;
+
 get_footer();
