@@ -26,7 +26,9 @@ while ( have_posts() ) :
 		<div class="container-bia grid items-center gap-12 lg:grid-cols-2">
 			<div class="prose-bia">
 				<?php
-				if ( trim( get_the_content() ) ) {
+				$bia_content = get_the_content();
+				$bia_is_elementor = class_exists( '\Elementor\Plugin' ) && \Elementor\Plugin::$instance->editor->is_edit_mode();
+				if ( trim( $bia_content ) || $bia_is_elementor ) {
 					the_content();
 				} else {
 					echo '<h2>' . esc_html__( 'ปณิธานของเรา', 'bia-learn' ) . '</h2>';

@@ -43,7 +43,9 @@ get_header();
 	if ( is_page() && have_posts() ) :
 		while ( have_posts() ) :
 			the_post();
-			if ( trim( get_the_content() ) ) :
+			$bia_content = get_the_content();
+			$bia_is_elementor = class_exists( '\Elementor\Plugin' ) && \Elementor\Plugin::$instance->editor->is_edit_mode();
+			if ( trim( $bia_content ) || $bia_is_elementor ) :
 				?>
 				<section class="section-tight">
 					<div class="container-bia">
