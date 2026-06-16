@@ -36,28 +36,39 @@ if ( empty( $certificates ) ) {
 				$date_formatted = date_i18n( get_option( 'date_format' ), strtotime( $cert['issued_at'] ) );
 			}
 		?>
-		<article class="card card-hover flex flex-col justify-between p-6">
-			<div>
-				<div class="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-full bg-success-light text-success">
-					<?php echo bia_learn_icon( 'cert', 'h-6 w-6' ); // phpcs:ignore ?>
-				</div>
-				<h3 class="font-sans text-lg font-bold leading-snug text-ink">
-					<?php echo esc_html( $cert['title'] ); ?>
+		<article class="card card-hover flex flex-col overflow-hidden">
+			<?php 
+			$is_image = preg_match( '/\.(jpg|jpeg|png|webp|gif)$/i', $cert['certificate_url'] );
+			?>
+			<a href="<?php echo esc_url( $cert['certificate_url'] ); ?>" target="_blank" class="relative block aspect-[16/11] overflow-hidden bg-paper-100 border-b border-paper-200 group-hover:bg-paper-200 transition">
+				<?php if ( $is_image ) : ?>
+					<img src="<?php echo esc_url( $cert['certificate_url'] ); ?>" alt="<?php echo esc_attr( $cert['title'] ); ?>" class="h-full w-full object-cover transition duration-500 ease-out-expo group-hover:scale-105" loading="lazy" />
+				<?php else : ?>
+					<span class="absolute inset-0 flex items-center justify-center text-paper-400 transition duration-500 group-hover:scale-110 group-hover:text-gold-light">
+						<?php echo bia_learn_icon( 'cert', 'h-16 w-16' ); // phpcs:ignore ?>
+					</span>
+				<?php endif; ?>
+			</a>
+			
+			<div class="flex flex-col flex-1 p-6">
+				<h3 class="font-sans text-lg font-bold leading-snug text-ink line-clamp-2">
+					<a href="<?php echo esc_url( $cert['certificate_url'] ); ?>" target="_blank" class="hover:text-crimson transition">
+						<?php echo esc_html( $cert['title'] ); ?>
+					</a>
 				</h3>
 				<div class="mt-3 flex items-center gap-2 text-sm text-ink-light">
 					<?php echo bia_learn_icon( 'calendar', 'h-4 w-4 text-crimson' ); // phpcs:ignore ?>
 					<span><?php echo esc_html( $date_formatted ); ?></span>
 				</div>
+				
+				<?php if ( ! empty( $cert['certificate_url'] ) ) : ?>
+					<div class="mt-auto pt-5">
+						<a href="<?php echo esc_url( $cert['certificate_url'] ); ?>" target="_blank" class="btn-outline w-full justify-center">
+							<?php esc_html_e( 'ดูใบประกาศนียบัตร', 'bia-learn' ); ?>
+						</a>
+					</div>
+				<?php endif; ?>
 			</div>
-			
-			<?php if ( ! empty( $cert['certificate_url'] ) ) : ?>
-				<div class="mt-6 pt-4 border-t border-paper-200">
-					<a href="<?php echo esc_url( $cert['certificate_url'] ); ?>" target="_blank" class="btn-primary w-full justify-center">
-						<?php esc_html_e( 'ดูใบประกาศนียบัตร', 'bia-learn' ); ?>
-						<?php echo bia_learn_icon( 'arrow', 'h-4 w-4' ); // phpcs:ignore ?>
-					</a>
-				</div>
-			<?php endif; ?>
 		</article>
 	<?php endforeach; ?>
 </div>
