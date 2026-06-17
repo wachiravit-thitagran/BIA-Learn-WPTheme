@@ -686,8 +686,6 @@
 .tutor-course-details-widget {
   @apply text-ink !important;
 }
-.tutor-dashboard .tutor-dashboard-content,
-.tutor-dashboard .tutor-dashboard-left-menu,
 .tutor-dashboard .tutor-profile-completion,
 .tutor-course-details-tab .tutor-tab-item,
 .tutor-review-summary,
@@ -695,7 +693,6 @@
   /* shadow-stat = the light 0 4px 6px elevation used on the bia /user/ cards */
   @apply rounded-2xl border border-paper-200 bg-white shadow-stat !important;
 }
-.tutor-dashboard .tutor-dashboard-content,
 .tutor-dashboard .tutor-dashboard-left-menu,
 .tutor-course-details-tab .tutor-tab-item {
   @apply p-4 sm:p-6 !important;
