@@ -433,6 +433,14 @@
   .bia-auth-login .login-password {
     @apply mb-4;
   }
+  
+  /* Strip Tutor LMS default card styling so the registration form blends in */
+  .bia-auth-register #tutor-registration-wrap,
+  .bia-auth-register .tutor-card,
+  .bia-auth-register .tutor-wrap {
+    @apply border-0 bg-transparent p-0 shadow-none !important;
+  }
+  
   .bia-auth-login .login-remember {
     @apply flex items-center mb-4 text-sm text-ink-light;
   }
