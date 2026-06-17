@@ -142,15 +142,17 @@ while ( have_posts() ) :
 
 						<div class="bia-auth-login mt-6">
 							<?php
-							$bia_pwd_disabled = false;
-							if ( class_exists( '\Authorizenter\Settings' ) ) {
-								$adv = \Authorizenter\Settings::get( 'advanced' );
-								$bia_pwd_disabled = ! empty( $adv['disable_password_auth'] );
-							}
-							$bia_pwd_disabled = (bool) apply_filters( 'authorizenter_disable_password_auth', $bia_pwd_disabled );
+							/**
+							 * Filter whether the standard password login form should be displayed.
+							 *
+							 * Plugins (like SSO providers) can hook into this to hide the native login form.
+							 *
+							 * @param bool $show True to show the password login form, false to hide it.
+							 */
+							$bia_show_password_login = (bool) apply_filters( 'bia_learn_show_password_login', true );
 							?>
 
-							<?php if ( ! $bia_pwd_disabled ) : ?>
+							<?php if ( $bia_show_password_login ) : ?>
 								<?php 
 								wp_login_form( array(
 									'redirect'       => $bia_redirect,
@@ -166,7 +168,7 @@ while ( have_posts() ) :
 							<?php endif; ?>
 							
 							<?php if ( shortcode_exists( 'authorizenter_button' ) ) : ?>
-								<?php if ( ! $bia_pwd_disabled ) : ?>
+								<?php if ( $bia_show_password_login ) : ?>
 									<div class="my-6 flex items-center gap-3">
 										<hr class="flex-1 border-paper-200">
 										<span class="text-sm text-ink-light"><?php esc_html_e( 'หรือ', 'bia-learn' ); ?></span>
