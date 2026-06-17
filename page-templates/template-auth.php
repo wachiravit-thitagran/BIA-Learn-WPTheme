@@ -141,25 +141,38 @@ while ( have_posts() ) :
 						<p class="mt-1 text-sm text-ink-light"><?php esc_html_e( 'เข้าสู่ระบบเพื่อเรียนต่อและจัดการคอร์สของคุณ', 'bia-learn' ); ?></p>
 
 						<div class="bia-auth-login mt-6">
-							<?php 
-							wp_login_form( array(
-								'redirect'       => $bia_redirect,
-								'label_username' => __( 'ชื่อผู้ใช้ หรืออีเมล', 'bia-learn' ),
-								'label_password' => __( 'รหัสผ่าน', 'bia-learn' ),
-								'label_remember' => __( 'จดจำฉัน', 'bia-learn' ),
-								'label_log_in'   => __( 'เข้าสู่ระบบ', 'bia-learn' ),
-							) ); 
+							<?php
+							$bia_pwd_disabled = false;
+							if ( class_exists( '\Authorizenter\Settings' ) ) {
+								$adv = \Authorizenter\Settings::get( 'advanced' );
+								$bia_pwd_disabled = ! empty( $adv['disable_password_auth'] );
+							}
+							$bia_pwd_disabled = (bool) apply_filters( 'authorizenter_disable_password_auth', $bia_pwd_disabled );
 							?>
-							<div class="mt-4 text-center sm:text-right">
-								<a href="<?php echo esc_url( wp_lostpassword_url() ); ?>" class="text-sm font-semibold text-crimson hover:underline"><?php esc_html_e( 'ลืมรหัสผ่าน?', 'bia-learn' ); ?></a>
-							</div>
+
+							<?php if ( ! $bia_pwd_disabled ) : ?>
+								<?php 
+								wp_login_form( array(
+									'redirect'       => $bia_redirect,
+									'label_username' => __( 'ชื่อผู้ใช้ หรืออีเมล', 'bia-learn' ),
+									'label_password' => __( 'รหัสผ่าน', 'bia-learn' ),
+									'label_remember' => __( 'จดจำฉัน', 'bia-learn' ),
+									'label_log_in'   => __( 'เข้าสู่ระบบ', 'bia-learn' ),
+								) ); 
+								?>
+								<div class="mt-4 text-center sm:text-right">
+									<a href="<?php echo esc_url( wp_lostpassword_url() ); ?>" class="text-sm font-semibold text-crimson hover:underline"><?php esc_html_e( 'ลืมรหัสผ่าน?', 'bia-learn' ); ?></a>
+								</div>
+							<?php endif; ?>
 							
 							<?php if ( shortcode_exists( 'authorizenter_button' ) ) : ?>
-								<div class="my-6 flex items-center gap-3">
-									<hr class="flex-1 border-paper-200">
-									<span class="text-sm text-ink-light"><?php esc_html_e( 'หรือ', 'bia-learn' ); ?></span>
-									<hr class="flex-1 border-paper-200">
-								</div>
+								<?php if ( ! $bia_pwd_disabled ) : ?>
+									<div class="my-6 flex items-center gap-3">
+										<hr class="flex-1 border-paper-200">
+										<span class="text-sm text-ink-light"><?php esc_html_e( 'หรือ', 'bia-learn' ); ?></span>
+										<hr class="flex-1 border-paper-200">
+									</div>
+								<?php endif; ?>
 								<div class="bia-auth-social">
 									<?php 
 									$bia_providers = array( 'google', 'facebook', 'line', 'oidc', 'oauth2' );
