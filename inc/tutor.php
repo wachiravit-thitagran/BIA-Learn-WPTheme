@@ -113,8 +113,8 @@ function bia_learn_register_supporting_pages() {
 	);
 
 	foreach ( $pages as $slug => $data ) {
-		// Ensure the supporting page exists by checking its slug.
-		if ( ! get_page_by_path( $slug ) ) {
+		$page = get_page_by_path( $slug );
+		if ( ! $page ) {
 			$page_id = wp_insert_post(
 				array(
 					'post_title'   => $data[0],
@@ -133,15 +133,19 @@ function bia_learn_register_supporting_pages() {
 					update_option( 'page_on_front', $page_id );
 				} elseif ( 'news' === $slug ) {
 					update_option( 'page_for_posts', $page_id );
-				} elseif ( 'dashboard' === $slug ) {
-					$tutor_option = get_option( 'tutor_option', array() );
-					if ( empty( $tutor_option['tutor_dashboard_page_id'] ) ) {
-						$tutor_option['tutor_dashboard_page_id'] = $page_id;
-						update_option( 'tutor_option', $tutor_option );
-						
-						// Flush permalinks because Tutor relies on rewrite endpoints attached to this page.
-						flush_rewrite_rules();
-					}
+				}
+				$page = get_post( $page_id );
+			}
+		}
+
+		// Ensure Tutor LMS is bound to the dashboard page even if it already existed.
+		if ( 'dashboard' === $slug && $page ) {
+			if ( function_exists( 'tutor_utils' ) ) {
+				$tutor_option = get_option( 'tutor_option', array() );
+				if ( empty( $tutor_option['tutor_dashboard_page_id'] ) || (int) $tutor_option['tutor_dashboard_page_id'] !== $page->ID ) {
+					$tutor_option['tutor_dashboard_page_id'] = $page->ID;
+					update_option( 'tutor_option', $tutor_option );
+					flush_rewrite_rules();
 				}
 			}
 		}
