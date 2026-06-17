@@ -415,18 +415,32 @@
 
   /* Auth page — style the Tutor LMS / WP registration form internals so they
      match the themed login form (template-auth.php). */
-  .bia-auth-register :is(input[type="text"], input[type="email"], input[type="password"], input[type="tel"], input:not([type])) {
+  .bia-auth-register :is(input[type="text"], input[type="email"], input[type="password"], input[type="tel"], input:not([type])),
+  .bia-auth-login :is(input[type="text"], input[type="password"]) {
     @apply field;
   }
-  .bia-auth-register label {
+  .bia-auth-register label,
+  .bia-auth-login label {
     @apply field-label;
   }
-  .bia-auth-register :is(button[type="submit"], input[type="submit"], .tutor-btn) {
+  .bia-auth-register :is(button[type="submit"], input[type="submit"], .tutor-btn),
+  .bia-auth-login :is(button[type="submit"], input[type="submit"]) {
     @apply btn-primary mt-2 w-full;
   }
   .bia-auth-register > form > p,
-  .bia-auth-register .tutor-form-group {
+  .bia-auth-register .tutor-form-group,
+  .bia-auth-login .login-username,
+  .bia-auth-login .login-password {
     @apply mb-4;
+  }
+  .bia-auth-login .login-remember {
+    @apply flex items-center mb-4 text-sm text-ink-light;
+  }
+  .bia-auth-login .login-remember label {
+    @apply font-normal flex items-center gap-2;
+  }
+  .bia-auth-login .login-remember input[type="checkbox"] {
+    @apply rounded border-paper-300 text-crimson focus:ring-crimson;
   }
 
   /* --- Decorative dharma rule (thin gold divider with center mark) ----- */
