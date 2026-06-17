@@ -436,9 +436,10 @@
   
   /* Strip Tutor LMS default card styling so the registration form blends in */
   .bia-auth-register #tutor-registration-wrap,
+  .bia-auth-register #tutor-registration-form,
   .bia-auth-register .tutor-card,
   .bia-auth-register .tutor-wrap {
-    @apply border-0 bg-transparent p-0 shadow-none !important;
+    @apply m-0 max-w-none border-0 bg-transparent p-0 shadow-none !important;
   }
   
   .bia-auth-login .login-remember {
