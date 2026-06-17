@@ -54,10 +54,13 @@ function bia_learn_tutor_utils_supports( $method ) {
  */
 function bia_learn_tutor_dashboard_url( $fallback = '' ) {
 	if ( bia_learn_tutor_utils_supports( 'tutor_dashboard_url' ) ) {
-		return (string) bia_learn_tutor_utils()->tutor_dashboard_url();
+		$url = (string) bia_learn_tutor_utils()->tutor_dashboard_url();
+		if ( ! empty( $url ) ) {
+			return $url;
+		}
 	}
 
-	return $fallback ? $fallback : wp_login_url();
+	return $fallback ? $fallback : home_url( '/' );
 }
 
 /**
