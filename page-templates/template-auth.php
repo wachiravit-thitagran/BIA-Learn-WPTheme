@@ -161,7 +161,12 @@ while ( have_posts() ) :
 									<hr class="flex-1 border-paper-200">
 								</div>
 								<div class="bia-auth-social">
-									<?php echo do_shortcode( '[authorizenter_button context="default" provider="google|facebook|line|oidc|oauth2"]' ); ?>
+									<?php 
+									$bia_providers = array( 'google', 'facebook', 'line', 'oidc', 'oauth2' );
+									foreach ( $bia_providers as $bia_provider ) {
+										echo do_shortcode( sprintf( '[authorizenter_button context="default" provider="%s"]', $bia_provider ) );
+									}
+									?>
 								</div>
 							<?php endif; ?>
 						</div>
@@ -212,7 +217,12 @@ while ( have_posts() ) :
 									<hr class="flex-1 border-paper-200">
 								</div>
 								<div class="bia-auth-social">
-									<?php echo do_shortcode( '[authorizenter_button context="default" provider="google|facebook|line|oidc|oauth2"]' ); ?>
+									<?php 
+									$bia_providers = array( 'google', 'facebook', 'line', 'oidc', 'oauth2' );
+									foreach ( $bia_providers as $bia_provider ) {
+										echo do_shortcode( sprintf( '[authorizenter_button context="default" provider="%s"]', $bia_provider ) );
+									}
+									?>
 								</div>
 							<?php endif; ?>
 
