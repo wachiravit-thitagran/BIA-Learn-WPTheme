@@ -65,7 +65,7 @@ while ( have_posts() ) :
 					<img src="<?php echo esc_url( BIA_LEARN_URI . '/assets/images/biaxpsu-logo.png' ); ?>" alt="<?php echo esc_attr( 'BIA × PSU — ' . get_bloginfo( 'name' ) ); ?>" width="273" height="142" class="h-10 w-auto" />
 				</span>
 				<h1 class="dashboard-hero__title mt-8 max-w-sm leading-snug">
-					<?php esc_html_e( 'เรียนรู้ธรรมะ ภาวนา และปัญญา จากสวนโมกข์สู่โลกดิจิทัล', 'bia-learn' ); ?>
+					<?php esc_html_e( 'เรียนรู้ พุทธธรรม ในยุค ดิจิทัล', 'bia-learn' ); ?>
 				</h1>
 			</div>
 			<ul class="mt-10 space-y-3 text-sm text-white/90">
