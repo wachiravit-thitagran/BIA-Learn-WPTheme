@@ -666,8 +666,6 @@
 .tutor-dashboard .tutor-dashboard-content,
 .tutor-dashboard .tutor-dashboard-left-menu,
 .tutor-dashboard .tutor-profile-completion,
-.tutor-course-details-widget,
-.tutor-course-topic-item,
 .tutor-course-details-tab .tutor-tab-item,
 .tutor-review-summary,
 .tutor-review-individual-item {
@@ -676,9 +674,16 @@
 }
 .tutor-dashboard .tutor-dashboard-content,
 .tutor-dashboard .tutor-dashboard-left-menu,
-.tutor-course-details-widget,
 .tutor-course-details-tab .tutor-tab-item {
   @apply p-4 sm:p-6 !important;
+}
+
+/* Make inner widgets look like simple sections instead of nested cards */
+.tutor-course-details-widget {
+  @apply mb-8 last:mb-0 !important;
+}
+.tutor-course-details-widget-title {
+  @apply font-sans text-xl font-bold text-ink mb-4 !important;
 }
 .tutor-course-details-page {
   @apply gap-8 !important;
