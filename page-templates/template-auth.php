@@ -153,6 +153,17 @@ while ( have_posts() ) :
 							<div class="mt-4 text-center sm:text-right">
 								<a href="<?php echo esc_url( wp_lostpassword_url() ); ?>" class="text-sm font-semibold text-crimson hover:underline"><?php esc_html_e( 'ลืมรหัสผ่าน?', 'bia-learn' ); ?></a>
 							</div>
+							
+							<?php if ( shortcode_exists( 'authorizenter_button' ) ) : ?>
+								<div class="my-6 flex items-center gap-3">
+									<hr class="flex-1 border-paper-200">
+									<span class="text-sm text-ink-light"><?php esc_html_e( 'หรือ', 'bia-learn' ); ?></span>
+									<hr class="flex-1 border-paper-200">
+								</div>
+								<div class="bia-auth-social">
+									<?php echo do_shortcode( '[authorizenter_button context="default" provider="google|facebook|line|oidc|oauth2"]' ); ?>
+								</div>
+							<?php endif; ?>
 						</div>
 
 						<?php if ( $bia_can_register ) : ?>
@@ -193,6 +204,17 @@ while ( have_posts() ) :
 								}
 								?>
 							</div>
+							
+							<?php if ( shortcode_exists( 'authorizenter_button' ) ) : ?>
+								<div class="my-6 flex items-center gap-3">
+									<hr class="flex-1 border-paper-200">
+									<span class="text-sm text-ink-light"><?php esc_html_e( 'หรือ', 'bia-learn' ); ?></span>
+									<hr class="flex-1 border-paper-200">
+								</div>
+								<div class="bia-auth-social">
+									<?php echo do_shortcode( '[authorizenter_button context="default" provider="google|facebook|line|oidc|oauth2"]' ); ?>
+								</div>
+							<?php endif; ?>
 
 							<p class="mt-6 text-center text-sm text-ink-light">
 								<?php esc_html_e( 'มีบัญชีอยู่แล้ว?', 'bia-learn' ); ?>
