@@ -106,7 +106,7 @@ function bia_learn_register_supporting_pages() {
 		'instructors' => array( __( 'ผู้สอนและวิทยากร', 'bia-learn' ), 'page-templates/template-instructors.php' ),
 		'statistics'  => array( __( 'สถิติการเรียนรู้', 'bia-learn' ), 'page-templates/template-statistics.php' ),
 		'auth'        => array( __( 'เข้าสู่ระบบ', 'bia-learn' ), 'page-templates/template-auth.php' ),
-		'dashboard'   => array( __( 'แดชบอร์ด', 'bia-learn' ), 'page-templates/template-dashboard.php' ),
+		'dashboard'   => array( __( 'แดชบอร์ดผู้เรียน', 'bia-learn' ), 'page-templates/template-dashboard.php' ),
 		'tutorial'    => array( __( 'วิธีใช้งาน', 'bia-learn' ), 'page-templates/template-tutorial.php' ),
 		'home'        => array( __( 'หน้าแรก', 'bia-learn' ), '' ),
 		'news'        => array( __( 'ข่าวสารและบทความ', 'bia-learn' ), '' ),
