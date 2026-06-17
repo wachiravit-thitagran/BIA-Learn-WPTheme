@@ -652,6 +652,13 @@
   @apply text-crimson !important;
 }
 
+/* Hide Instructor Stats on Dashboard */
+.tutor-dashboard-content-inner > .tutor-row > div:has(.tutor-icon-user-graduate),
+.tutor-dashboard-content-inner > .tutor-row > div:has(.tutor-icon-box-open),
+.tutor-dashboard-content-inner > .tutor-row > div:has(.tutor-icon-coins) {
+  display: none !important;
+}
+
 /* Form fields */
 .tutor-form-control,
 .tutor-input-group input,
