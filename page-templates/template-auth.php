@@ -121,6 +121,11 @@ while ( have_posts() ) :
 
 					<!-- Tabs -->
 					<div class="grid grid-cols-2 gap-1 rounded-xl bg-paper-100 p-1">
+						<button type="button" @click="tab = 'login'"
+							class="rounded-lg px-4 py-2 text-sm font-semibold transition <?php echo $bia_can_register ? '' : 'col-span-2'; ?>"
+							:class="tab === 'login' ? 'bg-white text-crimson shadow-soft' : 'text-ink-light hover:text-ink'">
+							<?php esc_html_e( 'เข้าสู่ระบบ', 'bia-learn' ); ?>
+						</button>
 						<?php if ( $bia_can_register ) : ?>
 							<button type="button" @click="tab = 'register'"
 								class="rounded-lg px-4 py-2 text-sm font-semibold transition"
@@ -128,11 +133,6 @@ while ( have_posts() ) :
 								<?php esc_html_e( 'สมัครเรียน', 'bia-learn' ); ?>
 							</button>
 						<?php endif; ?>
-						<button type="button" @click="tab = 'login'"
-							class="rounded-lg px-4 py-2 text-sm font-semibold transition <?php echo $bia_can_register ? '' : 'col-span-2'; ?>"
-							:class="tab === 'login' ? 'bg-white text-crimson shadow-soft' : 'text-ink-light hover:text-ink'">
-							<?php esc_html_e( 'เข้าสู่ระบบ', 'bia-learn' ); ?>
-						</button>
 					</div>
 
 					<!-- Login -->
@@ -140,25 +140,20 @@ while ( have_posts() ) :
 						<h2 class="font-sans text-2xl font-bold text-ink"><?php esc_html_e( 'เข้าสู่ระบบ', 'bia-learn' ); ?></h2>
 						<p class="mt-1 text-sm text-ink-light"><?php esc_html_e( 'เข้าสู่ระบบเพื่อเรียนต่อและจัดการคอร์สของคุณ', 'bia-learn' ); ?></p>
 
-						<form method="post" action="<?php echo esc_url( wp_login_url( $bia_redirect ) ); ?>" class="mt-6 space-y-4">
-							<div>
-								<label for="bia-log" class="field-label"><?php esc_html_e( 'ชื่อผู้ใช้ หรืออีเมล', 'bia-learn' ); ?></label>
-								<input id="bia-log" type="text" name="log" autocomplete="username" required class="field" />
+						<div class="bia-auth-login mt-6">
+							<?php 
+							wp_login_form( array(
+								'redirect'       => $bia_redirect,
+								'label_username' => __( 'ชื่อผู้ใช้ หรืออีเมล', 'bia-learn' ),
+								'label_password' => __( 'รหัสผ่าน', 'bia-learn' ),
+								'label_remember' => __( 'จดจำฉัน', 'bia-learn' ),
+								'label_log_in'   => __( 'เข้าสู่ระบบ', 'bia-learn' ),
+							) ); 
+							?>
+							<div class="mt-4 text-center sm:text-right">
+								<a href="<?php echo esc_url( wp_lostpassword_url() ); ?>" class="text-sm font-semibold text-crimson hover:underline"><?php esc_html_e( 'ลืมรหัสผ่าน?', 'bia-learn' ); ?></a>
 							</div>
-							<div>
-								<label for="bia-pwd" class="field-label"><?php esc_html_e( 'รหัสผ่าน', 'bia-learn' ); ?></label>
-								<input id="bia-pwd" type="password" name="pwd" autocomplete="current-password" required class="field" />
-							</div>
-							<div class="flex items-center justify-between text-sm">
-								<label class="inline-flex items-center gap-2 text-ink-light">
-									<input type="checkbox" name="rememberme" value="forever" class="rounded border-paper-300 text-crimson focus:ring-crimson" />
-									<?php esc_html_e( 'จดจำฉัน', 'bia-learn' ); ?>
-								</label>
-								<a href="<?php echo esc_url( wp_lostpassword_url() ); ?>" class="font-semibold text-crimson hover:underline"><?php esc_html_e( 'ลืมรหัสผ่าน?', 'bia-learn' ); ?></a>
-							</div>
-							<input type="hidden" name="redirect_to" value="<?php echo esc_url( $bia_redirect ); ?>" />
-							<button type="submit" class="btn-primary w-full"><?php esc_html_e( 'เข้าสู่ระบบ', 'bia-learn' ); ?></button>
-						</form>
+						</div>
 
 						<?php if ( $bia_can_register ) : ?>
 							<p class="mt-6 text-center text-sm text-ink-light">
