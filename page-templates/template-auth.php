@@ -24,9 +24,8 @@ if ( function_exists( 'tutor_utils' ) ) {
 $bia_has_tutor   = function_exists( 'bia_learn_has_tutor_lms' ) ? bia_learn_has_tutor_lms() : function_exists( 'tutor' );
 $bia_can_register = $bia_has_tutor || (bool) get_option( 'users_can_register' );
 
-// Default tab: registration for new learners, unless ?tab=login or sign-up
-// is disabled.
-$bia_default_tab = ( isset( $_GET['tab'] ) && 'login' === $_GET['tab'] ) || ! $bia_can_register ? 'login' : 'register'; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+// Default tab: login, unless ?tab=register is explicitly requested and registration is enabled.
+$bia_default_tab = ( isset( $_GET['tab'] ) && 'register' === $_GET['tab'] && $bia_can_register ) ? 'register' : 'login'; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 
 // Where to send the learner after login: an explicit ?redirect_to (e.g. when
 // sent here from a gated lesson) wins, otherwise the dashboard.
