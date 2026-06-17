@@ -645,6 +645,12 @@
 .tutor-dashboard-permalinks .active a {
   @apply bg-crimson-50 font-semibold text-crimson !important;
 }
+.tutor-dashboard-menu-item.active a [class^="tutor-icon-"],
+.tutor-dashboard-permalinks .active a [class^="tutor-icon-"],
+.tutor-dashboard-menu-item.active a i,
+.tutor-dashboard-permalinks .active a i {
+  @apply text-crimson !important;
+}
 
 /* Form fields */
 .tutor-form-control,
