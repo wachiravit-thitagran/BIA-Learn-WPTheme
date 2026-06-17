@@ -106,6 +106,7 @@ function bia_learn_register_supporting_pages() {
 		'instructors' => array( __( 'ผู้สอนและวิทยากร', 'bia-learn' ), 'page-templates/template-instructors.php' ),
 		'statistics'  => array( __( 'สถิติการเรียนรู้', 'bia-learn' ), 'page-templates/template-statistics.php' ),
 		'auth'        => array( __( 'เข้าสู่ระบบ', 'bia-learn' ), 'page-templates/template-auth.php' ),
+		'dashboard'   => array( __( 'แดชบอร์ด', 'bia-learn' ), 'page-templates/template-dashboard.php' ),
 		'tutorial'    => array( __( 'วิธีใช้งาน', 'bia-learn' ), 'page-templates/template-tutorial.php' ),
 		'home'        => array( __( 'หน้าแรก', 'bia-learn' ), '' ),
 		'news'        => array( __( 'ข่าวสารและบทความ', 'bia-learn' ), '' ),
@@ -132,6 +133,12 @@ function bia_learn_register_supporting_pages() {
 					update_option( 'page_on_front', $page_id );
 				} elseif ( 'news' === $slug ) {
 					update_option( 'page_for_posts', $page_id );
+				} elseif ( 'dashboard' === $slug ) {
+					$tutor_option = get_option( 'tutor_option', array() );
+					if ( empty( $tutor_option['tutor_dashboard_page_id'] ) ) {
+						$tutor_option['tutor_dashboard_page_id'] = $page_id;
+						update_option( 'tutor_option', $tutor_option );
+					}
 				}
 			}
 		}
