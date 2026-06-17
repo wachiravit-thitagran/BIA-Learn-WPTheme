@@ -138,6 +138,9 @@ function bia_learn_register_supporting_pages() {
 					if ( empty( $tutor_option['tutor_dashboard_page_id'] ) ) {
 						$tutor_option['tutor_dashboard_page_id'] = $page_id;
 						update_option( 'tutor_option', $tutor_option );
+						
+						// Flush permalinks because Tutor relies on rewrite endpoints attached to this page.
+						flush_rewrite_rules();
 					}
 				}
 			}
