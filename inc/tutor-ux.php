@@ -161,6 +161,9 @@ class BIA_Learn_Tutor_UX {
 			$topics->the_post();
 			$topic_id = get_the_ID();
 			$contents = tutor_utils()->get_course_contents_by_topic( $topic_id, -1 );
+			if ( ! is_array( $contents ) ) {
+				continue;
+			}
 			
 			foreach ( $contents as $content ) {
 				$is_completed_item = tutor_utils()->is_completed_lesson( $content->ID, $user_id );
@@ -193,6 +196,9 @@ class BIA_Learn_Tutor_UX {
 		}
 
 		$contents = tutor_utils()->get_course_contents_by_topic( $topic_id, -1 );
+		if ( ! is_array( $contents ) ) {
+			$contents = array();
+		}
 		$total = count( $contents );
 		$completed = 0;
 

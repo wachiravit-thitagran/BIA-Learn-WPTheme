@@ -25,6 +25,9 @@ if ( $topics->have_posts() ) {
 				$topics->the_post();
 				$topic_id = get_the_ID();
 				$contents = tutor_utils()->get_course_contents_by_topic( $topic_id, -1 );
+				if ( ! is_array( $contents ) ) {
+					$contents = array();
+				}
 				
 				// Calculate Section Progress
 				$progress = BIA_Learn_Tutor_UX::get_section_progress( $topic_id, $user_id );
