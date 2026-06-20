@@ -24,6 +24,76 @@ class BIA_Learn_Tutor_UX {
 
 		// 3. Continue Learning Dashboard Tab
 		add_filter( 'tutor_dashboard/nav_items', array( __CLASS__, 'register_dashboard_tab' ), 10, 1 );
+
+		// 4. Estimated Time Remaining Badge
+		add_action( 'tutor_course/single/after/lead_info', array( __CLASS__, 'render_estimated_time' ), 10, 1 );
+	}
+
+	/**
+	 * Get estimated time remaining (in minutes) for a course based on native Tutor LMS duration.
+	 */
+	public static function get_estimated_time_remaining( $course_id, $user_id ) {
+		if ( ! function_exists( 'tutor_utils' ) ) {
+			return 0;
+		}
+
+		// Get total course duration set by instructor (hours, minutes, seconds)
+		$duration = get_post_meta( $course_id, '_tutor_course_duration', true );
+		if ( empty( $duration ) || ! is_array( $duration ) ) {
+			return 0; // If instructor didn't set a duration, we can't reliably estimate.
+		}
+
+		$hours   = isset( $duration['hours'] ) ? (int) $duration['hours'] : 0;
+		$minutes = isset( $duration['minutes'] ) ? (int) $duration['minutes'] : 0;
+		$total_minutes = ( $hours * 60 ) + $minutes;
+
+		if ( $total_minutes === 0 ) {
+			return 0;
+		}
+
+		// Get current completion percentage
+		$progress = tutor_utils()->get_course_completed_percent( $course_id, $user_id, true );
+		$percent_completed = isset( $progress['completed_percent'] ) ? (float) $progress['completed_percent'] : 0;
+
+		if ( $percent_completed >= 100 ) {
+			return 0;
+		}
+
+		// Calculate remaining minutes based on the percentage left
+		$percent_left = 100 - $percent_completed;
+		$remaining_minutes = round( $total_minutes * ( $percent_left / 100 ) );
+
+		return (int) $remaining_minutes;
+	}
+
+	/**
+	 * Render the estimated time badge on the course page.
+	 */
+	public static function render_estimated_time( $course_id ) {
+		$user_id = get_current_user_id();
+		if ( ! $user_id ) return;
+		
+		if ( ! tutor_utils()->is_enrolled( $course_id, $user_id ) ) return;
+
+		$minutes = self::get_estimated_time_remaining( $course_id, $user_id );
+		if ( $minutes <= 0 ) return;
+
+		$hours = floor( $minutes / 60 );
+		$mins  = $minutes % 60;
+		
+		$time_str = '';
+		if ( $hours > 0 ) {
+			$time_str .= sprintf( __( '%d ชม. ', 'bia-learn' ), $hours );
+		}
+		if ( $mins > 0 || $hours === 0 ) {
+			$time_str .= sprintf( __( '%d นาที', 'bia-learn' ), $mins );
+		}
+		?>
+		<div class="mt-4 flex items-center gap-2 text-sm text-ink-light bg-paper-50 px-3 py-2 rounded-lg border border-paper-100 inline-flex w-auto">
+			<i class="tutor-icon-clock-line text-primary-500 text-lg"></i>
+			<span><?php printf( esc_html__( 'ใช้เวลาเรียนต่อประมาณ %s', 'bia-learn' ), $time_str ); ?></span>
+		</div>
+		<?php
 	}
 
 	/**
