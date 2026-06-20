@@ -32,7 +32,7 @@ class BIA_Learn_Tutor_Social {
 		
 		// Get recent enrollments or completions from comments
 		$query = $wpdb->prepare( "
-			SELECT comment_post_ID as course_id, comment_type as type, comment_date as date
+			SELECT comment_post_ID as course_id, comment_type as type, comment_date as date, comment_author as author
 			FROM {$wpdb->comments}
 			WHERE comment_type IN ('tutor_course_completed', 'tutor_course_enrolled')
 			ORDER BY comment_date DESC
@@ -46,10 +46,23 @@ class BIA_Learn_Tutor_Social {
 			$course_title = get_the_title( $row->course_id );
 			$time_diff = human_time_diff( strtotime( $row->date ), current_time('timestamp') );
 			
-			$action_text = ( $row->type === 'tutor_course_completed' ) ? __( 'เพิ่งเรียนจบคอร์ส', 'bia-learn' ) : __( 'เพิ่งลงทะเบียนเรียน', 'bia-learn' );
+			// Mask the author name (e.g., "Somchai" -> "Som****")
+			$author_name = trim( $row->author );
+			if ( empty( $author_name ) ) {
+				$author_name = __( 'ผู้เรียนท่านหนึ่ง', 'bia-learn' );
+			} else {
+				$len = mb_strlen( $author_name );
+				if ( $len > 3 ) {
+					$author_name = mb_substr( $author_name, 0, 3 ) . '***';
+				} else {
+					$author_name = mb_substr( $author_name, 0, 1 ) . '***';
+				}
+			}
+
+			$action_text = ( $row->type === 'tutor_course_completed' ) ? __( 'เพิ่งเรียนจบ', 'bia-learn' ) : __( 'เพิ่งลงทะเบียน', 'bia-learn' );
 			
 			$activities[] = array(
-				'message' => sprintf( __( 'มีผู้เรียนท่านหนึ่ง%s', 'bia-learn' ), $action_text ),
+				'message' => sprintf( __( 'คุณ %s %s', 'bia-learn' ), $author_name, $action_text ),
 				'course'  => $course_title,
 				'time'    => sprintf( __( '%s ที่ผ่านมา', 'bia-learn' ), $time_diff )
 			);
