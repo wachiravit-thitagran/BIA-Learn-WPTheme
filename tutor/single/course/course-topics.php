@@ -17,7 +17,7 @@ $is_enrolled = tutor_utils()->is_enrolled( $course_id, $user_id );
 
 if ( $topics->have_posts() ) {
 	?>
-	<div class="tutor-course-topics-wrap">
+	<div class="tutor-course-topics-wrap mb-8">
 		<h3 class="tutor-segment-title font-sans text-lg font-bold text-ink"><?php esc_html_e( 'เนื้อหาคอร์สเรียน', 'bia-learn' ); ?></h3>
 		<div class="tutor-accordion tutor-mt-24 mt-4 space-y-4">
 			<?php
