@@ -48,11 +48,20 @@ add_action( 'after_setup_theme', 'bia_learn_tutor_setup', 11 );
 function bia_learn_add_certificates_dashboard_tab( $nav_items ) {
 	$nav_items['my-certificates'] = array(
 		'title' => __( 'เกียรติบัตรของฉัน', 'bia-learn' ),
-		'icon'  => 'tutor-icon-certificate',
+		'icon'  => 'ti ti-certificate',
 	);
 	return $nav_items;
 }
 add_filter( 'tutor_dashboard/nav_items', 'bia_learn_add_certificates_dashboard_tab' );
+
+/**
+ * Register endpoints for custom Tutor LMS Dashboard tabs so they don't return 404.
+ */
+function bia_learn_register_tutor_dashboard_endpoints() {
+	add_rewrite_endpoint( 'my-certificates', EP_PAGES );
+	add_rewrite_endpoint( 'continue-learning', EP_PAGES );
+}
+add_action( 'init', 'bia_learn_register_tutor_dashboard_endpoints' );
 
 /**
  * Course archive grid: 3 columns to match the rest of the site.
