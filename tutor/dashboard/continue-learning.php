@@ -10,7 +10,49 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 $user_id = get_current_user_id();
+
+// Get enrolled courses (standard order)
 $enrolled_courses = tutor_utils()->get_enrolled_courses_by_user( $user_id );
+$sorted_courses   = array();
+
+if ( $enrolled_courses && $enrolled_courses->have_posts() ) {
+	$posts = $enrolled_courses->posts;
+	
+	global $wpdb;
+	$table_name = $wpdb->prefix . 'tutorlms_analytics_events';
+	
+	// Fetch last access time for each course if tracker table exists
+	$has_tracker = $wpdb->get_var("SHOW TABLES LIKE '{$table_name}'") === $table_name;
+	
+	foreach ( $posts as $post ) {
+		$course_id = $post->ID;
+		$last_access = 0;
+		if ( $has_tracker ) {
+			$last_access = $wpdb->get_var( $wpdb->prepare( "
+				SELECT MAX(created_at) 
+				FROM {$table_name} 
+				WHERE course_id = %d AND user_id = %d
+			", $course_id, $user_id ) );
+			$last_access = $last_access ? strtotime( $last_access ) : 0;
+		}
+		
+		// If no access found, fallback to post modification date or 0
+		if ( ! $last_access ) {
+			$last_access = strtotime( $post->post_modified );
+		}
+		
+		$post->bia_last_access = $last_access;
+		$sorted_courses[] = $post;
+	}
+	
+	// Sort by bia_last_access descending
+	usort( $sorted_courses, function( $a, $b ) {
+		return $b->bia_last_access <=> $a->bia_last_access;
+	});
+	
+	// Replace WP_Query posts with sorted posts
+	$enrolled_courses->posts = $sorted_courses;
+}
 
 ?>
 <div class="tutor-dashboard-content-inner">
