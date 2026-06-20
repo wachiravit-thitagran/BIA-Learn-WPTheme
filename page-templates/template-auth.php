@@ -142,8 +142,8 @@ while ( have_posts() ) :
 						<div class="bia-auth-login mt-6">
 							<?php
 							$bia_pwd_disabled = false;
-							if ( class_exists( '\Authorizenter\Settings' ) ) {
-								$adv = \Authorizenter\Settings::get( 'advanced' );
+							if ( function_exists( '\Authorizenter\Core\authorizenter_core' ) ) {
+								$adv = \Authorizenter\Core\authorizenter_core()->settings->get( 'advanced' );
 								$bia_pwd_disabled = ! empty( $adv['disable_password_auth'] );
 							}
 							$bia_pwd_disabled = (bool) apply_filters( 'authorizenter_disable_password_auth', $bia_pwd_disabled );
