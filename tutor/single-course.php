@@ -43,8 +43,8 @@ $is_enabled_wishlist = tutor_utils()->get_option( 'enable_wishlist', true );
 <div <?php tutor_post_class( 'tutor-full-width-course-top tutor-course-top-info tutor-page-wrap tutor-wrap-parent pt-20 lg:pt-24' ); ?>>
 	<div class="tutor-course-details-page tutor-container">
 		<?php ( isset( $is_enrolled ) && $is_enrolled ) ? tutor_course_enrolled_lead_info() : tutor_course_lead_info(); ?>
-		<div class="tutor-row tutor-gx-xl-5">
-			<main class="tutor-col-xl-8">
+		<div class="tutor-row tutor-gx-lg-5">
+			<main class="tutor-col-lg-8">
 				<?php $has_video ? tutor_course_video() : get_tutor_course_thumbnail(); ?>
 				<?php do_action( 'tutor_course/single/before/inner-wrap' ); ?>
 
@@ -84,9 +84,9 @@ $is_enabled_wishlist = tutor_utils()->get_option( 'enable_wishlist', true );
 				<?php do_action( 'tutor_course/single/after/inner-wrap' ); ?>
 			</main>
 
-			<aside class="tutor-col-xl-4">
+			<aside class="tutor-col-lg-4">
 				<?php $sidebar_attr = apply_filters( 'tutor_course_details_sidebar_attr', '' ); ?>
-				<div class="tutor-single-course-sidebar tutor-mt-40 tutor-mt-xl-0" <?php echo esc_attr( $sidebar_attr ); ?> >
+				<div class="tutor-single-course-sidebar tutor-mt-40 tutor-mt-lg-0" <?php echo esc_attr( $sidebar_attr ); ?> >
 					<?php do_action( 'tutor_course/single/before/sidebar' ); ?>
 
 					<?php if ( ( $is_mobile && 'bottom' === $enrollment_box_position ) || ! $is_mobile ) : ?>

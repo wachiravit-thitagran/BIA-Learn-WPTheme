@@ -704,6 +704,16 @@
   @apply p-4 sm:p-6 !important;
 }
 
+/* Single course thumbnail & video */
+.tutor-course-thumbnail img,
+.tutor-course-thumbnail .tutor-ratio,
+.tutor-course-video {
+  @apply rounded-2xl shadow-stat overflow-hidden w-full !important;
+}
+.tutor-course-thumbnail {
+  @apply mb-6 !important;
+}
+
 /* Make inner widgets look like simple sections instead of nested cards */
 .tutor-course-details-widget {
   @apply mb-8 last:mb-0 !important;
