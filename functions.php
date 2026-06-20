@@ -83,4 +83,5 @@ bia_learn_require( 'updater' );        // Self-update from GitHub Releases.
 // Tutor LMS glue only loads when the plugin is active.
 if ( bia_learn_has_tutor_lms() ) {
 	bia_learn_require( 'tutor' );
+	bia_learn_require( 'tutor-ux' );
 }
