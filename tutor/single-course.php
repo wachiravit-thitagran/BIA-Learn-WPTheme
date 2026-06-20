@@ -40,7 +40,7 @@ $is_enabled_wishlist = tutor_utils()->get_option( 'enable_wishlist', true );
 ?>
 
 <?php do_action( 'tutor_course/single/before/wrap' ); ?>
-<div <?php tutor_post_class( 'tutor-full-width-course-top tutor-course-top-info tutor-page-wrap tutor-wrap-parent' ); ?>>
+<div <?php tutor_post_class( 'tutor-full-width-course-top tutor-course-top-info tutor-page-wrap tutor-wrap-parent pt-20 lg:pt-24' ); ?>>
 	<div class="tutor-course-details-page tutor-container">
 		<?php ( isset( $is_enrolled ) && $is_enrolled ) ? tutor_course_enrolled_lead_info() : tutor_course_lead_info(); ?>
 		<div class="tutor-row tutor-gx-xl-5">
