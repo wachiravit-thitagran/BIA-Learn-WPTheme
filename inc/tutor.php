@@ -40,6 +40,21 @@ function bia_learn_tutor_setup() {
 add_action( 'after_setup_theme', 'bia_learn_tutor_setup', 11 );
 
 /**
+ * Add "My Certificates" tab to Tutor LMS Dashboard.
+ *
+ * @param array $nav_items Existing navigation items.
+ * @return array
+ */
+function bia_learn_add_certificates_dashboard_tab( $nav_items ) {
+	$nav_items['my-certificates'] = array(
+		'title' => __( 'เกียรติบัตรของฉัน', 'bia-learn' ),
+		'icon'  => 'tutor-icon-certificate',
+	);
+	return $nav_items;
+}
+add_filter( 'tutor_dashboard/nav_items', 'bia_learn_add_certificates_dashboard_tab' );
+
+/**
  * Course archive grid: 3 columns to match the rest of the site.
  *
  * @param int $cols Existing column count.
