@@ -85,4 +85,5 @@ if ( bia_learn_has_tutor_lms() ) {
 	bia_learn_require( 'tutor' );
 	bia_learn_require( 'tutor-ux' );
 	bia_learn_require( 'tutor-gamification' );
+	bia_learn_require( 'tutor-social' );
 }
