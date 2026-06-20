@@ -43,6 +43,12 @@ function bia_learn_enqueue_assets() {
 		true
 	);
 
+	// Tutor LMS UX Enhancements (Phase 3: Celebration)
+	if ( function_exists( 'tutor_utils' ) && is_singular( 'tutor_quiz' ) || is_singular( 'tutor_enrolled' ) || is_singular( 'courses' ) || is_singular( 'lesson' ) ) {
+		wp_enqueue_script( 'canvas-confetti', 'https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js', array(), '1.9.2', true );
+		wp_enqueue_script( 'bia-learn-celebration', BIA_LEARN_URI . '/assets/js/tutor-celebration.js', array( 'canvas-confetti' ), bia_learn_asset_version( 'assets/js/tutor-celebration.js' ), true );
+	}
+
 	if ( is_singular() && comments_open() && get_option( 'thread_comments' ) ) {
 		wp_enqueue_script( 'comment-reply' );
 	}
