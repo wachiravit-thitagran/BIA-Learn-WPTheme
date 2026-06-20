@@ -275,7 +275,7 @@ class BIA_Learn_Tutor_UX {
 			if ( $key === 'dashboard' || $key === 'index' ) {
 				$new_tabs['continue-learning'] = array(
 					'title' => __( 'เรียนต่อ (Continue Learning)', 'bia-learn' ),
-					'icon'  => 'tutor-icon-play-circle',
+					'icon'  => 'ti ti-player-play',
 				);
 			}
 		}
