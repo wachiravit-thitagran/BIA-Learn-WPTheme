@@ -111,7 +111,9 @@ class BIA_Learn_Tutor_Gamification {
 		?>
 		<div class="mb-6 card p-4 flex items-center justify-between border <?php echo esc_attr( $bg_color ); ?> rounded-xl">
 			<div class="flex items-center gap-4">
-				<div class="text-4xl <?php echo esc_attr( $icon_color ); ?>">🔥</div>
+				<div class="text-4xl <?php echo esc_attr( $icon_color ); ?>">
+					<?php echo bia_learn_icon( 'flame', 'h-10 w-10' ); ?>
+				</div>
 				<div>
 					<h4 class="font-sans text-lg font-bold <?php echo esc_attr( $text_color ); ?> m-0 mb-1">
 						<?php printf( esc_html__( '%d Day Streak!', 'bia-learn' ), $streak['current_streak'] ); ?>
@@ -149,7 +151,9 @@ class BIA_Learn_Tutor_Gamification {
 		?>
 		<div class="mt-6 card p-4 flex items-center justify-between bg-white border border-paper-200 rounded-xl shadow-sm">
 			<div class="flex items-center gap-3">
-				<div class="text-2xl <?php echo esc_attr( $icon_color ); ?>">🔥</div>
+				<div class="text-2xl <?php echo esc_attr( $icon_color ); ?>">
+					<?php echo bia_learn_icon( 'flame', 'h-8 w-8' ); ?>
+				</div>
 				<div>
 					<h4 class="font-sans text-sm font-bold text-ink m-0">
 						<?php printf( esc_html__( '%d Day Streak!', 'bia-learn' ), $streak['current_streak'] ); ?>
