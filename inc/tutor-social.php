@@ -81,7 +81,9 @@ class BIA_Learn_Tutor_Social {
 		ob_start();
 		?>
 		<div class="bg-blue-50 border border-blue-100 p-4 rounded-xl mb-6 relative overflow-hidden flex items-center gap-4">
-			<div class="text-blue-500 text-2xl animate-pulse">📢</div>
+			<div class="text-blue-500 animate-pulse">
+				<?php echo bia_learn_icon( 'megaphone', 'h-6 w-6' ); ?>
+			</div>
 			<div class="flex-1 overflow-hidden relative h-6">
 				<div class="bia-activity-ticker absolute top-0 left-0 w-full transition-transform duration-500">
 					<?php foreach ( $activities as $index => $act ) : ?>
@@ -169,8 +171,11 @@ class BIA_Learn_Tutor_Social {
 
 		?>
 		<div class="mb-8 mt-6">
-			<h3 class="tutor-fs-5 tutor-fw-medium tutor-color-black mb-4">
-				<span class="text-yellow-500 mr-2">⭐</span><?php esc_html_e( 'รีวิวแนะนำ', 'bia-learn' ); ?>
+			<h3 class="tutor-fs-5 tutor-fw-medium tutor-color-black mb-4 flex items-center">
+				<span class="text-yellow-500 mr-2 flex items-center">
+					<?php echo bia_learn_icon( 'star', 'h-5 w-5' ); ?>
+				</span>
+				<?php esc_html_e( 'รีวิวแนะนำ', 'bia-learn' ); ?>
 			</h3>
 			<div class="bg-gradient-to-br from-paper-50 to-white border border-paper-200 p-6 rounded-2xl shadow-sm relative">
 				<div class="absolute top-4 right-6 text-6xl text-paper-200 font-serif opacity-50 leading-none">"</div>
@@ -180,8 +185,8 @@ class BIA_Learn_Tutor_Social {
 					</div>
 					<div>
 						<h4 class="font-bold text-ink m-0"><?php echo esc_html( $review->comment_author ); ?></h4>
-						<div class="flex text-yellow-400 text-sm">
-							<?php for ( $i = 0; $i < 5; $i++ ) { echo '★'; } ?>
+						<div class="flex text-yellow-400 gap-0.5">
+							<?php for ( $i = 0; $i < 5; $i++ ) { echo bia_learn_icon( 'star', 'h-4 w-4' ); } ?>
 						</div>
 					</div>
 				</div>

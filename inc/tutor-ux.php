@@ -90,7 +90,7 @@ class BIA_Learn_Tutor_UX {
 		}
 		?>
 		<div class="mt-4 flex items-center gap-2 text-sm text-ink-light bg-paper-50 px-3 py-2 rounded-lg border border-paper-100 inline-flex w-auto">
-			<i class="tutor-icon-clock-line text-primary-500 text-lg"></i>
+			<?php echo bia_learn_icon( 'clock', 'h-5 w-5 text-primary-500' ); ?>
 			<span><?php printf( esc_html__( 'ใช้เวลาเรียนต่อประมาณ %s', 'bia-learn' ), $time_str ); ?></span>
 		</div>
 		<?php
@@ -247,7 +247,10 @@ class BIA_Learn_Tutor_UX {
 		?>
 		<div class="card p-5 mb-6 border-l-4 border-l-blue-500 bg-blue-50 flex flex-col md:flex-row justify-between items-center gap-4">
 			<div>
-				<h4 class="font-sans text-base font-bold text-blue-900 m-0">🎯 <?php esc_html_e( 'Next Best Action', 'bia-learn' ); ?></h4>
+				<h4 class="font-sans text-base font-bold text-blue-900 m-0 flex items-center gap-2">
+					<?php echo bia_learn_icon( 'target', 'h-5 w-5 text-blue-900' ); ?>
+					<?php esc_html_e( 'Next Best Action', 'bia-learn' ); ?>
+				</h4>
 				<p class="text-sm text-blue-800 m-0 mt-1">
 					<span class="font-semibold"><?php echo esc_html( $action['desc'] ); ?></span>: <?php echo esc_html( $action['title'] ); ?>
 				</p>
