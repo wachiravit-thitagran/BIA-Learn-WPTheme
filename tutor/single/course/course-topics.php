@@ -25,9 +25,8 @@ if ( $topics->have_posts() ) {
 				$topics->the_post();
 				$topic_id = get_the_ID();
 				$contents = tutor_utils()->get_course_contents_by_topic( $topic_id, -1 );
-				if ( ! is_array( $contents ) ) {
-					$contents = array();
-				}
+				$lesson_posts = is_object( $contents ) && isset( $contents->posts ) ? $contents->posts : ( is_array( $contents ) ? $contents : array() );
+
 				
 				// Calculate Section Progress
 				$progress = BIA_Learn_Tutor_UX::get_section_progress( $topic_id, $user_id );
@@ -52,7 +51,7 @@ if ( $topics->have_posts() ) {
 					<div class="tutor-accordion-item-body p-4 border-t border-paper-100 bg-white">
 						<ul class="tutor-course-topic-contents m-0 p-0 list-none space-y-2">
 							<?php
-							foreach ( $contents as $content ) {
+							foreach ( $lesson_posts as $content ) {
 								$icon = $content->post_type === 'tutor_quiz' ? 'tutor-icon-quiz' : 'tutor-icon-document-text';
 								$is_completed = tutor_utils()->is_completed_lesson( $content->ID, $user_id );
 								$status_text = $is_completed ? __( 'สำเร็จ', 'bia-learn' ) : __( 'รอเรียน', 'bia-learn' );
