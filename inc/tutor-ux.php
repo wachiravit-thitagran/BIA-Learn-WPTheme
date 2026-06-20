@@ -26,7 +26,7 @@ class BIA_Learn_Tutor_UX {
 		add_filter( 'tutor_dashboard/nav_items', array( __CLASS__, 'register_dashboard_tab' ), 10, 1 );
 
 		// 4. Estimated Time Remaining Badge
-		add_action( 'tutor_course/single/after/lead_info', array( __CLASS__, 'render_estimated_time' ), 10, 1 );
+		add_action( 'tutor_course/single/before/inner-wrap', array( __CLASS__, 'render_estimated_time' ), 10, 1 );
 	}
 
 	/**
@@ -69,7 +69,10 @@ class BIA_Learn_Tutor_UX {
 	/**
 	 * Render the estimated time badge on the course page.
 	 */
-	public static function render_estimated_time( $course_id ) {
+	public static function render_estimated_time( $course_id = 0 ) {
+		if ( ! $course_id ) {
+			$course_id = get_the_ID();
+		}
 		$user_id = get_current_user_id();
 		if ( ! $user_id ) return;
 		
@@ -233,7 +236,10 @@ class BIA_Learn_Tutor_UX {
 	/**
 	 * Inject the "Next Best Action" card at the top of the course.
 	 */
-	public static function inject_next_best_action( $course_id ) {
+	public static function inject_next_best_action( $course_id = 0 ) {
+		if ( ! $course_id ) {
+			$course_id = get_the_ID();
+		}
 		$user_id = get_current_user_id();
 		if ( ! $user_id ) return;
 
