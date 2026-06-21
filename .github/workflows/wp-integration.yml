@@ -71,6 +71,11 @@ jobs:
         cd /tmp/wordpress
         wp theme activate bia-learn --allow-root
 
+    - name: Install and Activate Plugins
+      run: |
+        cd /tmp/wordpress
+        wp plugin install tutor --activate --allow-root
+
     - name: Smoke Test - Home Page
       run: |
         cd /tmp/wordpress
@@ -107,8 +112,92 @@ jobs:
         $output = ob_get_clean();
         
         if (empty($output)) {
-           // Fallback to checking if no fatal errors occurred
            echo "Template output was empty, but no fatal errors occurred.\n";
         }
         echo "Single post rendering test passed!\n";
+        ' --allow-root
+
+    - name: Smoke Test - Core Templates (404, Archive, Search)
+      run: |
+        cd /tmp/wordpress
+        wp eval '
+        $templates = array("404", "archive", "search");
+        foreach ($templates as $template) {
+           ob_start();
+           get_template_part($template);
+           $output = ob_get_clean();
+           if ($output === false) {
+               echo "Failed to load $template template.\n";
+               exit(1);
+           }
+        }
+        echo "Core templates rendering test passed!\n";
+        ' --allow-root
+
+    - name: Smoke Test - Custom Page Templates
+      run: |
+        cd /tmp/wordpress
+        wp eval '
+        $custom_templates = array(
+            "page-templates/template-about.php",
+            "page-templates/template-instructors.php",
+            "page-templates/template-contact.php",
+            "page-templates/template-auth.php",
+            "page-templates/template-faq.php",
+            "page-templates/template-tutorial.php",
+            "page-templates/template-statistics.php",
+            "page-templates/template-dashboard.php"
+        );
+        
+        foreach ($custom_templates as $template) {
+            $post_id = wp_insert_post(array(
+                "post_title" => "Test " . basename($template),
+                "post_status" => "publish",
+                "post_type" => "page"
+            ));
+            update_post_meta($post_id, "_wp_page_template", $template);
+            
+            global $wp_query;
+            $wp_query->query(array("page_id" => $post_id));
+            the_post();
+            
+            ob_start();
+            // Simulate loading the template file directly as WP does
+            load_template(get_stylesheet_directory() . "/" . $template, false);
+            $output = ob_get_clean();
+            
+            if ($output === false) {
+               echo "Failed to load custom template: $template\n";
+               exit(1);
+           }
+        }
+        echo "Custom page templates rendering test passed!\n";
+        ' --allow-root
+
+    - name: Smoke Test - TutorLMS Overridden Templates
+      run: |
+        cd /tmp/wordpress
+        wp eval '
+        // Create a dummy course
+        $course_id = wp_insert_post(array(
+            "post_title" => "Test Course",
+            "post_status" => "publish",
+            "post_type" => "courses"
+        ));
+        
+        global $wp_query;
+        $wp_query->query(array("post_type" => "courses", "p" => $course_id));
+        the_post();
+        
+        ob_start();
+        // The theme overrides TutorLMS templates via the tutor/ directory
+        // Typically tutor_get_template is used, but we can test the raw PHP files directly
+        // for any fatal syntax/logic errors when loaded.
+        // E.g., single course
+        if (file_exists(get_stylesheet_directory() . "/tutor/single-course.php")) {
+            load_template(get_stylesheet_directory() . "/tutor/single-course.php", false);
+        }
+        $output = ob_get_clean();
+        
+        echo "TutorLMS overridden templates rendering test passed!\n";
         ' --allow-root
