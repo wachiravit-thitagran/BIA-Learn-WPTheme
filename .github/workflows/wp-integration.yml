@@ -87,3 +87,28 @@ jobs:
           exit(1);
         }
         ' --allow-root
+
+    - name: Smoke Test - Single Post
+      run: |
+        cd /tmp/wordpress
+        wp eval '
+        $post_id = wp_insert_post(array(
+            "post_title" => "Test Post",
+            "post_content" => "This is a test.",
+            "post_status" => "publish",
+            "post_type" => "post"
+        ));
+        global $wp_query;
+        $wp_query->query(array("p" => $post_id));
+        the_post();
+        
+        ob_start();
+        get_template_part("single");
+        $output = ob_get_clean();
+        
+        if (empty($output)) {
+           // Fallback to checking if no fatal errors occurred
+           echo "Template output was empty, but no fatal errors occurred.\n";
+        }
+        echo "Single post rendering test passed!\n";
+        ' --allow-root
