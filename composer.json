@@ -1,0 +1,17 @@
+{
+    "name": "biapsu/bia-learn-wptheme",
+    "description": "BIA Learn WP Theme",
+    "type": "wordpress-theme",
+    "require-dev": {
+        "phpunit/phpunit": "^9.6",
+        "brain/monkey": "^2.6",
+        "mockery/mockery": "^1.5"
+    },
+    "authors": [
+        {
+            "name": "Wachiravit Thitagarn",
+            "email": "wachiravit.thi@gmail.com"
+        }
+    ],
+    "require": {}
+}
