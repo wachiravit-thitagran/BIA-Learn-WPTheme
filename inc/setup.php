@@ -239,3 +239,22 @@ add_filter(
 		return '&hellip;';
 	}
 );
+
+/**
+ * Inject SSO buttons into the native wp-login.php page.
+ * Provides the [authorizenter_login] buttons above the disabled form.
+ */
+function bia_learn_sso_login_message( $message ) {
+	$action = isset( $_GET['action'] ) ? sanitize_text_field( wp_unslash( $_GET['action'] ) ) : 'login';
+	if ( 'login' !== $action ) {
+		return $message;
+	}
+
+	if ( shortcode_exists( 'authorizenter_login' ) ) {
+		$buttons = do_shortcode( '[authorizenter_login]' );
+		return $message . '<div style="margin-bottom: 24px;">' . $buttons . '</div>';
+	}
+
+	return $message;
+}
+add_filter( 'login_message', 'bia_learn_sso_login_message' );
