@@ -79,14 +79,6 @@ add_filter( 'tutor_courses_col_per_row', 'bia_learn_tutor_loop_columns' );
  * Open a themed wrapper before the course archive list.
  */
 function bia_learn_tutor_archive_before() {
-	bia_learn_page_hero(
-		array(
-			'eyebrow'    => __( 'คอร์สเรียน', 'bia-learn' ),
-			'title'      => __( 'คอร์สเรียนทั้งหมด', 'bia-learn' ),
-			'subtitle'   => __( 'เลือกเรียนรู้ในหัวข้อที่คุณสนใจ เริ่มต้นได้ทันที เรียนฟรีหลากหลายคอร์ส', 'bia-learn' ),
-			'breadcrumb' => true,
-		)
-	);
 	echo '<div class="section"><div class="container-bia">';
 }
 add_action( 'tutor_course/archive/before_loop', 'bia_learn_tutor_archive_before', 5 );

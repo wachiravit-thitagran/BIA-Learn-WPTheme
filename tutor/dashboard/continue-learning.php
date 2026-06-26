@@ -68,12 +68,11 @@ if ( $enrolled_courses && $enrolled_courses->have_posts() ) {
 				$course_id = get_the_ID();
 				
 				$progress = tutor_utils()->get_course_completed_percent( $course_id, 0, true );
-				$action   = BIA_Learn_Tutor_UX::get_next_best_action( $course_id, $user_id );
 				
 				// Tracker exact last lesson URL
 				$resume_url = BIA_Learn_Tutor_UX::get_last_viewed_lesson_url( $course_id, $user_id );
 				if ( ! $resume_url ) {
-					$resume_url = $action ? $action['url'] : get_permalink( $course_id );
+					$resume_url = get_permalink( $course_id );
 				}
 				?>
 				<div class="card p-5 flex flex-col justify-between h-full bg-white border border-paper-200 hover:border-primary-300 transition shadow-sm rounded-xl">
@@ -86,13 +85,6 @@ if ( $enrolled_courses && $enrolled_courses->have_posts() ) {
 						
 						<!-- Segmented Progress Bar -->
 						<?php BIA_Learn_Tutor_UX::render_segmented_progress_bar( $course_id, $user_id ); ?>
-
-						<!-- Next Action Hint -->
-						<?php if ( $action ) : ?>
-							<p class="text-sm text-ink-light m-0 mb-4 bg-paper-50 p-3 rounded-lg border border-paper-100">
-								<span class="font-semibold text-ink"><?php esc_html_e( 'ถัดไป:', 'bia-learn' ); ?></span> <?php echo esc_html( $action['title'] ); ?>
-							</p>
-						<?php endif; ?>
 					</div>
 					
 					<div class="mt-auto pt-2">

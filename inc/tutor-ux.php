@@ -134,58 +134,6 @@ class BIA_Learn_Tutor_UX {
 	}
 
 	/**
-	 * Determine the "Next Best Action" (e.g., specific uncompleted lesson or pending quiz).
-	 */
-	public static function get_next_best_action( $course_id, $user_id ) {
-		if ( ! function_exists( 'tutor_utils' ) ) {
-			return null;
-		}
-
-		// Check if course is completed
-		$is_completed = tutor_utils()->is_completed_course( $course_id, $user_id );
-		if ( $is_completed ) {
-			return array(
-				'type'  => 'certificate',
-				'title' => __( 'Course Completed!', 'bia-learn' ),
-				'desc'  => __( 'Download your certificate or leave a review.', 'bia-learn' ),
-				'url'   => get_permalink( $course_id ),
-			);
-		}
-
-		$topics = tutor_utils()->get_topics( $course_id );
-		if ( ! $topics || ! $topics->have_posts() ) {
-			return null;
-		}
-
-		while ( $topics->have_posts() ) {
-			$topics->the_post();
-			$topic_id = get_the_ID();
-			$contents = tutor_utils()->get_course_contents_by_topic( $topic_id, -1 );
-			$lesson_posts = is_object( $contents ) && isset( $contents->posts ) ? $contents->posts : ( is_array( $contents ) ? $contents : array() );
-			
-			foreach ( $lesson_posts as $content ) {
-				$is_completed_item = tutor_utils()->is_completed_lesson( $content->ID, $user_id );
-				
-				if ( ! $is_completed_item ) {
-					// Found the first incomplete item
-					$type = $content->post_type === 'tutor_quiz' ? 'quiz' : 'lesson';
-					
-					return array(
-						'type'  => $type,
-						'title' => $content->post_title,
-						'desc'  => $type === 'quiz' ? __( 'You have a pending quiz.', 'bia-learn' ) : __( 'Continue where you left off.', 'bia-learn' ),
-						'url'   => get_permalink( $content->ID ),
-					);
-				}
-			}
-		}
-
-		wp_reset_postdata();
-
-		return null;
-	}
-
-	/**
 	 * Get progress percentage for a specific topic/section.
 	 */
 	public static function get_section_progress( $topic_id, $user_id ) {
@@ -311,12 +259,7 @@ class BIA_Learn_Tutor_UX {
 			return $exact_url;
 		}
 
-		// Fallback to Next Best Action if no tracker data
-		$action = self::get_next_best_action( (int) $course_id, $user_id );
-		if ( $action && ! empty( $action['url'] ) ) {
-			return $action['url'];
-		}
-
+		// Fallback to course page if no tracker data
 		return $url;
 	}
 

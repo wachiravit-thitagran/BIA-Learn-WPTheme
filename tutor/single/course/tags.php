@@ -10,11 +10,11 @@ do_action( 'tutor_course/single/before/tags' );
 $course_tags = apply_filters( 'tutor_course_single_tags', get_tutor_course_tags(), get_the_ID() );
 if ( is_array( $course_tags ) && count( $course_tags ) ) { ?>
 	<div class="tutor-course-details-widget">
-		<h3 class="tutor-course-details-widget-title">
+		<h3 class="tutor-course-details-widget-title text-base font-bold text-ink mb-4">
 			<?php esc_html_e( 'แท็ก', 'bia-learn' ); ?>
 		</h3>
 		<div class="tutor-course-details-widget-tags">
-		  <ul class="flex flex-wrap gap-2 p-0 m-0 list-none">
+		  <ul class="flex flex-wrap gap-2 !p-0 !m-0 list-none">
 				<?php
 				foreach ( $course_tags as $course_tag ) {
 					$tag_link = get_term_link( $course_tag );
