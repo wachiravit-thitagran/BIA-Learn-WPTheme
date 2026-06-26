@@ -84,16 +84,8 @@ if ( $enrolled_courses && $enrolled_courses->have_posts() ) {
 							</a>
 						</h4>
 						
-						<!-- Progress Bar -->
-						<div class="mb-4">
-							<div class="flex justify-between items-center text-xs font-medium text-ink-light mb-1.5">
-								<span><?php esc_html_e( 'ความคืบหน้า', 'bia-learn' ); ?></span>
-								<span class="text-primary-600"><?php echo esc_html( $progress['completed_percent'] ); ?>%</span>
-							</div>
-							<div class="w-full bg-paper-100 rounded-full h-2 overflow-hidden">
-								<div class="bg-primary-500 h-2 rounded-full transition-all duration-500" style="width: <?php echo esc_attr( $progress['completed_percent'] ); ?>%;"></div>
-							</div>
-						</div>
+						<!-- Segmented Progress Bar -->
+						<?php BIA_Learn_Tutor_UX::render_segmented_progress_bar( $course_id, $user_id ); ?>
 
 						<!-- Next Action Hint -->
 						<?php if ( $action ) : ?>

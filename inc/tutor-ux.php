@@ -214,6 +214,91 @@ class BIA_Learn_Tutor_UX {
 	}
 
 	/**
+	 * Get status of every lesson and quiz in the course for segmented progress bar.
+	 *
+	 * Returns an array of items with their status: 'completed' (green), 'quiz_pending' (yellow), 'unattempted' (gray).
+	 */
+	public static function get_course_curriculum_status( $course_id, $user_id ) {
+		if ( ! function_exists( 'tutor_utils' ) ) {
+			return array();
+		}
+
+		$status_list = array();
+		$topics = tutor_utils()->get_topics( $course_id );
+		
+		if ( ! $topics || ! $topics->have_posts() ) {
+			return $status_list;
+		}
+
+		while ( $topics->have_posts() ) {
+			$topics->the_post();
+			$topic_id = get_the_ID();
+			$contents = tutor_utils()->get_course_contents_by_topic( $topic_id, -1 );
+			$items    = is_object( $contents ) && isset( $contents->posts ) ? $contents->posts : ( is_array( $contents ) ? $contents : array() );
+			
+			foreach ( $items as $content ) {
+				$is_completed = tutor_utils()->is_completed_lesson( $content->ID, $user_id );
+				$type         = $content->post_type; // 'tutor_quiz' etc.
+				
+				if ( $is_completed ) {
+					$status_list[] = 'completed'; // Green
+				} elseif ( in_array( $type, array( 'tutor_quiz', 'tutor_assignments' ), true ) ) {
+					$status_list[] = 'quiz_pending'; // Yellow
+				} else {
+					$status_list[] = 'unattempted'; // Gray
+				}
+			}
+		}
+
+		wp_reset_postdata();
+
+		return $status_list;
+	}
+
+	/**
+	 * Render the segmented progress bar HTML.
+	 */
+	public static function render_segmented_progress_bar( $course_id, $user_id = 0 ) {
+		if ( ! $user_id ) {
+			$user_id = get_current_user_id();
+		}
+		
+		$segments = self::get_course_curriculum_status( $course_id, $user_id );
+		$total = count( $segments );
+		
+		if ( $total === 0 ) {
+			// Fallback if course is empty
+			echo '<div class="w-full bg-paper-100 rounded-full h-2"></div>';
+			return;
+		}
+		
+		$completed = count( array_filter( $segments, function( $s ) { return $s === 'completed'; } ) );
+		$percent   = round( ( $completed / $total ) * 100 );
+		
+		?>
+		<div class="mb-4">
+			<div class="flex justify-between items-center text-xs font-medium text-ink-light mb-1.5">
+				<span><?php esc_html_e( 'ความคืบหน้า', 'bia-learn' ); ?></span>
+				<span class="text-primary-600 font-bold"><?php echo esc_html( $percent ); ?>%</span>
+			</div>
+			
+			<div class="flex gap-1 w-full h-2.5">
+				<?php foreach ( $segments as $status ) : 
+					$bg_class = 'bg-paper-200'; // Default gray (unattempted)
+					if ( 'completed' === $status ) {
+						$bg_class = 'bg-success'; // Green
+					} elseif ( 'quiz_pending' === $status ) {
+						$bg_class = 'bg-warning'; // Yellow
+					}
+				?>
+					<div class="flex-1 rounded-full <?php echo esc_attr( $bg_class ); ?> transition-colors duration-500 shadow-sm"></div>
+				<?php endforeach; ?>
+			</div>
+		</div>
+		<?php
+	}
+
+	/**
 	 * Intercept the Continue button URL and redirect to the exact last viewed lesson.
 	 */
 	public static function smart_continue_url( $url, $course_id ) {
