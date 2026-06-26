@@ -19,11 +19,11 @@ class BIA_Learn_Tutor_UX {
 		// 1. Smart Continue Button Redirect
 		add_filter( 'tutor_course_continue_url', array( __CLASS__, 'smart_continue_url' ), 10, 2 );
 
-		// 2. Next Best Action UI Injection
-		add_action( 'tutor_course/single/before/content', array( __CLASS__, 'inject_next_best_action' ), 10, 1 );
-
 		// 3. Continue Learning Dashboard Tab
 		add_filter( 'tutor_dashboard/nav_items', array( __CLASS__, 'register_dashboard_tab' ), 10, 1 );
+
+		// 4. Change Start Learning button text
+		add_filter( 'gettext', array( __CLASS__, 'translate_start_learning' ), 20, 3 );
 
 		// 4. Estimated Time Remaining Badge
 		add_action( 'tutor_course/single/before/inner-wrap', array( __CLASS__, 'render_estimated_time' ), 10, 1 );
@@ -320,41 +320,18 @@ class BIA_Learn_Tutor_UX {
 		return $url;
 	}
 
+
+
 	/**
-	 * Inject the "Next Best Action" card at the top of the course.
+	 * Change "Start Learning" to "Continue Learning" (เรียนต่อ)
 	 */
-	public static function inject_next_best_action( $course_id = 0 ) {
-		if ( ! $course_id ) {
-			$course_id = get_the_ID();
+	public static function translate_start_learning( $translated_text, $text, $domain ) {
+		if ( 'tutor' === $domain ) {
+			if ( 'Start Learning' === $text || 'Start learning!' === $text || 'Continue to lesson' === $text ) {
+				return __( 'เรียนต่อ', 'bia-learn' );
+			}
 		}
-		$user_id = get_current_user_id();
-		if ( ! $user_id ) return;
-
-		// Only show if enrolled
-		if ( ! tutor_utils()->is_enrolled( $course_id, $user_id ) ) return;
-
-		$action = self::get_next_best_action( (int) $course_id, $user_id );
-		if ( ! $action ) return;
-
-		// Use theme classes (card, etc.)
-		?>
-		<div class="card p-5 mb-6 border-l-4 border-l-blue-500 bg-blue-50 flex flex-col md:flex-row justify-between items-center gap-4">
-			<div>
-				<h4 class="font-sans text-base font-bold text-blue-900 m-0 flex items-center gap-2">
-					<?php echo bia_learn_icon( 'target', 'h-5 w-5 text-blue-900' ); ?>
-					<?php esc_html_e( 'Next Best Action', 'bia-learn' ); ?>
-				</h4>
-				<p class="text-sm text-blue-800 m-0 mt-1">
-					<span class="font-semibold"><?php echo esc_html( $action['desc'] ); ?></span>: <?php echo esc_html( $action['title'] ); ?>
-				</p>
-			</div>
-			<div>
-				<a href="<?php echo esc_url( $action['url'] ); ?>" class="bia-tutor-btn">
-					<?php echo $action['type'] === 'quiz' ? esc_html__( 'Take Quiz', 'bia-learn' ) : esc_html__( 'Resume Learning', 'bia-learn' ); ?>
-				</a>
-			</div>
-		</div>
-		<?php
+		return $translated_text;
 	}
 
 	/**

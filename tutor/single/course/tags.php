@@ -14,10 +14,10 @@ if ( is_array( $course_tags ) && count( $course_tags ) ) { ?>
 			<?php esc_html_e( 'แท็ก', 'bia-learn' ); ?>
 		</h3>
 		<div class="tutor-course-details-widget-tags">
-		  <ul class="flex flex-wrap gap-2">
+		  <ul class="flex flex-wrap gap-2 p-0 m-0 list-none">
 				<?php
 				foreach ( $course_tags as $course_tag ) {
-					$tag_link = get_term_link( (int) $course_tag->term_id );
+					$tag_link = get_term_link( $course_tag );
 					echo "<li><a href='" . esc_url( $tag_link ) . "' class='badge-muted hover:bg-paper-200 transition'>" . esc_html( $course_tag->name ) . "</a></li>";
 				}
 				?>
