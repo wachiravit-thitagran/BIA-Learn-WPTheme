@@ -81,3 +81,71 @@ Alpine.data('siteHeader', () => ({
 
 window.Alpine = Alpine;
 Alpine.start();
+
+/* ---------------------------------------------------------------------------
+ * Tutor LMS Auto-complete Lessons
+ * ------------------------------------------------------------------------- */
+document.addEventListener('DOMContentLoaded', () => {
+  // Find the complete lesson form
+  const completeForm = document.querySelector('form input[value="tutor_complete_lesson"]')?.closest('form');
+  if (!completeForm) return;
+
+  const nextBtn = document.querySelector('.tutor-next-link');
+
+  const completeAndNavigate = (href) => {
+    const formData = new FormData(completeForm);
+    fetch(window.location.href, {
+      method: 'POST',
+      body: formData,
+      keepalive: true
+    }).finally(() => {
+      if (href) {
+        window.location.href = href;
+      } else {
+        completeForm.submit();
+      }
+    });
+  };
+
+  // 1. Text Lessons: Intercept "Next" button click
+  if (nextBtn) {
+    nextBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      const href = nextBtn.getAttribute('href');
+      completeAndNavigate(href);
+    });
+  }
+
+  // 2. Video Lessons: Listen to Video Ended Events
+  const checkVideo = setInterval(() => {
+    let videoFound = false;
+
+    // Check Plyr instances from Tutor LMS
+    if (window.tutor_plyr && Array.isArray(window.tutor_plyr) && window.tutor_plyr.length > 0) {
+      window.tutor_plyr.forEach(player => {
+        player.on('ended', () => {
+          completeForm.submit(); // Normal submit will reload and show checkmark
+        });
+      });
+      videoFound = true;
+    }
+
+    // Check native video tags
+    const videoEls = document.querySelectorAll('video');
+    if (videoEls.length > 0) {
+      videoEls.forEach(vid => {
+        vid.addEventListener('ended', () => {
+          completeForm.submit();
+        });
+      });
+      videoFound = true;
+    }
+
+    if (videoFound) {
+      clearInterval(checkVideo);
+    }
+  }, 1000);
+  
+  // Stop checking for video after 10 seconds
+  setTimeout(() => clearInterval(checkVideo), 10000);
+});
