@@ -726,16 +726,11 @@
 }
 
 /* Lesson / quiz */
-.tutor-single-lesson-wrap,
-.tutor-quiz-wrapper,
-.tutor-quiz-single-wrap,
-.tutor-course-single-sidebar-wrapper {
-  @apply rounded-2xl border border-paper-200 bg-white shadow-soft !important;
-}
-.tutor-single-lesson-wrap,
-.tutor-quiz-wrapper,
-.tutor-quiz-single-wrap {
-  @apply overflow-hidden !important;
+/* Only apply borders and radius when NOT in spotlight mode (fullscreen) if needed, 
+   but Tutor's native spotlight CSS already handles the layout. 
+   Removing the blanket !important overrides that break mobile. */
+.tutor-quiz-wrapper:not(.tutor-spotlight-mode) {
+  @apply rounded-2xl border border-paper-200 bg-white shadow-soft overflow-hidden;
 }
 
 /* Quiz + certificate accents */
