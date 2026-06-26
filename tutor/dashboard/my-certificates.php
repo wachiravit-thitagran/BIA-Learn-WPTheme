@@ -41,4 +41,3 @@ defined( 'ABSPATH' ) || exit;
 	</div>
 
 	<?php echo do_shortcode( '[certpsu_my_certificates]' ); ?>
-</div>
