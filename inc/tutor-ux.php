@@ -185,8 +185,16 @@ class BIA_Learn_Tutor_UX {
 			$items    = is_object( $contents ) && isset( $contents->posts ) ? $contents->posts : ( is_array( $contents ) ? $contents : array() );
 			
 			foreach ( $items as $content ) {
-				$is_completed = tutor_utils()->is_completed_lesson( $content->ID, $user_id );
-				$type         = $content->post_type; // 'tutor_quiz' etc.
+				$type         = $content->post_type; // 'tutor_quiz', 'tutor_assignments', 'lesson'
+				$is_completed = false;
+				
+				if ( 'tutor_quiz' === $type ) {
+					$is_completed = tutor_utils()->has_attempted_quiz( $user_id, $content->ID );
+				} elseif ( 'tutor_assignments' === $type ) {
+					$is_completed = tutor_utils()->is_assignment_submitted( $content->ID, $user_id );
+				} else {
+					$is_completed = tutor_utils()->is_completed_lesson( $content->ID, $user_id );
+				}
 				
 				if ( $is_completed ) {
 					$status_list[] = 'completed'; // Green
@@ -212,17 +220,15 @@ class BIA_Learn_Tutor_UX {
 		}
 		
 		$segments = self::get_course_curriculum_status( $course_id, $user_id );
-		$total = count( $segments );
-		
-		if ( $total === 0 ) {
-			// Fallback if course is empty
-			echo '<div class="w-full bg-paper-100 rounded-full h-2"></div>';
-			return;
+		$total    = count( $segments );
+		if ( 0 === $total ) {
+			return; // No lessons, don't show progress
 		}
-		
-		$completed = count( array_filter( $segments, function( $s ) { return $s === 'completed'; } ) );
-		$percent   = round( ( $completed / $total ) * 100 );
-		
+
+		// Use Tutor LMS actual percentage calculation to ensure absolute consistency
+		$course_progress = tutor_utils()->get_course_completed_percent( $course_id, $user_id, true );
+		$percent = is_array( $course_progress ) && isset( $course_progress['completed_percent'] ) ? (int) $course_progress['completed_percent'] : 0;
+
 		?>
 		<div class="mb-4">
 			<div class="flex justify-between items-center text-xs font-medium text-ink-light mb-1.5">
