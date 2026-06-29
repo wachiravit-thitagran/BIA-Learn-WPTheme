@@ -161,6 +161,43 @@ class BIA_Learn_Tutor_UX {
 		);
 	}
 
+	private static function get_quiz_assignment_status( $content_id, $user_id, $type ) {
+		global $wpdb;
+		
+		if ( 'tutor_quiz' === $type ) {
+			if ( ! tutor_utils()->has_attempted_quiz( $user_id, $content_id ) ) {
+				return 'unattempted';
+			}
+			
+			$passed = $wpdb->get_var( $wpdb->prepare( "
+				SELECT attempt_id
+				FROM {$wpdb->prefix}tutor_quiz_attempts
+				WHERE user_id = %d AND quiz_id = %d AND result = 'pass'
+				LIMIT 1
+			", $user_id, $content_id ) );
+			
+			return $passed ? 'completed' : 'quiz_pending';
+		}
+		
+		if ( 'tutor_assignments' === $type ) {
+			$submissions = tutor_utils()->is_assignment_submitted( $content_id, $user_id );
+			if ( empty( $submissions ) ) {
+				return 'unattempted';
+			}
+			
+			$pass_mark = tutor_utils()->get_assignment_option( $content_id, 'pass_mark' );
+			foreach ( $submissions as $submission ) {
+				$mark = get_comment_meta( $submission->comment_ID, 'assignment_mark', true );
+				if ( is_numeric( $mark ) && (int) $mark >= $pass_mark ) {
+					return 'completed';
+				}
+			}
+			return 'quiz_pending'; // Attempted but not passed/evaluated
+		}
+		
+		return 'unattempted';
+	}
+
 	/**
 	 * Get status of every lesson and quiz in the course for segmented progress bar.
 	 *
@@ -185,21 +222,12 @@ class BIA_Learn_Tutor_UX {
 			$items    = is_object( $contents ) && isset( $contents->posts ) ? $contents->posts : ( is_array( $contents ) ? $contents : array() );
 			
 			foreach ( $items as $content ) {
-				$type         = $content->post_type; // 'tutor_quiz', 'tutor_assignments', 'lesson'
-				$is_completed = false;
+				$type = $content->post_type; // 'tutor_quiz', 'tutor_assignments', 'lesson'
 				
-				if ( 'tutor_quiz' === $type ) {
-					$is_completed = tutor_utils()->has_attempted_quiz( $user_id, $content->ID );
-				} elseif ( 'tutor_assignments' === $type ) {
-					$is_completed = tutor_utils()->is_assignment_submitted( $content->ID, $user_id );
+				if ( 'tutor_quiz' === $type || 'tutor_assignments' === $type ) {
+					$status_list[] = self::get_quiz_assignment_status( $content->ID, $user_id, $type );
 				} else {
-					$is_completed = tutor_utils()->is_completed_lesson( $content->ID, $user_id );
-				}
-				
-				if ( $is_completed ) {
-					$status_list[] = 'completed'; // Green
-				} else {
-					$status_list[] = 'unattempted'; // Gray
+					$status_list[] = tutor_utils()->is_completed_lesson( $content->ID, $user_id ) ? 'completed' : 'unattempted';
 				}
 			}
 		}
