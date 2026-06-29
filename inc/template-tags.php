@@ -8,6 +8,19 @@
 defined( 'ABSPATH' ) || exit;
 
 /**
+ * Globally filter out "Uncategorized" from being returned for posts.
+ */
+add_filter( 'get_the_terms', function ( $terms, $post_id, $taxonomy ) {
+	if ( 'category' === $taxonomy && is_array( $terms ) ) {
+		$terms = array_filter( $terms, function ( $term ) {
+			return 'uncategorized' !== $term->slug && 'ไม่มีหมวดหมู่' !== $term->name;
+		} );
+		return empty( $terms ) ? false : array_values( $terms );
+	}
+	return $terms;
+}, 10, 3 );
+
+/**
  * Output a styled breadcrumb trail.
  *
  * Uses Yoast / Rank Math output when available, otherwise builds a sensible
