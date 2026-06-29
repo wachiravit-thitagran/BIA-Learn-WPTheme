@@ -198,8 +198,6 @@ class BIA_Learn_Tutor_UX {
 				
 				if ( $is_completed ) {
 					$status_list[] = 'completed'; // Green
-				} elseif ( in_array( $type, array( 'tutor_quiz', 'tutor_assignments' ), true ) ) {
-					$status_list[] = 'quiz_pending'; // Yellow
 				} else {
 					$status_list[] = 'unattempted'; // Gray
 				}
