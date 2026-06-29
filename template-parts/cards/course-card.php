@@ -151,10 +151,16 @@ $level_labels = array(
 					<span class="block h-full rounded-full bg-crimson transition-all duration-500" style="width:<?php echo (int) $progress; ?>%"></span>
 				</div>
 				<?php } ?>
-				<span class="mt-3 inline-flex items-center gap-1.5 text-sm font-semibold text-crimson">
+				<?php
+				$continue_url = get_permalink( $course_id );
+				if ( class_exists( 'BIA_Learn_Tutor_UX' ) ) {
+					$continue_url = BIA_Learn_Tutor_UX::smart_continue_url( $continue_url, $course_id );
+				}
+				?>
+				<a href="<?php echo esc_url( $continue_url ); ?>" class="mt-3 inline-flex items-center gap-1.5 text-sm font-semibold text-crimson hover:text-crimson-dark">
 					<?php esc_html_e( 'เรียนต่อ', 'bia-learn' ); ?>
 					<?php echo bia_learn_icon( 'arrow', 'h-4 w-4 transition group-hover:translate-x-1' ); // phpcs:ignore ?>
-				</span>
+				</a>
 			</div>
 		<?php else : ?>
 			<!-- footer row -->
