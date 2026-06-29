@@ -85,7 +85,7 @@ while ( have_posts() ) :
 		</div>
 
 		<!-- Form panel -->
-		<div class="flex flex-col justify-center rounded-3xl border border-paper-200 bg-white p-6 shadow-card sm:p-10 lg:rounded-l-none">
+		<div class="flex flex-col justify-start rounded-3xl border border-paper-200 bg-white p-6 shadow-card sm:p-10 lg:rounded-l-none">
 
 			<?php if ( '' !== $bia_auth_shortcode ) : ?>
 
