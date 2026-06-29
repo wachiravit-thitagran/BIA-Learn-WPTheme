@@ -199,6 +199,44 @@ function bia_learn_redirect_wp_login() {
 add_action( 'login_init', 'bia_learn_redirect_wp_login' );
 
 /**
+ * Filter wp_login_url to point to our branded auth page.
+ * Prevents Tutor LMS from setting the login URL to the dashboard,
+ * which causes an infinite redirect loop when clicking "Enroll Now".
+ *
+ * @param string $login_url The login URL.
+ * @param string $redirect  The redirect URL.
+ * @return string
+ */
+function bia_learn_filter_login_url( $login_url, $redirect = '' ) {
+	$auth = get_page_by_path( 'auth' );
+	if ( $auth ) {
+		$url = get_permalink( $auth );
+		if ( $redirect ) {
+			$url = add_query_arg( 'redirect_to', rawurlencode( $redirect ), $url );
+		}
+		return $url;
+	}
+	return $login_url;
+}
+add_filter( 'login_url', 'bia_learn_filter_login_url', 99, 2 );
+
+/**
+ * Filter wp_registration_url to point to our branded auth page.
+ *
+ * @param string $register_url The registration URL.
+ * @return string
+ */
+function bia_learn_filter_register_url( $register_url ) {
+	$auth = get_page_by_path( 'auth' );
+	if ( $auth ) {
+		return add_query_arg( 'tab', 'register', get_permalink( $auth ) );
+	}
+	return $register_url;
+}
+add_filter( 'register_url', 'bia_learn_filter_register_url', 99 );
+
+
+/**
  * Flush the cached stats whenever a course / enrolment changes.
  */
 function bia_learn_flush_stats_cache() {
