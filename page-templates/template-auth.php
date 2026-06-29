@@ -198,37 +198,41 @@ while ( have_posts() ) :
 								<h2 class="font-sans text-2xl font-bold text-ink"><?php esc_html_e( 'สมัครเรียนฟรี', 'bia-learn' ); ?></h2>
 								<p class="mt-1 text-sm text-ink-light"><?php esc_html_e( 'สร้างบัญชีเพื่อเข้าถึงคอร์สและบทเรียนทั้งหมด', 'bia-learn' ); ?></p>
 
-								<div class="bia-auth-register mt-6">
-									<?php
-									if ( $bia_has_tutor ) {
-										// Tutor LMS student registration form (handles submission + validation).
-										echo do_shortcode( '[tutor_student_registration_form]' );
-									} else {
-										// Native WordPress registration.
-										?>
-										<form method="post" action="<?php echo esc_url( wp_registration_url() ); ?>" class="space-y-4">
-											<div>
-												<label for="bia-user_login" class="field-label"><?php esc_html_e( 'ชื่อผู้ใช้', 'bia-learn' ); ?></label>
-												<input id="bia-user_login" type="text" name="user_login" autocomplete="username" required class="field" />
-											</div>
-											<div>
-												<label for="bia-user_email" class="field-label"><?php esc_html_e( 'อีเมล', 'bia-learn' ); ?></label>
-												<input id="bia-user_email" type="email" name="user_email" autocomplete="email" required class="field" />
-											</div>
-											<p class="text-xs text-ink-light"><?php esc_html_e( 'ระบบจะส่งลิงก์ตั้งรหัสผ่านไปยังอีเมลของคุณ', 'bia-learn' ); ?></p>
-											<button type="submit" class="btn-primary w-full"><?php esc_html_e( 'สมัครเรียน', 'bia-learn' ); ?></button>
-										</form>
+								<?php if ( ! $bia_pwd_disabled ) : ?>
+									<div class="bia-auth-register mt-6">
 										<?php
-									}
-									?>
-								</div>
+										if ( $bia_has_tutor ) {
+											// Tutor LMS student registration form (handles submission + validation).
+											echo do_shortcode( '[tutor_student_registration_form]' );
+										} else {
+											// Native WordPress registration.
+											?>
+											<form method="post" action="<?php echo esc_url( wp_registration_url() ); ?>" class="space-y-4">
+												<div>
+													<label for="bia-user_login" class="field-label"><?php esc_html_e( 'ชื่อผู้ใช้', 'bia-learn' ); ?></label>
+													<input id="bia-user_login" type="text" name="user_login" autocomplete="username" required class="field" />
+												</div>
+												<div>
+													<label for="bia-user_email" class="field-label"><?php esc_html_e( 'อีเมล', 'bia-learn' ); ?></label>
+													<input id="bia-user_email" type="email" name="user_email" autocomplete="email" required class="field" />
+												</div>
+												<p class="text-xs text-ink-light"><?php esc_html_e( 'ระบบจะส่งลิงก์ตั้งรหัสผ่านไปยังอีเมลของคุณ', 'bia-learn' ); ?></p>
+												<button type="submit" class="btn-primary w-full"><?php esc_html_e( 'สมัครเรียน', 'bia-learn' ); ?></button>
+											</form>
+											<?php
+										}
+										?>
+									</div>
+								<?php endif; ?>
 								
 								<?php if ( shortcode_exists( 'authorizenter_button' ) ) : ?>
-									<div class="my-6 flex items-center gap-3">
-										<hr class="flex-1 border-paper-200">
-										<span class="text-sm text-ink-light"><?php esc_html_e( 'หรือ', 'bia-learn' ); ?></span>
-										<hr class="flex-1 border-paper-200">
-									</div>
+									<?php if ( ! $bia_pwd_disabled ) : ?>
+										<div class="my-6 flex items-center gap-3">
+											<hr class="flex-1 border-paper-200">
+											<span class="text-sm text-ink-light"><?php esc_html_e( 'หรือ', 'bia-learn' ); ?></span>
+											<hr class="flex-1 border-paper-200">
+										</div>
+									<?php endif; ?>
 									<div class="bia-auth-social">
 										<?php 
 										$bia_providers = array( 'google', 'facebook', 'line', 'oidc', 'oauth2' );
