@@ -198,8 +198,8 @@ while ( have_posts() ) :
 								<h2 class="font-sans text-2xl font-bold text-ink"><?php esc_html_e( 'สมัครเรียนฟรี', 'bia-learn' ); ?></h2>
 								<p class="mt-1 text-sm text-ink-light"><?php esc_html_e( 'สร้างบัญชีเพื่อเข้าถึงคอร์สและบทเรียนทั้งหมด', 'bia-learn' ); ?></p>
 
-								<?php if ( ! $bia_pwd_disabled ) : ?>
-									<div class="bia-auth-register mt-6">
+								<div class="bia-auth-register mt-6">
+									<?php if ( ! $bia_pwd_disabled ) : ?>
 										<?php
 										if ( $bia_has_tutor ) {
 											// Tutor LMS student registration form (handles submission + validation).
@@ -222,26 +222,26 @@ while ( have_posts() ) :
 											<?php
 										}
 										?>
-									</div>
-								<?php endif; ?>
-								
-								<?php if ( shortcode_exists( 'authorizenter_button' ) ) : ?>
-									<?php if ( ! $bia_pwd_disabled ) : ?>
-										<div class="my-6 flex items-center gap-3">
-											<hr class="flex-1 border-paper-200">
-											<span class="text-sm text-ink-light"><?php esc_html_e( 'หรือ', 'bia-learn' ); ?></span>
-											<hr class="flex-1 border-paper-200">
+									<?php endif; ?>
+									
+									<?php if ( shortcode_exists( 'authorizenter_button' ) ) : ?>
+										<?php if ( ! $bia_pwd_disabled ) : ?>
+											<div class="my-6 flex items-center gap-3">
+												<hr class="flex-1 border-paper-200">
+												<span class="text-sm text-ink-light"><?php esc_html_e( 'หรือ', 'bia-learn' ); ?></span>
+												<hr class="flex-1 border-paper-200">
+											</div>
+										<?php endif; ?>
+										<div class="bia-auth-social">
+											<?php 
+											$bia_providers = array( 'google', 'facebook', 'line', 'oidc', 'oauth2' );
+											foreach ( $bia_providers as $bia_provider ) {
+												echo do_shortcode( sprintf( '[authorizenter_button context="default" provider="%s"]', $bia_provider ) );
+											}
+											?>
 										</div>
 									<?php endif; ?>
-									<div class="bia-auth-social">
-										<?php 
-										$bia_providers = array( 'google', 'facebook', 'line', 'oidc', 'oauth2' );
-										foreach ( $bia_providers as $bia_provider ) {
-											echo do_shortcode( sprintf( '[authorizenter_button context="default" provider="%s"]', $bia_provider ) );
-										}
-										?>
-									</div>
-								<?php endif; ?>
+								</div>
 
 								<p class="mt-6 text-center text-sm text-ink-light">
 									<?php esc_html_e( 'มีบัญชีอยู่แล้ว?', 'bia-learn' ); ?>
