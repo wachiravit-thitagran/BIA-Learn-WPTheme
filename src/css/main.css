@@ -721,6 +721,9 @@
 .tutor-course-details-widget-title {
   @apply font-sans text-xl font-bold text-ink mb-4 !important;
 }
+.tutor-course-details-widget-tags {
+  @apply ml-0 !important;
+}
 .tutor-course-details-page {
   @apply gap-8 !important;
 }
