@@ -72,7 +72,11 @@ if ( $enrolled_courses && $enrolled_courses->have_posts() ) {
 				// Tracker exact last lesson URL
 				$resume_url = BIA_Learn_Tutor_UX::get_last_viewed_lesson_url( $course_id, $user_id );
 				if ( ! $resume_url ) {
-					$resume_url = get_permalink( $course_id );
+					$resume_url = tutor_utils()->get_course_first_lesson( $course_id );
+					// If the course has no lessons at all, fallback to course page
+					if ( ! $resume_url ) {
+						$resume_url = get_permalink( $course_id );
+					}
 				}
 				?>
 				<div class="card p-5 flex flex-col justify-between h-full bg-white border border-paper-200 hover:border-primary-300 transition shadow-sm rounded-xl">

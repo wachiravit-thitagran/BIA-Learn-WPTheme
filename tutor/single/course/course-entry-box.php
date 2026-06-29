@@ -16,6 +16,9 @@ global $is_enrolled;
 
 $is_enrolled          = apply_filters( 'tutor_alter_enroll_status', $is_enrolled );
 $lesson_url           = tutor_utils()->get_course_first_lesson();
+if ( class_exists( 'BIA_Learn_Tutor_UX' ) ) {
+	$lesson_url = BIA_Learn_Tutor_UX::smart_continue_url( $lesson_url, get_the_ID() );
+}
 $is_privileged_user   = tutor_utils()->has_user_course_content_access();
 $tutor_course_sell_by = apply_filters( 'tutor_course_sell_by', null );
 $is_public            = get_post_meta( get_the_ID(), '_tutor_is_public_course', true ) == 'yes';

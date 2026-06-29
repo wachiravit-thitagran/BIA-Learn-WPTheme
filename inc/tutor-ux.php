@@ -259,7 +259,13 @@ class BIA_Learn_Tutor_UX {
 			return $exact_url;
 		}
 
-		// Fallback to course page if no tracker data
+		// Fallback to the first incomplete lesson
+		$fallback_url = tutor_utils()->get_course_first_lesson( $course_id );
+		if ( $fallback_url ) {
+			return $fallback_url;
+		}
+
+		// Fallback to course page if no lessons exist
 		return $url;
 	}
 
