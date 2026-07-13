@@ -225,10 +225,15 @@ class BIA_Learn_Tutor_UX {
 				$type = $content->post_type; // 'tutor_quiz', 'tutor_assignments', 'lesson'
 				
 				if ( 'tutor_quiz' === $type || 'tutor_assignments' === $type ) {
-					$status_list[] = self::get_quiz_assignment_status( $content->ID, $user_id, $type );
+					$status = self::get_quiz_assignment_status( $content->ID, $user_id, $type );
 				} else {
-					$status_list[] = tutor_utils()->is_completed_lesson( $content->ID, $user_id ) ? 'completed' : 'unattempted';
+					$status = tutor_utils()->is_completed_lesson( $content->ID, $user_id ) ? 'completed' : 'unattempted';
 				}
+				
+				$status_list[] = array(
+					'title'  => get_the_title( $content->ID ),
+					'status' => $status
+				);
 			}
 		}
 
@@ -237,9 +242,6 @@ class BIA_Learn_Tutor_UX {
 		return $status_list;
 	}
 
-	/**
-	 * Render the segmented progress bar HTML.
-	 */
 	public static function render_segmented_progress_bar( $course_id, $user_id = 0 ) {
 		if ( ! $user_id ) {
 			$user_id = get_current_user_id();
@@ -250,20 +252,24 @@ class BIA_Learn_Tutor_UX {
 		if ( 0 === $total ) {
 			return; // No lessons, don't show progress
 		}
-
+		
 		// Use Tutor LMS actual percentage calculation to ensure absolute consistency
 		$course_progress = tutor_utils()->get_course_completed_percent( $course_id, $user_id, true );
 		$percent = is_array( $course_progress ) && isset( $course_progress['completed_percent'] ) ? (int) $course_progress['completed_percent'] : 0;
+		$completed_count = is_array( $course_progress ) && isset( $course_progress['completed_count'] ) ? (int) $course_progress['completed_count'] : 0;
+		$total_count = is_array( $course_progress ) && isset( $course_progress['total_count'] ) ? (int) $course_progress['total_count'] : 0;
 
 		?>
 		<div class="mb-4">
-			<div class="flex justify-between items-center text-xs font-medium text-ink-light mb-1.5">
-				<span><?php esc_html_e( 'ความคืบหน้า', 'bia-learn' ); ?></span>
-				<span class="text-primary-600 font-bold"><?php echo esc_html( $percent ); ?>%</span>
+			<div class="flex justify-between items-center text-xs text-ink-light mb-1.5 font-medium">
+				<span><?php printf( esc_html__( '%1$d of %2$d lessons', 'bia-learn' ), $completed_count, $total_count ); ?></span>
+				<span><?php echo esc_html( $percent ); ?>% <?php esc_html_e( 'Complete', 'bia-learn' ); ?></span>
 			</div>
 			
-			<div class="flex gap-1 w-full h-2.5">
-				<?php foreach ( $segments as $status ) : 
+			<div class="flex gap-1 w-full h-1.5">
+				<?php foreach ( $segments as $segment ) : 
+					$status = $segment['status'];
+					$title  = $segment['title'];
 					$bg_class = 'bg-paper-200'; // Default gray (unattempted)
 					if ( 'completed' === $status ) {
 						$bg_class = 'bg-success'; // Green
@@ -271,7 +277,7 @@ class BIA_Learn_Tutor_UX {
 						$bg_class = 'bg-warning'; // Yellow
 					}
 				?>
-					<div class="flex-1 rounded-full <?php echo esc_attr( $bg_class ); ?> transition-colors duration-500 shadow-sm"></div>
+					<div class="flex-1 rounded-full <?php echo esc_attr( $bg_class ); ?> transition-colors duration-500 shadow-sm" title="<?php echo esc_attr( $title ); ?>"></div>
 				<?php endforeach; ?>
 			</div>
 		</div>
