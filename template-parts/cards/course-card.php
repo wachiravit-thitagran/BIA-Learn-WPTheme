@@ -111,7 +111,7 @@ $level_labels = array(
 			<a href="<?php the_permalink(); ?>" class="line-clamp-2"><?php the_title(); ?></a>
 		</h3>
 
-		<p class="line-clamp-2 text-sm leading-relaxed text-ink-light"><?php echo esc_html( get_the_excerpt() ); ?></p>
+		<p class="text-sm leading-relaxed text-ink-light"><?php echo esc_html( get_the_excerpt() ); ?></p>
 
 		<?php if ( $instructor ) : ?>
 			<div class="flex items-center gap-2 text-xs text-ink-light">
