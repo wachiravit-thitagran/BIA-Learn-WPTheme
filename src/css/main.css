@@ -597,6 +597,10 @@
 .tutor-course-card {
   @apply border-0 bg-transparent shadow-none p-0 overflow-visible !important;
 }
+.tutor-course-listing-item:hover,
+.tutor-course-card:hover {
+  @apply translate-y-0 shadow-none !important;
+}
 .bia-tutor-archive-shell {
   @apply mt-8 rounded-[2rem] border border-paper-200 bg-paper-50/80 p-4 sm:p-6 !important;
 }

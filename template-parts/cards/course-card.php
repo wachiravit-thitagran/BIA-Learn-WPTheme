@@ -111,7 +111,15 @@ $level_labels = array(
 			<a href="<?php the_permalink(); ?>" class="line-clamp-2"><?php the_title(); ?></a>
 		</h3>
 
-		<p class="text-sm leading-relaxed text-ink-light"><?php echo esc_html( get_the_excerpt() ); ?></p>
+		<p class="text-sm leading-relaxed text-ink-light">
+			<?php 
+			$bia_excerpt = get_post_field( 'post_excerpt', get_the_ID() );
+			if ( empty( $bia_excerpt ) ) {
+				$bia_excerpt = wp_strip_all_tags( get_post_field( 'post_content', get_the_ID() ) );
+			}
+			echo esc_html( $bia_excerpt );
+			?>
+		</p>
 
 		<?php if ( $instructor ) : ?>
 			<div class="flex items-center gap-2 text-xs text-ink-light">
