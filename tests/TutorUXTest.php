@@ -106,14 +106,14 @@ class TutorUXTest extends TestCase {
 		$result = BIA_Learn_Tutor_UX::get_course_curriculum_status( 123, 1 );
 
 		$expected = array(
-			'unattempted',   // Lesson 101
-			'completed',     // Lesson 102
-			'unattempted',   // Quiz 301
-			'completed',     // Quiz 302
-			'quiz_pending',  // Quiz 303
-			'unattempted',   // Assignment 401
-			'completed',     // Assignment 402
-			'quiz_pending',  // Assignment 403
+			array( 'title' => 'Title', 'status' => 'unattempted' ),
+			array( 'title' => 'Title', 'status' => 'completed' ),
+			array( 'title' => 'Title', 'status' => 'unattempted' ),
+			array( 'title' => 'Title', 'status' => 'completed' ),
+			array( 'title' => 'Title', 'status' => 'quiz_pending' ),
+			array( 'title' => 'Title', 'status' => 'unattempted' ),
+			array( 'title' => 'Title', 'status' => 'completed' ),
+			array( 'title' => 'Title', 'status' => 'quiz_pending' ),
 		);
 
 		$this->assertEquals( $expected, $result );
