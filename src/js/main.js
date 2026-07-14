@@ -114,7 +114,29 @@ document.addEventListener('DOMContentLoaded', () => {
   const completeForm = document.querySelector('form input[value="tutor_complete_lesson"]')?.closest('form');
   if (!completeForm) return;
 
-  const nextBtn = document.querySelector('.tutor-next-link');
+  // Tutor 4.0 renders the lesson footer nav as:
+  //   [Previous <a>] [complete <form>] [Next <a>]
+  // The "Next" control is the anchor that follows the complete form. Older Tutor
+  // used a `.tutor-next-link` class that no longer exists in 4.0, which is why
+  // clicking "Next" stopped auto-completing the lesson. Find it structurally,
+  // with fallbacks for the legacy class and other layouts.
+  let nextBtn = null;
+  for (let sib = completeForm.nextElementSibling; sib; sib = sib.nextElementSibling) {
+    if (sib.tagName === 'A' && sib.getAttribute('href')) {
+      nextBtn = sib;
+      break;
+    }
+  }
+  if (!nextBtn) {
+    nextBtn = document.querySelector('.tutor-next-link');
+  }
+  if (!nextBtn) {
+    const footer = completeForm.closest('.tutor-learning-area-footer');
+    const anchors = footer ? footer.querySelectorAll('a[href]') : [];
+    if (anchors.length) {
+      nextBtn = anchors[anchors.length - 1];
+    }
+  }
 
   const completeAndNavigate = (href) => {
     const formData = new FormData(completeForm);
