@@ -116,7 +116,20 @@ while ( have_posts() ) :
 
 			<?php else : ?>
 
-				<div class="mx-auto flex h-full w-full max-w-md flex-col" x-data="{ tab: '<?php echo esc_js( $bia_default_tab ); ?>' }">
+				<style>
+					/* Tab visibility is driven by the container's data-tab attribute, which
+					   is set server-side and updated by Alpine on click. This keeps the
+					   correct panel visible even if Alpine is delayed, blocked, or fails —
+					   preventing both panels from rendering at once. */
+					.bia-auth-tabs [data-auth-panel] { display: none; }
+					.bia-auth-tabs[data-tab="login"] [data-auth-panel="login"] { display: block; }
+					.bia-auth-tabs[data-tab="register"] [data-auth-panel="register"] { display: block; }
+				</style>
+				<div class="bia-auth-tabs mx-auto flex h-full w-full max-w-md flex-col"
+					data-auth-tabs
+					data-tab="<?php echo esc_attr( $bia_default_tab ); ?>"
+					x-data="{ tab: '<?php echo esc_js( $bia_default_tab ); ?>' }"
+					:data-tab="tab">
 
 					<!-- Tabs -->
 					<div class="grid grid-cols-2 gap-1 rounded-xl bg-paper-100 p-1">
@@ -136,7 +149,7 @@ while ( have_posts() ) :
 
 					<div class="flex flex-1 flex-col justify-center">
 						<!-- Login -->
-						<div x-show="tab === 'login'" x-cloak class="mt-7">
+						<div data-auth-panel="login" class="mt-7">
 							<h2 class="font-sans text-2xl font-bold text-ink"><?php esc_html_e( 'เข้าสู่ระบบ', 'bia-learn' ); ?></h2>
 							<p class="mt-1 text-sm text-ink-light"><?php esc_html_e( 'เข้าสู่ระบบเพื่อเรียนต่อและจัดการคอร์สของคุณ', 'bia-learn' ); ?></p>
 
@@ -194,7 +207,7 @@ while ( have_posts() ) :
 
 						<!-- Register -->
 						<?php if ( $bia_can_register ) : ?>
-							<div x-show="tab === 'register'" x-cloak class="mt-7">
+							<div data-auth-panel="register" class="mt-7">
 								<h2 class="font-sans text-2xl font-bold text-ink"><?php esc_html_e( 'สมัครเรียนฟรี', 'bia-learn' ); ?></h2>
 								<p class="mt-1 text-sm text-ink-light"><?php esc_html_e( 'สร้างบัญชีเพื่อเข้าถึงคอร์สและบทเรียนทั้งหมด', 'bia-learn' ); ?></p>
 

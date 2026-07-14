@@ -79,8 +79,25 @@ Alpine.data('siteHeader', () => ({
   },
 }));
 
-window.Alpine = Alpine;
-Alpine.start();
+// Tutor LMS 4.x bundles and starts its OWN Alpine instance on its pages
+// (dashboard, courses, lessons, auth). Running a second Alpine instance on the
+// same page breaks reactivity across the whole document — Tutor's dashboard
+// popovers stop working and the theme's own x-show/x-data (e.g. the auth tabs)
+// misbehave, and the console fills with "slides/currentSlide/handleClickOutside
+// is not defined" as our Alpine tries to evaluate Tutor's component expressions.
+// So only bootstrap our Alpine when the page has none; otherwise leave Tutor's
+// instance to run cleanly.
+const alpineAlreadyRunning =
+  !!window.Alpine ||
+  Array.prototype.some.call(
+    document.querySelectorAll('[x-data]'),
+    (el) => !!el._x_dataStack
+  );
+
+if (!alpineAlreadyRunning) {
+  window.Alpine = Alpine;
+  Alpine.start();
+}
 
 /* ---------------------------------------------------------------------------
  * Tutor LMS Auto-complete Lessons
