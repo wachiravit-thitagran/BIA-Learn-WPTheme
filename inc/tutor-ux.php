@@ -261,23 +261,23 @@ class BIA_Learn_Tutor_UX {
 
 		?>
 		<div class="mb-4">
-			<div class="flex justify-between items-center text-xs text-ink-light mb-1.5 font-medium">
-				<span><?php printf( esc_html__( '%1$d of %2$d lessons', 'bia-learn' ), $completed_count, $total_count ); ?></span>
-				<span><?php echo esc_html( $percent ); ?>% <?php esc_html_e( 'Complete', 'bia-learn' ); ?></span>
+			<div class="flex items-center justify-between text-xs text-ink-light mb-1.5">
+				<span><?php esc_html_e( 'ความคืบหน้า', 'bia-learn' ); ?></span>
+				<span class="font-semibold text-crimson"><?php echo esc_html( $percent ); ?>%</span>
 			</div>
 			
-			<div class="flex gap-1 w-full h-1.5">
+			<div class="flex gap-0.5 w-full h-1.5">
 				<?php foreach ( $segments as $segment ) : 
 					$status = $segment['status'];
 					$title  = $segment['title'];
-					$bg_class = 'bg-paper-200'; // Default gray (unattempted)
+					$bg_class = 'bg-paper-100'; // Default gray (unattempted)
 					if ( 'completed' === $status ) {
 						$bg_class = 'bg-success'; // Green
 					} elseif ( 'quiz_pending' === $status ) {
 						$bg_class = 'bg-warning'; // Yellow
 					}
 				?>
-					<div class="flex-1 rounded-full <?php echo esc_attr( $bg_class ); ?> transition-colors duration-500 shadow-sm" title="<?php echo esc_attr( $title ); ?>"></div>
+					<div class="flex-1 rounded-full <?php echo esc_attr( $bg_class ); ?> transition-colors duration-500" title="<?php echo esc_attr( $title ); ?>"></div>
 				<?php endforeach; ?>
 			</div>
 		</div>

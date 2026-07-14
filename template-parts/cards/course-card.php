@@ -131,31 +131,16 @@ $level_labels = array(
 		<?php if ( null !== $progress ) : ?>
 			<!-- enrolled learner: completion + continue -->
 			<div class="mt-auto border-t border-paper-100 pt-4">
+				<?php 
+				if ( class_exists( 'BIA_Learn_Tutor_UX' ) ) {
+					BIA_Learn_Tutor_UX::render_segmented_progress_bar( $course_id, get_current_user_id() );
+				} else {
+				?>
 				<div class="flex items-center justify-between text-xs text-ink-light mb-1.5">
 					<span><?php esc_html_e( 'ความคืบหน้า', 'bia-learn' ); ?></span>
 					<span class="font-semibold text-crimson"><?php echo esc_html( $progress ); ?>%</span>
 				</div>
-				<?php 
-				if ( class_exists( 'BIA_Learn_Tutor_UX' ) ) {
-					$segments = BIA_Learn_Tutor_UX::get_course_curriculum_status( $course_id, get_current_user_id() );
-					if ( empty( $segments ) ) {
-						echo '<div class="h-1.5 w-full overflow-hidden rounded-full bg-paper-100"></div>';
-					} else {
-						echo '<div class="flex gap-0.5 w-full h-1.5">';
-						foreach ( $segments as $status ) {
-							$bg = 'bg-paper-100'; // unattempted
-							if ( 'completed' === $status ) {
-								$bg = 'bg-success'; // Green
-							} elseif ( 'quiz_pending' === $status ) {
-								$bg = 'bg-warning'; // Yellow
-							}
-							echo '<div class="flex-1 rounded-full transition-colors duration-500 ' . esc_attr( $bg ) . '"></div>';
-						}
-						echo '</div>';
-					}
-				} else {
-				?>
-				<div class="h-1.5 w-full overflow-hidden rounded-full bg-paper-100">
+				<div class="h-1.5 w-full overflow-hidden rounded-full bg-paper-100 mb-4">
 					<span class="block h-full rounded-full bg-crimson transition-all duration-500" style="width:<?php echo (int) $progress; ?>%"></span>
 				</div>
 				<?php } ?>
