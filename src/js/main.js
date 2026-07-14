@@ -87,14 +87,21 @@ Alpine.data('siteHeader', () => ({
 // is not defined" as our Alpine tries to evaluate Tutor's component expressions.
 // So only bootstrap our Alpine when the page has none; otherwise leave Tutor's
 // instance to run cleanly.
-const alpineAlreadyRunning =
+// Tutor bundles its Alpine and defers the DOM walk, and it does not set
+// window.Alpine, so we can't reliably detect it at this instant via window.Alpine
+// or _x_dataStack. Instead detect it synchronously from the server-rendered DOM:
+// every Tutor Alpine root uses an x-data that references a "tutor…" component
+// (tutorHeader, tutorPopover, tutorTour, tutorModal, tutorCourseCompletionChart…).
+// If any are present, Tutor owns Alpine on this page — do not start a second one.
+const otherAlpineOwnsPage =
   !!window.Alpine ||
+  !!document.querySelector('[x-data*="tutor"]') ||
   Array.prototype.some.call(
     document.querySelectorAll('[x-data]'),
     (el) => !!el._x_dataStack
   );
 
-if (!alpineAlreadyRunning) {
+if (!otherAlpineOwnsPage) {
   window.Alpine = Alpine;
   Alpine.start();
 }
