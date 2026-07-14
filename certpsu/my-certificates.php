@@ -16,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 if ( empty( $certificates ) ) {
 	?>
-	<div class="mx-auto max-w-md rounded-2xl border border-paper-200 bg-white p-8 text-center shadow-soft">
+	<div class="mt-12 mx-auto max-w-md rounded-2xl border border-paper-200 bg-white p-8 text-center shadow-soft">
 		<span class="mx-auto grid h-16 w-16 place-items-center rounded-full bg-paper-100 text-ink-light">
 			<?php echo bia_learn_icon( 'cert', 'h-8 w-8' ); // phpcs:ignore ?>
 		</span>
