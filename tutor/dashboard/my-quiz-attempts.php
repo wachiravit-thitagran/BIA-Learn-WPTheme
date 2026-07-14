@@ -16,7 +16,7 @@ $attempts = tutor_utils()->get_all_quiz_attempts_by_user( $user_id );
 
 <div class="tutor-dashboard-content-inner">
 	<div class="mb-6 flex items-center">
-		<div class="inline-flex items-center gap-2 px-4 py-2 bg-primary-50 text-primary-600 font-semibold rounded-lg">
+		<div class="inline-flex items-center gap-2 px-4 py-2 bg-crimson/10 text-crimson font-semibold rounded-lg">
 			<i class="ti ti-puzzle text-lg"></i>
 			<?php esc_html_e( 'Quiz Attempts', 'bia-learn' ); ?>
 		</div>
