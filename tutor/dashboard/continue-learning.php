@@ -70,7 +70,7 @@ if ( $enrolled_courses && $enrolled_courses->have_posts() ) {
 ?>
 <div class="tutor-dashboard-content-inner">
 	<div class="tutor-dashboard-inline-links mb-6">
-		<h3 class="font-sans text-xl font-bold text-ink m-0"><?php esc_html_e( 'เรียนต่อจากที่หยุดไว้', 'bia-learn' ); ?></h3>
+		<h3 class="font-sans text-xl font-bold text-ink m-0"><?php esc_html_e( 'เรียนต่อจากที่ค้างไว้', 'bia-learn' ); ?></h3>
 	</div>
 
 	<?php if ( $enrolled_courses && $enrolled_courses->have_posts() ) : ?>
