@@ -48,7 +48,7 @@ add_action( 'after_setup_theme', 'bia_learn_tutor_setup', 11 );
 function bia_learn_add_certificates_dashboard_tab( $nav_items ) {
 	$nav_items['my-certificates'] = array(
 		'title' => __( 'เกียรติบัตรของฉัน', 'bia-learn' ),
-		'icon'  => 'ti ti-certificate',
+		'icon'  => 'tutor-icon-mortarboard',
 	);
 	return $nav_items;
 }
