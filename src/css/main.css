@@ -598,7 +598,7 @@
 /* Strip outer wrapper styling for course cards in the loop to prevent double-box effect */
 .tutor-course-listing-item,
 .tutor-course-card {
-  @apply border-0 bg-transparent shadow-none p-0 overflow-visible !important;
+  @apply border-0 bg-transparent shadow-none p-0 overflow-visible h-full !important;
 }
 .tutor-course-listing-item:hover,
 .tutor-course-card:hover {

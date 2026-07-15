@@ -69,7 +69,7 @@ $level_labels = array(
 	'all_levels'   => __( 'ทุกระดับ', 'bia-learn' ),
 );
 ?>
-<article <?php post_class( 'card card-hover group flex flex-col' ); ?>>
+<article <?php post_class( 'card card-hover group flex flex-col h-full' ); ?>>
 	<a href="<?php the_permalink(); ?>" class="relative block aspect-[16/10] overflow-hidden bg-paper-100">
 		<?php if ( has_post_thumbnail() ) : ?>
 			<?php
@@ -108,7 +108,7 @@ $level_labels = array(
 		</div>
 
 		<h3 class="font-serif text-xl font-bold leading-snug text-ink transition group-hover:text-crimson">
-			<a href="<?php the_permalink(); ?>" class="line-clamp-2"><?php the_title(); ?></a>
+			<a href="<?php the_permalink(); ?>"><?php the_title(); ?></a>
 		</h3>
 
 		<p class="text-sm leading-relaxed text-ink-light">
