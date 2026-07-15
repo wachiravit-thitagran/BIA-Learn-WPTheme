@@ -162,36 +162,62 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // 2. Video Lessons: Listen to Video Ended Events
-  const checkVideo = setInterval(() => {
-    let videoFound = false;
+  // 2. Video lessons: auto-complete when the video finishes.
+  // Tutor 4.0 wraps videos in a Plyr player (YouTube/Vimeo/HTML5) and no longer
+  // exposes window.tutor_plyr. Instead of relying on Plyr instance internals, we
+  // watch the Plyr seek control, which reports current time (aria-valuenow) and
+  // duration (aria-valuemax) as the video plays; when playback reaches the end we
+  // submit the lesson's complete form once. Native <video> elements are handled
+  // via their "ended" event. This also completes the final lesson, whose "Next"
+  // button is hidden.
+  const submitComplete = () => {
+    const btn = completeForm.querySelector('[name="complete_lesson_btn"]');
+    if (typeof completeForm.requestSubmit === 'function') {
+      completeForm.requestSubmit(btn || undefined);
+    } else {
+      completeForm.submit();
+    }
+  };
 
-    // Check Plyr instances from Tutor LMS
-    if (window.tutor_plyr && Array.isArray(window.tutor_plyr) && window.tutor_plyr.length > 0) {
-      window.tutor_plyr.forEach(player => {
-        player.on('ended', () => {
-          completeForm.submit(); // Normal submit will reload and show checkmark
-        });
-      });
-      videoFound = true;
+  // Skip if this lesson is already completed.
+  let alreadyCompleted = false;
+  try {
+    const trackingEl = document.getElementById('tutor_video_tracking_information');
+    if (trackingEl) {
+      alreadyCompleted = !!JSON.parse(trackingEl.value || '{}').lesson_completed;
+    }
+  } catch (e) {}
+
+  if (!alreadyCompleted) {
+    let videoDone = false;
+    const finish = () => {
+      if (videoDone) return;
+      videoDone = true;
+      submitComplete();
+    };
+
+    // Plyr player (YouTube/Vimeo/HTML5): poll the seek control for end-of-video.
+    const seek = document.querySelector(
+      '.tutor-lesson-video-wrapper input[data-plyr="seek"], .tutor-video-player input[data-plyr="seek"]'
+    );
+    if (seek) {
+      const poll = setInterval(() => {
+        if (videoDone) {
+          clearInterval(poll);
+          return;
+        }
+        const now = parseFloat(seek.getAttribute('aria-valuenow'));
+        const max = parseFloat(seek.getAttribute('aria-valuemax'));
+        if (max > 5 && now >= 0 && now / max >= 0.97) {
+          clearInterval(poll);
+          finish();
+        }
+      }, 2000);
     }
 
-    // Check native video tags
-    const videoEls = document.querySelectorAll('video');
-    if (videoEls.length > 0) {
-      videoEls.forEach(vid => {
-        vid.addEventListener('ended', () => {
-          completeForm.submit();
-        });
-      });
-      videoFound = true;
-    }
-
-    if (videoFound) {
-      clearInterval(checkVideo);
-    }
-  }, 1000);
-  
-  // Stop checking for video after 10 seconds
-  setTimeout(() => clearInterval(checkVideo), 10000);
+    // Native HTML5 video fallback.
+    document
+      .querySelectorAll('.tutor-lesson-video-wrapper video, .tutor-video-player video')
+      .forEach((vid) => vid.addEventListener('ended', finish));
+  }
 });
