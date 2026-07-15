@@ -592,6 +592,9 @@
 .tutor-card {
   @apply overflow-hidden rounded-2xl border border-paper-200 bg-white shadow-card transition-all duration-300 !important;
 }
+.tutor-card:hover {
+  @apply -translate-y-1 shadow-card-hover !important;
+}
 /* Strip outer wrapper styling for course cards in the loop to prevent double-box effect */
 .tutor-course-listing-item,
 .tutor-course-card {
@@ -623,9 +626,6 @@
 .bia-tutor-archive-shell .tutor-course-filter-form-title,
 .bia-tutor-archive-shell .tutor-course-filter-form-title span {
   @apply font-serif text-lg font-bold text-ink !important;
-}
-.tutor-card:hover {
-  @apply -translate-y-1 shadow-card-hover !important;
 }
 .tutor-course-name a,
 .tutor-card-title a {
