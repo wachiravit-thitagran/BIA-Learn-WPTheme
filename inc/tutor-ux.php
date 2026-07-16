@@ -163,45 +163,76 @@ class BIA_Learn_Tutor_UX {
 
 	private static function get_quiz_assignment_status( $content_id, $user_id, $type ) {
 		global $wpdb;
-		
+
 		if ( 'tutor_quiz' === $type ) {
-			if ( ! tutor_utils()->has_attempted_quiz( $user_id, $content_id ) ) {
+			// Only count submitted attempts (exclude in-progress `attempt_started`),
+			// matching Tutor's own get_course_completed_percent() criteria — otherwise
+			// a quiz the learner merely opened would be misread as failed.
+			$attempts = $wpdb->get_results( $wpdb->prepare( "
+				SELECT result, earned_marks, total_marks
+				FROM {$wpdb->prefix}tutor_quiz_attempts
+				WHERE user_id = %d AND quiz_id = %d AND attempt_status != 'attempt_started'
+			", $user_id, $content_id ) );
+
+			if ( empty( $attempts ) ) {
 				return 'unattempted';
 			}
-			
-			$passed = $wpdb->get_var( $wpdb->prepare( "
-				SELECT attempt_id
-				FROM {$wpdb->prefix}tutor_quiz_attempts
-				WHERE user_id = %d AND quiz_id = %d AND result = 'pass'
-				LIMIT 1
-			", $user_id, $content_id ) );
-			
-			return $passed ? 'completed' : 'quiz_pending';
+
+			// Priority across attempts: pass > pending (awaiting review) > fail.
+			$passing_grade = (float) tutor_utils()->get_quiz_option( $content_id, 'passing_grade', 0 );
+			$has_pending   = false;
+
+			foreach ( $attempts as $attempt ) {
+				if ( 'pass' === $attempt->result ) {
+					return 'completed';
+				}
+				if ( empty( $attempt->result ) ) {
+					// Legacy attempts predate the `result` column: derive pass/fail from marks.
+					$total   = (float) $attempt->total_marks;
+					$percent = $total > 0 ? ( (float) $attempt->earned_marks * 100 ) / $total : 0;
+					if ( $percent >= $passing_grade ) {
+						return 'completed';
+					}
+				} elseif ( 'fail' !== $attempt->result ) {
+					$has_pending = true; // e.g. 'pending' — submitted, awaiting manual review.
+				}
+			}
+
+			return $has_pending ? 'quiz_pending' : 'quiz_failed';
 		}
-		
+
 		if ( 'tutor_assignments' === $type ) {
 			$submissions = tutor_utils()->is_assignment_submitted( $content_id, $user_id );
 			if ( empty( $submissions ) ) {
 				return 'unattempted';
 			}
-			
-			$pass_mark = tutor_utils()->get_assignment_option( $content_id, 'pass_mark' );
+
+			$pass_mark   = tutor_utils()->get_assignment_option( $content_id, 'pass_mark' );
+			$has_pending = false;
+
 			foreach ( $submissions as $submission ) {
 				$mark = get_comment_meta( $submission->comment_ID, 'assignment_mark', true );
-				if ( is_numeric( $mark ) && (int) $mark >= $pass_mark ) {
+				if ( ! is_numeric( $mark ) ) {
+					$has_pending = true; // Submitted but not evaluated yet.
+					continue;
+				}
+				if ( (int) $mark >= $pass_mark ) {
 					return 'completed';
 				}
 			}
-			return 'quiz_pending'; // Attempted but not passed/evaluated
+
+			return $has_pending ? 'quiz_pending' : 'quiz_failed';
 		}
-		
+
 		return 'unattempted';
 	}
 
 	/**
 	 * Get status of every lesson and quiz in the course for segmented progress bar.
 	 *
-	 * Returns an array of items with their status: 'completed' (green), 'quiz_pending' (yellow), 'unattempted' (gray).
+	 * Returns an array of items with their status: 'completed' (green),
+	 * 'quiz_pending' (yellow — submitted, awaiting review), 'quiz_failed'
+	 * (red — submitted but not passed), 'unattempted' (gray).
 	 */
 	public static function get_course_curriculum_status( $course_id, $user_id ) {
 		if ( ! function_exists( 'tutor_utils' ) ) {
@@ -267,17 +298,20 @@ class BIA_Learn_Tutor_UX {
 			</div>
 			
 			<div class="flex gap-0.5 w-full h-1.5">
-				<?php foreach ( $segments as $segment ) : 
-					$status = $segment['status'];
-					$title  = $segment['title'];
-					$bg_class = 'bg-paper-100'; // Default gray (unattempted)
-					if ( 'completed' === $status ) {
-						$bg_class = 'bg-success'; // Green
-					} elseif ( 'quiz_pending' === $status ) {
-						$bg_class = 'bg-warning'; // Yellow
-					}
+				<?php
+				$status_meta = array(
+					'completed'    => array( 'bg-success', __( 'ผ่านแล้ว', 'bia-learn' ) ),
+					'quiz_pending' => array( 'bg-warning', __( 'ส่งแล้ว รอตรวจ', 'bia-learn' ) ),
+					'quiz_failed'  => array( 'bg-danger', __( 'ยังไม่ผ่าน', 'bia-learn' ) ),
+					'unattempted'  => array( 'bg-paper-100', __( 'ยังไม่ได้เริ่ม', 'bia-learn' ) ),
+				);
+				foreach ( $segments as $segment ) :
+					list( $bg_class, $status_label ) = isset( $status_meta[ $segment['status'] ] )
+						? $status_meta[ $segment['status'] ]
+						: $status_meta['unattempted'];
+					$tooltip = $segment['title'] . ' — ' . $status_label;
 				?>
-					<div class="flex-1 rounded-full <?php echo esc_attr( $bg_class ); ?> transition-colors duration-500" title="<?php echo esc_attr( $title ); ?>"></div>
+					<div class="flex-1 rounded-full <?php echo esc_attr( $bg_class ); ?> transition-colors duration-500" title="<?php echo esc_attr( $tooltip ); ?>"></div>
 				<?php endforeach; ?>
 			</div>
 		</div>
