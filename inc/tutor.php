@@ -115,6 +115,18 @@ add_filter( 'tutor_button_class', 'bia_learn_tutor_btn_classes' );
  * Runs once; safe to re-run (checks by slug).
  */
 function bia_learn_register_supporting_pages() {
+	// Least privilege: this seeds pages and rewrites core reading options, and
+	// it is hooked to admin_init as a self-heal — never run it from AJAX or a
+	// low-privilege session (subscribers/students also trigger admin_init).
+	if ( ( function_exists( 'wp_doing_ajax' ) && wp_doing_ajax() ) || ! current_user_can( 'manage_options' ) ) {
+		return;
+	}
+
+	// Run the self-heal once per theme version instead of on every admin load.
+	if ( doing_action( 'admin_init' ) && get_option( 'bia_learn_pages_seeded' ) === BIA_LEARN_VERSION ) {
+		return;
+	}
+
 	$pages = array(
 		'about'       => array( __( 'เกี่ยวกับเรา', 'bia-learn' ), 'page-templates/template-about.php' ),
 		'contact'     => array( __( 'ติดต่อเรา', 'bia-learn' ), 'page-templates/template-contact.php' ),
@@ -166,6 +178,8 @@ function bia_learn_register_supporting_pages() {
 			}
 		}
 	}
+
+	update_option( 'bia_learn_pages_seeded', BIA_LEARN_VERSION );
 }
 add_action( 'after_switch_theme', 'bia_learn_register_supporting_pages' );
 // Self-heal on existing installs (e.g. theme deployed via git, not re-activated):
@@ -192,7 +206,7 @@ function bia_learn_redirect_wp_login() {
 	if ( ! get_page_by_path( 'auth' ) ) {
 		return; // no branded page yet — keep the default screen.
 	}
-	$redirect = isset( $_GET['redirect_to'] ) ? wp_unslash( $_GET['redirect_to'] ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+	$redirect = isset( $_GET['redirect_to'] ) ? esc_url_raw( wp_unslash( $_GET['redirect_to'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 	wp_safe_redirect( bia_learn_auth_url( 'register' === $action ? 'register' : 'login', $redirect ) );
 	exit;
 }

@@ -13,11 +13,24 @@ defined( 'ABSPATH' ) || exit;
 class BIA_Learn_Tutor_UX {
 
 	/**
+	 * Per-request memo of whether the analytics tracker table exists.
+	 * Public so templates that already ran the check can share the result
+	 * (and so tests can reset it).
+	 *
+	 * @var bool|null
+	 */
+	public static $analytics_table_exists = null;
+
+	/**
 	 * Initialize all hooks.
 	 */
 	public static function init() {
 		// 1. Smart Continue Button Redirect
 		add_filter( 'tutor_course_continue_url', array( __CLASS__, 'smart_continue_url' ), 10, 2 );
+
+		// Keep the cached curriculum status fresh (see get_course_curriculum_status).
+		add_action( 'tutor_mark_lesson_complete_after', array( __CLASS__, 'flush_curriculum_cache_for_lesson' ), 10, 2 );
+		add_action( 'tutor_quiz/attempt_ended', array( __CLASS__, 'flush_curriculum_cache_for_attempt' ), 10, 3 );
 
 		// 3. Continue Learning Dashboard Tab
 		add_filter( 'tutor_dashboard/nav_items', array( __CLASS__, 'register_dashboard_tab' ), 10, 1 );
@@ -106,9 +119,15 @@ class BIA_Learn_Tutor_UX {
 	public static function get_last_viewed_lesson_url( $course_id, $user_id ) {
 		global $wpdb;
 		$table_name = $wpdb->prefix . 'tutorlms_analytics_events';
-		
-		// Check if table exists
-		if ( $wpdb->get_var("SHOW TABLES LIKE '{$table_name}'") !== $table_name ) {
+
+		// Check if table exists — memoized per request (this used to run a
+		// SHOW TABLES query for every card on archive pages).
+		if ( null === self::$analytics_table_exists ) {
+			self::$analytics_table_exists = $wpdb->get_var(
+				$wpdb->prepare( 'SHOW TABLES LIKE %s', $wpdb->esc_like( $table_name ) )
+			) === $table_name;
+		}
+		if ( ! self::$analytics_table_exists ) {
 			return null;
 		}
 
@@ -134,30 +153,64 @@ class BIA_Learn_Tutor_UX {
 	}
 
 	/**
-	 * Get progress percentage for a specific topic/section.
+	 * Status of a single curriculum content item.
+	 *
+	 * Quizzes/assignments are judged by their attempt/submission state (see
+	 * get_quiz_assignment_status); everything else by lesson completion.
+	 *
+	 * @param object $content Curriculum content post.
+	 * @param int    $user_id Learner.
+	 * @return string 'completed' | 'quiz_pending' | 'quiz_failed' | 'unattempted'
 	 */
-	public static function get_section_progress( $topic_id, $user_id ) {
+	public static function get_content_status( $content, $user_id ) {
+		$type = $content->post_type;
+		if ( 'tutor_quiz' === $type || 'tutor_assignments' === $type ) {
+			return self::get_quiz_assignment_status( $content->ID, $user_id, $type );
+		}
+		return tutor_utils()->is_completed_lesson( $content->ID, $user_id ) ? 'completed' : 'unattempted';
+	}
+
+	/**
+	 * Get progress percentage for a specific topic/section.
+	 *
+	 * Passed quizzes/assignments now count as completed (they used to be judged
+	 * by is_completed_lesson(), so a section containing a quiz could never
+	 * reach 100%). The returned 'statuses' map (content_id => status) lets
+	 * templates render per-item icons without re-querying.
+	 *
+	 * @param int        $topic_id Topic ID.
+	 * @param int        $user_id  Learner.
+	 * @param mixed|null $contents Optional pre-fetched result of
+	 *                             get_course_contents_by_topic() to avoid a
+	 *                             duplicate query.
+	 */
+	public static function get_section_progress( $topic_id, $user_id, $contents = null ) {
 		if ( ! function_exists( 'tutor_utils' ) ) {
-			return array( 'completed' => 0, 'total' => 0, 'percent' => 0 );
+			return array( 'completed' => 0, 'total' => 0, 'percent' => 0, 'statuses' => array() );
 		}
 
-		$contents = tutor_utils()->get_course_contents_by_topic( $topic_id, -1 );
+		if ( null === $contents ) {
+			$contents = tutor_utils()->get_course_contents_by_topic( $topic_id, -1 );
+		}
 		$lesson_posts = is_object( $contents ) && isset( $contents->posts ) ? $contents->posts : ( is_array( $contents ) ? $contents : array() );
-		$total = count( $lesson_posts );
-		$completed = 0;
 
+		$statuses  = array();
+		$completed = 0;
 		foreach ( $lesson_posts as $content ) {
-			if ( tutor_utils()->is_completed_lesson( $content->ID, $user_id ) ) {
+			$status = self::get_content_status( $content, $user_id );
+			$statuses[ (int) $content->ID ] = $status;
+			if ( 'completed' === $status ) {
 				$completed++;
 			}
 		}
 
-		$percent = $total > 0 ? round( ( $completed / $total ) * 100 ) : 0;
+		$total = count( $lesson_posts );
 
 		return array(
 			'completed' => $completed,
 			'total'     => $total,
-			'percent'   => $percent,
+			'percent'   => $total > 0 ? round( ( $completed / $total ) * 100 ) : 0,
+			'statuses'  => $statuses,
 		);
 	}
 
@@ -239,56 +292,85 @@ class BIA_Learn_Tutor_UX {
 			return array();
 		}
 
-		$status_list = array();
-		$topics = tutor_utils()->get_topics( $course_id );
-		
-		if ( ! $topics || ! $topics->have_posts() ) {
-			return $status_list;
+		// Archive pages render many cards per request — cache per learner+course.
+		// Without a persistent object cache this is a per-request memo; with one
+		// (Redis etc.) the short TTL + the flush hooks in init() keep it fresh.
+		$cache_key = 'bia_curr_status_' . (int) $course_id . '_' . (int) $user_id;
+		$cached    = wp_cache_get( $cache_key, 'bia-learn' );
+		if ( is_array( $cached ) ) {
+			return $cached;
 		}
 
-		while ( $topics->have_posts() ) {
-			$topics->the_post();
-			$topic_id = get_the_ID();
-			$contents = tutor_utils()->get_course_contents_by_topic( $topic_id, -1 );
+		$status_list = array();
+		$topics      = tutor_utils()->get_topics( $course_id );
+		$topic_posts = ( $topics && ! empty( $topics->posts ) ) ? $topics->posts : array();
+
+		// Iterate the raw posts array — the_post()/wp_reset_postdata() would
+		// clobber the global $post of enclosing custom loops (front page,
+		// dashboard grids), pointing later template tags at the wrong post.
+		foreach ( $topic_posts as $topic ) {
+			$contents = tutor_utils()->get_course_contents_by_topic( $topic->ID, -1 );
 			$items    = is_object( $contents ) && isset( $contents->posts ) ? $contents->posts : ( is_array( $contents ) ? $contents : array() );
-			
+
 			foreach ( $items as $content ) {
-				$type = $content->post_type; // 'tutor_quiz', 'tutor_assignments', 'lesson'
-				
-				if ( 'tutor_quiz' === $type || 'tutor_assignments' === $type ) {
-					$status = self::get_quiz_assignment_status( $content->ID, $user_id, $type );
-				} else {
-					$status = tutor_utils()->is_completed_lesson( $content->ID, $user_id ) ? 'completed' : 'unattempted';
-				}
-				
 				$status_list[] = array(
 					'title'  => get_the_title( $content->ID ),
-					'status' => $status
+					'status' => self::get_content_status( $content, $user_id ),
 				);
 			}
 		}
 
-		wp_reset_postdata();
+		wp_cache_set( $cache_key, $status_list, 'bia-learn', 5 * MINUTE_IN_SECONDS );
 
 		return $status_list;
 	}
 
-	public static function render_segmented_progress_bar( $course_id, $user_id = 0 ) {
+	/**
+	 * Drop the cached curriculum status for one learner+course.
+	 */
+	public static function flush_curriculum_cache( $course_id, $user_id ) {
+		wp_cache_delete( 'bia_curr_status_' . (int) $course_id . '_' . (int) $user_id, 'bia-learn' );
+	}
+
+	/**
+	 * Cache invalidation: lesson completed (tutor_mark_lesson_complete_after).
+	 */
+	public static function flush_curriculum_cache_for_lesson( $lesson_id, $user_id = 0 ) {
+		$user_id   = $user_id ? (int) $user_id : get_current_user_id();
+		$course_id = (int) tutor_utils()->get_course_id_by( 'lesson', (int) $lesson_id );
+		if ( $course_id ) {
+			self::flush_curriculum_cache( $course_id, $user_id );
+		}
+	}
+
+	/**
+	 * Cache invalidation: quiz attempt submitted (tutor_quiz/attempt_ended).
+	 */
+	public static function flush_curriculum_cache_for_attempt( $attempt_id, $course_id = 0, $user_id = 0 ) {
+		if ( $course_id ) {
+			self::flush_curriculum_cache( (int) $course_id, $user_id ? (int) $user_id : get_current_user_id() );
+		}
+	}
+
+	public static function render_segmented_progress_bar( $course_id, $user_id = 0, $percent = null ) {
 		if ( ! $user_id ) {
 			$user_id = get_current_user_id();
 		}
-		
+
 		$segments = self::get_course_curriculum_status( $course_id, $user_id );
 		$total    = count( $segments );
 		if ( 0 === $total ) {
 			return; // No lessons, don't show progress
 		}
-		
-		// Use Tutor LMS actual percentage calculation to ensure absolute consistency
-		$course_progress = tutor_utils()->get_course_completed_percent( $course_id, $user_id, true );
-		$percent = is_array( $course_progress ) && isset( $course_progress['completed_percent'] ) ? (int) $course_progress['completed_percent'] : 0;
-		$completed_count = is_array( $course_progress ) && isset( $course_progress['completed_count'] ) ? (int) $course_progress['completed_count'] : 0;
-		$total_count = is_array( $course_progress ) && isset( $course_progress['total_count'] ) ? (int) $course_progress['total_count'] : 0;
+
+		if ( null === $percent ) {
+			// Use Tutor LMS actual percentage calculation to ensure absolute
+			// consistency. Callers that already computed it (course cards) pass
+			// it in to avoid running the same queries twice per card.
+			$course_progress = tutor_utils()->get_course_completed_percent( $course_id, $user_id, true );
+			$percent = is_array( $course_progress ) && isset( $course_progress['completed_percent'] ) ? (int) $course_progress['completed_percent'] : 0;
+		}
+		$percent = (int) $percent;
 
 		?>
 		<div class="mb-4">

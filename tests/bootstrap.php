@@ -328,3 +328,11 @@ if ( ! function_exists( 'wp_list_pluck' ) ) {
 		return array();
 	}
 }
+
+if ( ! defined( 'MINUTE_IN_SECONDS' ) ) {
+	define( 'MINUTE_IN_SECONDS', 60 );
+}
+
+if ( ! defined( 'HOUR_IN_SECONDS' ) ) {
+	define( 'HOUR_IN_SECONDS', 3600 );
+}

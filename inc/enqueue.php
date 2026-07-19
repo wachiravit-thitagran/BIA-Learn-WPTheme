@@ -43,9 +43,13 @@ function bia_learn_enqueue_assets() {
 		true
 	);
 
-	// Tutor LMS UX Enhancements (Phase 3: Celebration)
-	if ( function_exists( 'tutor_utils' ) && is_singular( 'tutor_quiz' ) || is_singular( 'tutor_enrolled' ) || is_singular( 'courses' ) || is_singular( 'lesson' ) ) {
-		wp_enqueue_script( 'canvas-confetti', 'https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js', array(), '1.9.2', true );
+	// Tutor LMS UX Enhancements (Phase 3: Celebration).
+	// Self-hosted canvas-confetti — no third-party CDN (consistent with the
+	// font policy above, and a CDN outage used to block lesson completion).
+	// Note the parentheses: `&&` binds tighter than `||`, so without them the
+	// script loaded on course/lesson pages even without Tutor active.
+	if ( function_exists( 'tutor_utils' ) && ( is_singular( 'tutor_quiz' ) || is_singular( 'tutor_enrolled' ) || is_singular( 'courses' ) || is_singular( 'lesson' ) ) ) {
+		wp_enqueue_script( 'canvas-confetti', BIA_LEARN_URI . '/assets/js/vendor/confetti.browser.min.js', array(), '1.9.2', true );
 		wp_enqueue_script( 'bia-learn-celebration', BIA_LEARN_URI . '/assets/js/tutor-celebration.js', array( 'canvas-confetti' ), bia_learn_asset_version( 'assets/js/tutor-celebration.js' ), true );
 	}
 

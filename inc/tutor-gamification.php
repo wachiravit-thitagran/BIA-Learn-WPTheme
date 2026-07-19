@@ -16,10 +16,11 @@ class BIA_Learn_Tutor_Gamification {
 		// Display streak on the dashboard header
 		add_action( 'tutor_dashboard/before_header', array( __CLASS__, 'render_dashboard_streak' ), 10 );
 		
-		// Display streak in course sidebar (using a generic tutor action or injecting via JS)
-		// We'll use JS injection similar to course reviews if there isn't a perfect hook,
-		// but Tutor has tutor_course/single/enrolled/after/lead_info
-		add_action( 'tutor_course/single/enrolled/after/lead_info', array( __CLASS__, 'render_sidebar_streak' ), 10 );
+		// Display streak in the single-course header for enrolled learners.
+		// (Tutor 4.0 removed 'tutor_course/single/enrolled/after/lead_info';
+		// the '/progress_bar' variant is what fires now — see
+		// templates/single/common/header.php in the plugin.)
+		add_action( 'tutor_course/single/enrolled/after/lead_info/progress_bar', array( __CLASS__, 'render_sidebar_streak' ), 10 );
 	}
 
 	/**
@@ -30,17 +31,20 @@ class BIA_Learn_Tutor_Gamification {
 	 */
 	public static function get_user_streak( $user_id ) {
 		global $wpdb;
-		$table_name = $wpdb->prefix . 'tutorlms_analytics_events';
-		
-		// Active means the user COMPLETED a lesson on that day.
-		// Tutor LMS stores lesson completions in the comments table.
+
+		// Active means the user COMPLETED a lesson on that day. Tutor LMS 4.x
+		// records completions as usermeta `_tutor_completed_lesson_id_{id}`
+		// whose value is tutor_time() — a site-local unix timestamp. (It never
+		// writes lesson-completion comments; the old comments query here
+		// matched nothing, so streaks were permanently zero.)
 		$query = $wpdb->prepare( "
-			SELECT DISTINCT DATE(comment_date) as active_date
-			FROM {$wpdb->comments}
+			SELECT DISTINCT DATE(FROM_UNIXTIME(meta_value)) as active_date
+			FROM {$wpdb->usermeta}
 			WHERE user_id = %d
-			  AND comment_type = 'tutor_lesson_completed'
+			  AND meta_key LIKE %s
+			  AND meta_value REGEXP '^[0-9]+$'
 			ORDER BY active_date DESC
-		", $user_id );
+		", $user_id, $wpdb->esc_like( '_tutor_completed_lesson_id_' ) . '%' );
 
 		$results = $wpdb->get_col( $query );
 

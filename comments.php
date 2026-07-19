@@ -48,8 +48,9 @@ if ( post_password_required() ) {
 		<p class="mt-6 rounded-xl bg-paper-100 px-4 py-3 text-sm text-ink-light"><?php esc_html_e( 'ปิดการแสดงความคิดเห็นแล้ว', 'bia-learn' ); ?></p>
 	<?php endif; ?>
 
+	<?php
 	$user_identity = wp_get_current_user()->exists() ? wp_get_current_user()->display_name : '';
-	
+
 	comment_form(
 		array(
 			'class_container'    => 'comment-respond mt-10 rounded-2xl border border-paper-200 bg-white p-6 sm:p-8',

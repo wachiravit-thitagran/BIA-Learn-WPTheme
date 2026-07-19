@@ -51,9 +51,13 @@ if ( $topics->have_posts() ) {
 				$contents = tutor_utils()->get_course_contents_by_topic( $topic_id, -1 );
 				$lesson_posts = is_object( $contents ) && isset( $contents->posts ) ? $contents->posts : ( is_array( $contents ) ? $contents : array() );
 
-				// Calculate Section Progress
-				$progress = BIA_Learn_Tutor_UX::get_section_progress( $topic_id, $user_id );
-				$is_section_completed = ( $progress['percent'] === 100 && $progress['total'] > 0 );
+				// Calculate Section Progress — pass the contents we already
+				// fetched so it isn't queried twice, and reuse the returned
+				// per-item statuses for the icons below (this also lets passed
+				// quizzes/assignments count toward section completion).
+				$progress = BIA_Learn_Tutor_UX::get_section_progress( $topic_id, $user_id, $contents );
+				$content_statuses = isset( $progress['statuses'] ) ? $progress['statuses'] : array();
+				$is_section_completed = ( (int) $progress['percent'] === 100 && $progress['total'] > 0 );
 				$topic_index++;
 				$is_first = ( $topic_index === 1 ); // open the first one by default if we were using JS, but Tutor handles it via its own classes
 
@@ -87,7 +91,10 @@ if ( $topics->have_posts() ) {
 							<?php
 							foreach ( $lesson_posts as $content ) {
 								$type = $content->post_type;
-								$is_completed = tutor_utils()->is_completed_lesson( $content->ID, $user_id );
+								// Reuse the status computed by get_section_progress()
+								// instead of re-querying per item.
+								$content_status = isset( $content_statuses[ (int) $content->ID ] ) ? $content_statuses[ (int) $content->ID ] : 'unattempted';
+								$is_completed   = ( 'completed' === $content_status );
 								
 								// Determine specific icon and subtext
 								if ( 'tutor_quiz' === $type ) {
@@ -136,14 +143,16 @@ if ( $topics->have_posts() ) {
 													<div class="w-5 h-5 rounded-full bg-success text-white flex items-center justify-center shadow-sm">
 														<i class="ti ti-check text-xs"></i>
 													</div>
+												<?php elseif ( 'quiz_failed' === $content_status ) : ?>
+													<div class="w-5 h-5 rounded-full bg-danger text-white flex items-center justify-center shadow-sm" title="<?php esc_attr_e( 'ยังไม่ผ่าน', 'bia-learn' ); ?>">
+														<i class="ti ti-exclamation-mark text-xs"></i>
+													</div>
+												<?php elseif ( 'quiz_pending' === $content_status ) : ?>
+													<div class="w-5 h-5 rounded-full bg-warning text-white flex items-center justify-center shadow-sm" title="<?php esc_attr_e( 'ส่งแล้ว รอตรวจ', 'bia-learn' ); ?>">
+														<i class="ti ti-exclamation-mark text-xs"></i>
+													</div>
 												<?php else : ?>
-													<?php if ( 'tutor_quiz' === $type || 'tutor_assignments' === $type ) : ?>
-														<div class="w-5 h-5 rounded-full bg-warning text-white flex items-center justify-center shadow-sm">
-															<i class="ti ti-exclamation-mark text-xs"></i>
-														</div>
-													<?php else: ?>
-														<div class="w-5 h-5 rounded-full border-2 border-primary-300"></div>
-													<?php endif; ?>
+													<div class="w-5 h-5 rounded-full border-2 border-primary-300"></div>
 												<?php endif; ?>
 											<?php else: ?>
 												<i class="ti ti-lock text-paper-400"></i>

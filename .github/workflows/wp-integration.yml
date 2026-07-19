@@ -7,6 +7,59 @@ on:
     branches: [ "main" ]
 
 jobs:
+  unit:
+    name: "PHPUnit (PHP ${{ matrix.php-version }})"
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        php-version: ['8.0', '8.1', '8.2', '8.3', '8.4']
+      fail-fast: false
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: ${{ matrix.php-version }}
+        extensions: mbstring, dom, xml
+        coverage: none
+        tools: composer
+
+    - name: Install Composer Dependencies
+      # The committed lock file targets the maintainer's PHP version; dev-only
+      # deps (phpunit/brain-monkey) are resolved fresh per matrix PHP instead.
+      run: composer update --prefer-dist --no-progress --no-interaction
+
+    - name: Run PHPUnit
+      run: vendor/bin/phpunit --testdox
+
+  phpcs:
+    name: "Coding Standards (WPCS security ruleset)"
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.2'
+        coverage: none
+        tools: composer
+
+    - name: Install PHPCS + WordPress Coding Standards
+      run: |
+        composer global config --no-interaction allow-plugins.dealerdirect/phpcodesniffer-composer-installer true
+        composer global require --no-interaction --no-progress wp-coding-standards/wpcs:^3.1
+
+    - name: Run PHPCS (security-focused ruleset — see phpcs.xml.dist)
+      # Non-blocking while the existing backlog is triaged: findings appear in
+      # the job log without failing the build. Once clean, make it required by
+      # deleting the continue-on-error line.
+      continue-on-error: true
+      run: $(composer global config bin-dir --absolute --quiet)/phpcs -q --report=full
+
   integration:
     name: "WP Integration (PHP ${{ matrix.php-version }})"
     runs-on: ubuntu-latest

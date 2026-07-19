@@ -13,15 +13,18 @@ class BIA_Learn_Tutor_Social {
 	 * Initialize hooks.
 	 */
 	public static function init() {
-		// 1. Enrolled Students Avatars on Single Course
-		add_action( 'tutor_course/single/enrolled/after/lead_info', array( __CLASS__, 'render_enrolled_avatars' ), 5 );
-		add_action( 'tutor_course/single/before/enroll_btn', array( __CLASS__, 'render_enrolled_avatars' ), 5 );
+		// 1. Enrolled Students social proof on Single Course.
+		// (The Tutor 1.x hooks 'tutor_course/single/enrolled/after/lead_info'
+		// and '…/before/enroll_btn' no longer fire in Tutor 4.0 — this theme's
+		// course-entry-box.php fires 'tutor_course/single/entry/after'.)
+		add_action( 'tutor_course/single/entry/after', array( __CLASS__, 'render_enrolled_avatars' ), 5 );
 
 		// 2. Activity Feed Shortcode
 		add_shortcode( 'bia_tutor_activity_feed', array( __CLASS__, 'activity_feed_shortcode' ) );
 
-		// 3. Featured Review Highlight
-		add_action( 'tutor_course/single/before/reviews', array( __CLASS__, 'render_featured_review' ), 10 );
+		// 3. Featured Review Highlight — below the curriculum in the info tab
+		// ('tutor_course/single/before/reviews' does not exist in Tutor 4.0).
+		add_action( 'tutor_course/single/tab/info/after', array( __CLASS__, 'render_featured_review' ), 20 );
 	}
 
 	/**
@@ -29,13 +32,24 @@ class BIA_Learn_Tutor_Social {
 	 */
 	public static function get_recent_activities( $limit = 5 ) {
 		global $wpdb;
-		
-		// Get recent enrollments or completions from comments
+
+		// Tutor LMS 4.x sources (verified against plugin code):
+		// - completions: comments, comment_type 'course_completed', agent 'TutorLMSPlugin'
+		// - enrollments: posts of type 'tutor_enrolled' (status 'completed' = active)
+		// The old query used comment types Tutor never writes, so the feed was empty.
 		$query = $wpdb->prepare( "
-			SELECT comment_post_ID as course_id, comment_type as type, comment_date as date, comment_author as author
-			FROM {$wpdb->comments}
-			WHERE comment_type IN ('tutor_course_completed', 'tutor_course_enrolled')
-			ORDER BY comment_date DESC
+			( SELECT c.comment_post_ID AS course_id, 'completed' AS type, c.comment_date AS date, u.display_name AS author
+			  FROM {$wpdb->comments} c
+			  INNER JOIN {$wpdb->users} u ON u.ID = c.user_id
+			  WHERE c.comment_type = 'course_completed'
+			    AND c.comment_agent = 'TutorLMSPlugin' )
+			UNION ALL
+			( SELECT p.post_parent AS course_id, 'enrolled' AS type, p.post_date AS date, u.display_name AS author
+			  FROM {$wpdb->posts} p
+			  INNER JOIN {$wpdb->users} u ON u.ID = p.post_author
+			  WHERE p.post_type = 'tutor_enrolled'
+			    AND p.post_status = 'completed' )
+			ORDER BY date DESC
 			LIMIT %d
 		", $limit );
 
@@ -59,7 +73,7 @@ class BIA_Learn_Tutor_Social {
 				}
 			}
 
-			$action_text = ( $row->type === 'tutor_course_completed' ) ? __( 'เพิ่งเรียนจบ', 'bia-learn' ) : __( 'เพิ่งลงทะเบียน', 'bia-learn' );
+			$action_text = ( 'completed' === $row->type ) ? __( 'เพิ่งเรียนจบ', 'bia-learn' ) : __( 'เพิ่งลงทะเบียน', 'bia-learn' );
 			
 			$activities[] = array(
 				'message' => sprintf( __( 'คุณ %s %s', 'bia-learn' ), $author_name, $action_text ),
@@ -124,28 +138,39 @@ class BIA_Learn_Tutor_Social {
 		if ( ! $course_id ) {
 			$course_id = get_the_ID();
 		}
+		global $wpdb;
 
-		// Get enrolled users for this course
-		$enrolled_users = tutor_utils()->get_enrolled_users_by_course( $course_id );
-		
-		if ( ! $enrolled_users || ! is_array( $enrolled_users ) || count( $enrolled_users ) < 3 ) {
+		// Count via SQL — the old code loaded EVERY enrollment row just to count.
+		$total_enrolled = (int) tutor_utils()->count_enrolled_users_by_course( $course_id );
+		if ( $total_enrolled < 3 ) {
 			return; // Only show if we have a decent amount of students
 		}
 
-		$total_enrolled = count( $enrolled_users );
-		$display_users = array_slice( $enrolled_users, 0, 5 ); // Show max 5 avatars
+		// Fetch only 5 recent display names. Deliberately NOT avatars: Gravatar
+		// URLs embed the email hash, which can deanonymize learners on a public
+		// course page (PDPA consideration) — render initial badges instead.
+		$names = $wpdb->get_col( $wpdb->prepare( "
+			SELECT u.display_name
+			FROM {$wpdb->posts} p
+			INNER JOIN {$wpdb->users} u ON u.ID = p.post_author
+			WHERE p.post_type = 'tutor_enrolled'
+			  AND p.post_status = 'completed'
+			  AND p.post_parent = %d
+			ORDER BY p.ID DESC
+			LIMIT 5
+		", $course_id ) );
+		if ( empty( $names ) ) {
+			return;
+		}
 
+		$bg_colors = array( 'bg-red-100', 'bg-blue-100', 'bg-green-100', 'bg-yellow-100', 'bg-purple-100' );
 		?>
 		<div class="mt-4 mb-6 flex items-center gap-3">
 			<div class="flex -space-x-3 rtl:space-x-reverse">
-				<?php foreach ( $display_users as $user_id ) : ?>
-					<?php 
-					$avatar_url = get_avatar_url( $user_id, array( 'size' => 40 ) ); 
-					// Generate a random pastel background color based on User ID for variety if avatar is default
-					$bg_colors = ['bg-red-100', 'bg-blue-100', 'bg-green-100', 'bg-yellow-100', 'bg-purple-100'];
-					$bg = $bg_colors[ $user_id % 5 ];
-					?>
-					<img class="w-8 h-8 rounded-full border-2 border-white <?php echo esc_attr( $bg ); ?> object-cover shadow-sm" src="<?php echo esc_url( $avatar_url ); ?>" alt="Student Avatar">
+				<?php foreach ( $names as $i => $name ) : ?>
+					<span class="w-8 h-8 rounded-full border-2 border-white <?php echo esc_attr( $bg_colors[ $i % 5 ] ); ?> inline-flex items-center justify-center text-xs font-bold text-ink shadow-sm" aria-hidden="true">
+						<?php echo esc_html( mb_substr( trim( (string) $name ), 0, 1 ) ); ?>
+					</span>
 				<?php endforeach; ?>
 			</div>
 			<div class="text-sm text-ink-light">
@@ -203,14 +228,19 @@ class BIA_Learn_Tutor_Social {
 	 */
 	public static function get_featured_review( $course_id ) {
 		global $wpdb;
-		// Fetch 5-star reviews, longest text first
+		// Tutor stores reviews as comments (comment_type 'tutor_course_rating',
+		// approved = 'approved') with the stars in commentmeta 'tutor_rating' —
+		// there is no {$wpdb->prefix}tutor_reviews table (the old JOIN against
+		// it logged a DB error on every render and always returned null).
+		// Fetch 5-star reviews, longest text first.
 		$query = $wpdb->prepare( "
-			SELECT c.comment_ID, c.comment_content, c.comment_author, r.rating
+			SELECT c.comment_ID, c.comment_content, c.comment_author, m.meta_value AS rating
 			FROM {$wpdb->comments} c
-			INNER JOIN {$wpdb->prefix}tutor_reviews r ON c.comment_ID = r.comment_id
+			INNER JOIN {$wpdb->commentmeta} m ON m.comment_id = c.comment_ID AND m.meta_key = 'tutor_rating'
 			WHERE c.comment_post_ID = %d
-			  AND c.comment_approved = '1'
-			  AND r.rating = 5
+			  AND c.comment_type = 'tutor_course_rating'
+			  AND c.comment_approved = 'approved'
+			  AND m.meta_value >= 5
 			ORDER BY LENGTH(c.comment_content) DESC
 			LIMIT 1
 		", $course_id );

@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<ruleset name="BIA-Learn-Security">
+	<description>Security-focused WordPress Coding Standards checks for the BIA Learn theme. Deliberately scoped to high-signal sniffs (escaping, nonces, SQL) — broaden toward WordPress-Extra once this baseline is clean.</description>
+
+	<file>.</file>
+
+	<!-- Third-party / generated code -->
+	<exclude-pattern>*/vendor/*</exclude-pattern>
+	<exclude-pattern>*/node_modules/*</exclude-pattern>
+	<exclude-pattern>*/inc/lib/*</exclude-pattern>
+	<exclude-pattern>*/assets/*</exclude-pattern>
+	<exclude-pattern>*/tests/*</exclude-pattern>
+
+	<arg name="extensions" value="php"/>
+	<!-- Show progress + sniff codes -->
+	<arg value="ps"/>
+	<arg name="parallel" value="8"/>
+
+	<!-- XSS: every echo must be escaped -->
+	<rule ref="WordPress.Security.EscapeOutput">
+		<properties>
+			<!-- Returns hardcoded SVG markup only (no user input). -->
+			<property name="customEscapingFunctions" type="array">
+				<element value="bia_learn_icon"/>
+				<element value="bia_learn_star_row"/>
+			</property>
+		</properties>
+	</rule>
+	<rule ref="WordPress.Security.NonceVerification"/>
+	<rule ref="WordPress.Security.ValidatedSanitizedInput"/>
+	<rule ref="WordPress.Security.PluginMenuSlug"/>
+	<rule ref="WordPress.Security.SafeRedirect"/>
+
+	<!-- SQL injection -->
+	<rule ref="WordPress.DB.PreparedSQL"/>
+	<rule ref="WordPress.DB.PreparedSQLPlaceholders"/>
+
+	<!-- Plain parse errors -->
+	<rule ref="Generic.PHP.Syntax"/>
+</ruleset>

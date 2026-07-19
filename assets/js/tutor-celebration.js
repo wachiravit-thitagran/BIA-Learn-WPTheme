@@ -6,6 +6,12 @@
  */
 
 document.addEventListener('DOMContentLoaded', () => {
+	// Never let a missing confetti lib block lesson completion: if the script
+	// failed to load, skip all interception so forms submit natively.
+	if (typeof confetti === 'undefined') {
+		return;
+	}
+
 	// 1. Intercept "Mark as Complete" forms in Tutor LMS
 	const completeForms = document.querySelectorAll('form.tutor-topbar-mark-btn');
 

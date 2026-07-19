@@ -34,39 +34,52 @@ $attempts = tutor_utils()->get_all_quiz_attempts_by_user( $user_id );
 
 			<!-- Rows -->
 			<div class="divide-y divide-paper-100">
-				<?php foreach ( $attempts as $attempt ) : 
+				<?php foreach ( $attempts as $attempt ) :
+					// In-progress attempts have no result/end time — don't list them.
+					if ( isset( $attempt->attempt_status ) && 'attempt_started' === $attempt->attempt_status ) {
+						continue;
+					}
+
 					$quiz_title = get_the_title( $attempt->quiz_id );
 					$course_title = get_the_title( $attempt->course_id );
-					$date = date_i18n( 'D M d, Y, h:i A', strtotime( $attempt->attempt_ended_at ) );
-					$percent = $attempt->earned_percent;
-					$is_pass = ( $attempt->result === 'pass' );
-					
+					$date = ! empty( $attempt->attempt_ended_at ) ? date_i18n( 'D M d, Y, h:i A', strtotime( $attempt->attempt_ended_at ) ) : '—';
+
+					$earned_marks = isset( $attempt->earned_marks ) ? (float) $attempt->earned_marks : 0;
+					$total_marks  = isset( $attempt->total_marks ) ? (float) $attempt->total_marks : 0;
+
+					// earned_percent is NULL on attempts made before the column existed.
+					$percent = ( isset( $attempt->earned_percent ) && null !== $attempt->earned_percent )
+						? (float) $attempt->earned_percent
+						: ( $total_marks > 0 ? ( $earned_marks * 100 ) / $total_marks : 0 );
+
+					// Three-way result: pass / fail / awaiting review ('pending' or legacy NULL).
+					$is_pass    = ( $attempt->result === 'pass' );
+					$is_fail    = ( $attempt->result === 'fail' );
+					$is_pending = ! $is_pass && ! $is_fail;
+
 					// Parse attempt info
 					$attempt_info = $attempt->attempt_info;
 					if ( is_string( $attempt_info ) ) {
-						$attempt_info = unserialize( $attempt_info );
+						$attempt_info = unserialize( $attempt_info, array( 'allowed_classes' => false ) );
 					}
 					
 					$total_questions = isset( $attempt_info['total_questions'] ) ? $attempt_info['total_questions'] : 0;
 					$total_answered = isset( $attempt->total_answered_questions ) ? $attempt->total_answered_questions : 0;
-					// Tutor LMS usually provides earned_marks and total_marks. We can roughly estimate correct/incorrect based on percent or just use what we have.
-					// Since the exact correct/incorrect count might not be directly available on the attempt object without fetching answers, we'll try to find it or approximate.
-					// Let's use earned_marks vs total_marks as correct/incorrect ratio if we can't find question counts.
-					$earned_marks = isset($attempt->earned_marks) ? (float) $attempt->earned_marks : 0;
-					$total_marks = isset($attempt->total_marks) ? (float) $attempt->total_marks : 1;
-					
 					// Assuming 1 mark per question for display purposes if actual question counts aren't easily accessible
 					$correct = $earned_marks;
-					$incorrect = $total_marks - $earned_marks;
+					$incorrect = max( 0, $total_marks - $earned_marks );
 
 					// Time Taken
 					$time_taken = '-';
-					if ( isset( $attempt->attempt_ended_at ) && isset( $attempt->attempt_started_at ) ) {
+					if ( ! empty( $attempt->attempt_ended_at ) && ! empty( $attempt->attempt_started_at ) ) {
 						$diff = strtotime( $attempt->attempt_ended_at ) - strtotime( $attempt->attempt_started_at );
 						$mins = floor( $diff / 60 );
 						$secs = $diff % 60;
 						$time_taken = sprintf( '%02d:%02d', $mins, $secs );
 					}
+
+					$ring_class = $is_pass ? 'border-success' : ( $is_pending ? 'border-warning' : 'border-danger' );
+					$text_class = $is_pass ? 'text-success' : ( $is_pending ? 'text-warning' : 'text-danger' );
 				?>
 				<div class="grid grid-cols-12 gap-4 p-5 hover:bg-paper-50 transition-colors items-center">
 					
@@ -85,9 +98,9 @@ $attempts = tutor_utils()->get_all_quiz_attempts_by_user( $user_id );
 					
 					<!-- Marks -->
 					<div class="col-span-4 md:col-span-2 flex items-center gap-3">
-						<div class="relative w-10 h-10 flex items-center justify-center rounded-full border-4 <?php echo $is_pass ? 'border-success' : 'border-error'; ?>">
-							<span class="text-xs font-bold <?php echo $is_pass ? 'text-success' : 'text-error'; ?>">
-								<?php echo esc_html( round($percent) ); ?>%
+						<div class="relative w-10 h-10 flex items-center justify-center rounded-full border-4 <?php echo esc_attr( $ring_class ); ?>" aria-hidden="true">
+							<span class="text-xs font-bold <?php echo esc_attr( $text_class ); ?>">
+								<?php echo esc_html( round( $percent ) ); ?>%
 							</span>
 						</div>
 						<div class="text-xs font-medium space-y-1">
@@ -96,7 +109,7 @@ $attempts = tutor_utils()->get_all_quiz_attempts_by_user( $user_id );
 								<?php echo esc_html( $correct ); ?> correct
 							</div>
 							<div class="flex items-center gap-1 text-ink-light">
-								<span class="w-2 h-2 rounded-full bg-error inline-block"></span>
+								<span class="w-2 h-2 rounded-full bg-danger inline-block"></span>
 								<?php echo esc_html( $incorrect ); ?> incorrect
 							</div>
 						</div>
@@ -111,9 +124,11 @@ $attempts = tutor_utils()->get_all_quiz_attempts_by_user( $user_id );
 					<!-- Result -->
 					<div class="col-span-4 md:col-span-2 text-center md:text-left">
 						<?php if ( $is_pass ) : ?>
-							<span class="px-3 py-1 bg-green-100 text-green-700 text-xs font-bold rounded-full">Passed</span>
-						<?php else: ?>
-							<span class="px-3 py-1 bg-red-100 text-red-700 text-xs font-bold rounded-full">Failed</span>
+							<span class="px-3 py-1 bg-green-100 text-green-700 text-xs font-bold rounded-full"><?php esc_html_e( 'ผ่าน', 'bia-learn' ); ?></span>
+						<?php elseif ( $is_pending ) : ?>
+							<span class="px-3 py-1 bg-warning-light text-warning-dark text-xs font-bold rounded-full"><?php esc_html_e( 'รอตรวจ', 'bia-learn' ); ?></span>
+						<?php else : ?>
+							<span class="px-3 py-1 bg-red-100 text-red-700 text-xs font-bold rounded-full"><?php esc_html_e( 'ไม่ผ่าน', 'bia-learn' ); ?></span>
 						<?php endif; ?>
 					</div>
 					
