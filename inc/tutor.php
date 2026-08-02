@@ -222,6 +222,82 @@ function bia_learn_redirect_wp_login() {
 add_action( 'login_init', 'bia_learn_redirect_wp_login' );
 
 /**
+ * Tutor dashboard sub-pages that exist only to serve password sign-in.
+ *
+ * @param string $page Dashboard sub-page slug.
+ * @return bool
+ */
+function bia_learn_is_tutor_password_page( $page ) {
+	return in_array( (string) $page, array( 'retrieve-password', 'reset-password' ), true );
+}
+
+/**
+ * Whether a request for a Tutor dashboard page should be sent to the branded
+ * auth page instead. Kept free of WordPress state so it can be tested directly.
+ *
+ * @param string $page                 Dashboard sub-page slug.
+ * @param bool   $is_logged_in         Whether someone is signed in.
+ * @param bool   $native_login_enabled Whether Tutor's own login system is on.
+ * @return bool
+ */
+function bia_learn_should_redirect_tutor_password_page( $page, $is_logged_in, $native_login_enabled ) {
+	if ( $is_logged_in || $native_login_enabled ) {
+		return false;
+	}
+
+	return bia_learn_is_tutor_password_page( $page );
+}
+
+/**
+ * Resolve the requested Tutor dashboard sub-page.
+ *
+ * Prefers Tutor's query var and falls back to the last path segment, because the
+ * rewrite rules have moved between Tutor releases and a missing query var would
+ * silently disable the guard.
+ *
+ * @return string
+ */
+function bia_learn_current_tutor_dashboard_page() {
+	$page = function_exists( 'get_query_var' ) ? (string) get_query_var( 'tutor_dashboard_page' ) : '';
+	if ( '' !== $page ) {
+		return $page;
+	}
+
+	$uri  = isset( $_SERVER['REQUEST_URI'] ) ? wp_unslash( $_SERVER['REQUEST_URI'] ) : ''; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput
+	$path = (string) wp_parse_url( $uri, PHP_URL_PATH );
+	$bits = array_values( array_filter( explode( '/', $path ) ) );
+
+	return $bits ? (string) end( $bits ) : '';
+}
+
+/**
+ * Send Tutor's "forgot / reset password" pages to the branded auth page.
+ *
+ * Those screens mail out a password that cannot be used: sign-in is SSO-only, so
+ * the reset succeeds and the login still fails, which is worse than not offering
+ * it. Tutor keeps them reachable even with its native login switched off, and
+ * they are linked from its login markup, so the guard sits on template_redirect
+ * rather than on a template override — Tutor has renamed those templates before.
+ *
+ * @return void
+ */
+function bia_learn_redirect_tutor_password_pages() {
+	if ( ! function_exists( 'tutor_utils' ) || ! function_exists( 'bia_learn_auth_url' ) ) {
+		return;
+	}
+
+	$native = (bool) tutor_utils()->get_option( 'enable_tutor_native_login', null, true, true );
+
+	if ( ! bia_learn_should_redirect_tutor_password_page( bia_learn_current_tutor_dashboard_page(), is_user_logged_in(), $native ) ) {
+		return;
+	}
+
+	wp_safe_redirect( bia_learn_auth_url( 'login' ) );
+	exit;
+}
+add_action( 'template_redirect', 'bia_learn_redirect_tutor_password_pages' );
+
+/**
  * Filter wp_login_url to point to our branded auth page.
  * Prevents Tutor LMS from setting the login URL to the dashboard,
  * which causes an infinite redirect loop when clicking "Enroll Now".

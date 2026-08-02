@@ -79,6 +79,79 @@ class TutorIntegrationTest extends TestCase {
 	}
 
 	/**
+	 * Tutor's forgot-password screen mails out a password that cannot be used,
+	 * because sign-in is SSO-only. Guests belong on the branded auth page.
+	 */
+	public function test_forgot_password_page_is_redirected_for_guests() {
+		$this->assertTrue(
+			bia_learn_should_redirect_tutor_password_page( 'retrieve-password', false, false )
+		);
+		$this->assertTrue(
+			bia_learn_should_redirect_tutor_password_page( 'reset-password', false, false )
+		);
+	}
+
+	/**
+	 * Tutor's own login system being on means passwords are in play again, so its
+	 * password screens must keep working.
+	 */
+	public function test_password_pages_are_left_alone_when_native_login_is_on() {
+		$this->assertFalse(
+			bia_learn_should_redirect_tutor_password_page( 'retrieve-password', false, true )
+		);
+	}
+
+	public function test_signed_in_users_are_not_redirected() {
+		$this->assertFalse(
+			bia_learn_should_redirect_tutor_password_page( 'retrieve-password', true, false )
+		);
+	}
+
+	/**
+	 * The guard must not swallow the rest of the dashboard.
+	 */
+	public function test_other_dashboard_pages_are_untouched() {
+		foreach ( array( 'enrolled-courses', 'my-certificates', 'settings', '' ) as $page ) {
+			$this->assertFalse(
+				bia_learn_should_redirect_tutor_password_page( $page, false, false ),
+				"Dashboard page '{$page}' must not be redirected"
+			);
+		}
+	}
+
+	/**
+	 * The sub-page comes from Tutor's query var, and falls back to the request
+	 * path — Tutor has moved these rewrite rules between releases, and a missing
+	 * query var would silently disable the guard.
+	 */
+	public function test_dashboard_page_falls_back_to_the_request_path() {
+		Monkey\Functions\when( 'get_query_var' )->justReturn( '' );
+		Monkey\Functions\when( 'wp_unslash' )->returnArg();
+		Monkey\Functions\when( 'wp_parse_url' )->alias(
+			function ( $url, $component = -1 ) {
+				return parse_url( $url, $component );
+			}
+		);
+
+		$_SERVER['REQUEST_URI'] = '/dashboard/retrieve-password/';
+		$this->assertSame( 'retrieve-password', bia_learn_current_tutor_dashboard_page() );
+
+		$_SERVER['REQUEST_URI'] = '/dashboard/retrieve-password?foo=bar';
+		$this->assertSame( 'retrieve-password', bia_learn_current_tutor_dashboard_page() );
+
+		unset( $_SERVER['REQUEST_URI'] );
+	}
+
+	public function test_dashboard_page_prefers_the_query_var() {
+		Monkey\Functions\when( 'get_query_var' )->justReturn( 'enrolled-courses' );
+
+		$_SERVER['REQUEST_URI'] = '/dashboard/retrieve-password/';
+		$this->assertSame( 'enrolled-courses', bia_learn_current_tutor_dashboard_page() );
+
+		unset( $_SERVER['REQUEST_URI'] );
+	}
+
+	/**
 	 * Without the marker the function walks past the exemption and consults the
 	 * branded page, which is what decides the redirect. The redirect itself cannot
 	 * be asserted here: bia_learn_redirect_wp_login() ends in exit, which would
