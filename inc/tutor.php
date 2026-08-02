@@ -196,6 +196,15 @@ function bia_learn_redirect_wp_login() {
 	if ( 'GET' !== strtoupper( isset( $_SERVER['REQUEST_METHOD'] ) ? $_SERVER['REQUEST_METHOD'] : 'GET' ) ) {
 		return;
 	}
+	// Authorizenter's administrator escape hatch (?external=wordpress) is the one
+	// URL that still accepts a password when SSO is enforced. Redirecting it to the
+	// branded page would leave no way in at all if the identity provider is down —
+	// and on this host wp-login.php is the only credential endpoint reachable,
+	// since the branded page offers SSO buttons only.
+	// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+	if ( isset( $_GET['external'] ) && 'wordpress' === sanitize_key( wp_unslash( $_GET['external'] ) ) ) {
+		return;
+	}
 	$action = isset( $_GET['action'] ) ? sanitize_key( wp_unslash( $_GET['action'] ) ) : 'login'; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 	if ( ! in_array( $action, array( 'login', 'register' ), true ) ) {
 		return; // leave logout / lostpassword / rp / resetpass to WordPress.
