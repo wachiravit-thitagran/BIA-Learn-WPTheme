@@ -287,7 +287,15 @@ $login_url    = tutor_utils()->get_option( 'enable_tutor_native_login', null, tr
 </div>
 
 <?php
-if ( ! is_user_logged_in() ) {
+/*
+ * Tutor's login modal asks for a WordPress username and password. This site
+ * authenticates through SSO only (Authorizenter blocks password sign-in), so the
+ * modal could never succeed — it just offered guests a form that always fails.
+ * Load it only while Tutor's native login is actually switched on; otherwise the
+ * enrol buttons already carry $auth_url, which wp_login_url() points at the
+ * branded /auth/ page.
+ */
+if ( ! is_user_logged_in() && ! $is_tutor_login_disabled ) {
 	tutor_load_template_from_custom_path( tutor()->path . '/views/modal/login.php' );
 }
 ?>

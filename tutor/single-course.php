@@ -29,6 +29,17 @@ $student_must_login_to_view_course = tutor_utils()->get_option( 'student_must_lo
 tutor_utils()->tutor_custom_header();
 
 if ( ! is_user_logged_in() && ! $is_public && $student_must_login_to_view_course ) {
+	/*
+	 * Tutor's own login template is a username/password form. With password
+	 * sign-in disabled site-wide it can never succeed, so send the guest to the
+	 * branded SSO page instead of showing a form that always fails. Only falls
+	 * back to Tutor's template while its native login is switched on.
+	 */
+	if ( ! tutor_utils()->get_option( 'enable_tutor_native_login', null, true, true ) && function_exists( 'bia_learn_auth_url' ) ) {
+		wp_safe_redirect( bia_learn_auth_url( 'login', tutor_utils()->get_current_url() ) );
+		exit;
+	}
+
 	tutor_load_template( 'login' );
 	tutor_utils()->tutor_custom_footer();
 	return;
