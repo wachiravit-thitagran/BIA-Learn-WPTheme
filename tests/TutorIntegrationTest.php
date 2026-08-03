@@ -79,6 +79,38 @@ class TutorIntegrationTest extends TestCase {
 	}
 
 	/**
+	 * Tutor's own templates/login.php redirects with a raw header() call after the
+	 * page has already been sent, which printed "headers already sent" where the
+	 * lesson should be. The override must therefore render, never redirect — and it
+	 * must not reintroduce a password form, since password sign-in is disabled.
+	 */
+	public function test_tutor_login_override_renders_without_redirecting() {
+		$src = file_get_contents( dirname( __DIR__ ) . '/tutor/login.php' );
+
+		$this->assertNotFalse( $src, 'tutor/login.php override is missing' );
+
+		// Strip the docblock first: it names these calls while explaining the bug.
+		$code = preg_replace( '#/\*.*?\*/#s', '', $src );
+
+		foreach ( array( 'header(', 'wp_redirect', 'wp_safe_redirect' ) as $forbidden ) {
+			$this->assertStringNotContainsString(
+				$forbidden,
+				$code,
+				"tutor/login.php must not call {$forbidden} — output has already started by then"
+			);
+		}
+
+		// The only permitted exit is the direct-access guard.
+		$this->assertStringContainsString( "defined( 'ABSPATH' ) || exit;", $code );
+		$this->assertSame( 1, substr_count( $code, 'exit' ), 'the only exit may be the ABSPATH guard' );
+
+		$this->assertStringNotContainsString( 'type="password"', $src );
+		$this->assertStringNotContainsString( 'name="log"', $src );
+		$this->assertStringContainsString( 'authorizenter_button', $src, 'the SSO buttons are the only working sign-in' );
+		$this->assertStringContainsString( 'return_to', $src, 'sign-in must return the visitor to the gated page' );
+	}
+
+	/**
 	 * Tutor's forgot-password screen mails out a password that cannot be used,
 	 * because sign-in is SSO-only. Guests belong on the branded auth page.
 	 */
