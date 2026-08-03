@@ -79,6 +79,27 @@ class TutorIntegrationTest extends TestCase {
 	}
 
 	/**
+	 * Both the Tailwind source and its build output are committed, so a rule added
+	 * to one and not rebuilt into the other ships as a silent no-op. Pin the quiz
+	 * footer fix — the submit button sat flush against the viewport edge without
+	 * it — in both files.
+	 */
+	public function test_quiz_footer_rule_is_built_into_the_stylesheet() {
+		$src   = (string) file_get_contents( dirname( __DIR__ ) . '/src/css/main.css' );
+		$built = (string) file_get_contents( dirname( __DIR__ ) . '/assets/css/main.css' );
+
+		$this->assertStringContainsString( '.tutor-quiz-submission .tutor-quiz-footer', $src );
+		$this->assertStringContainsString(
+			'.tutor-quiz-submission .tutor-quiz-footer',
+			$built,
+			'assets/css/main.css is stale — run npm run build:css'
+		);
+		// The button must fill the centred column rather than sit at its left edge.
+		$this->assertMatchesRegularExpression( '/tutor-quiz-footer\{[^}]*margin-left:auto/', $built );
+		$this->assertMatchesRegularExpression( '/tutor-quiz-footer\{[^}]*justify-content:center/', $built );
+	}
+
+	/**
 	 * Tutor's own templates/login.php redirects with a raw header() call after the
 	 * page has already been sent, which printed "headers already sent" where the
 	 * lesson should be. The override must therefore render, never redirect — and it

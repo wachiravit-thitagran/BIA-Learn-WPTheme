@@ -786,6 +786,20 @@
   @apply border-danger !important;
 }
 
+/* --- Quiz attempt footer ----------------------------------------------
+   Tutor 4.x centres the question column with `.tutor-quiz-questions`
+   (max-width 860px, auto margins) but leaves `.tutor-quiz-footer` at the
+   full width of the form, so the submit button lands flush against the
+   left edge of the viewport, far from the questions it belongs to.
+   Pull the footer onto the same column and let the button fill it. */
+.tutor-quiz-submission .tutor-quiz-footer {
+  @apply mx-auto flex w-full max-w-[860px] justify-center px-4;
+}
+.tutor-quiz-submission .tutor-quiz-footer > .tutor-btn,
+.tutor-quiz-submission .tutor-quiz-footer > button {
+  @apply w-full justify-center;
+}
+
 /* --- Q&A (Tutor LMS built-in) -----------------------------------------
    We use Tutor's native Question & Answer (course Q&A tab + dashboard
    "คำถาม-คำตอบ") rather than a custom forum. Most of it already inherits the
