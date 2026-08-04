@@ -104,6 +104,68 @@ class TutorIntegrationTest extends TestCase {
 	}
 
 	/**
+	 * The hook fires for every template rendered through Tutor's public loader,
+	 * including other plugins'. Only Tutor's own copy of the modal may be matched,
+	 * so a plugin that ships views/modal/login.php of its own keeps working.
+	 */
+	public function test_another_plugins_template_of_the_same_name_is_left_alone() {
+		$base = '/var/www/wp-content/plugins/tutor/';
+
+		$this->assertTrue(
+			// Tutor builds the path as `path . '/views/…'`, so it carries a double slash.
+			bia_learn_is_suppressed_tutor_template( $base . '/views/modal/login.php', $base ),
+			"Tutor's own modal must be matched, double slash and all"
+		);
+		$this->assertFalse(
+			bia_learn_is_suppressed_tutor_template( '/var/www/wp-content/plugins/other-lms/views/modal/login.php', $base ),
+			"another plugin's template must render untouched"
+		);
+		$this->assertFalse(
+			bia_learn_is_suppressed_tutor_template( $base . 'views/modal/enrol.php', $base ),
+			'only the login modal is suppressed'
+		);
+	}
+
+	/**
+	 * A nested render of a different template must not close our buffer early, and
+	 * must not be swallowed itself.
+	 */
+	public function test_nested_template_render_is_not_disturbed() {
+		$modal  = '/plugins/tutor/views/modal/login.php';
+		$nested = '/plugins/other/views/partial.php';
+
+		$level = ob_get_level();
+
+		bia_learn_suppress_tutor_template_start( $modal );
+		bia_learn_suppress_tutor_template_start( $nested ); // no-op: not suppressed
+		bia_learn_suppress_tutor_template_end( $nested );   // must not close ours
+
+		$this->assertGreaterThan( $level, ob_get_level(), 'our buffer must still be open' );
+		$this->assertArrayHasKey( 'bia_learn_suppressing_tutor_template', $GLOBALS );
+
+		bia_learn_suppress_tutor_template_end( $modal );
+
+		$this->assertSame( $level, ob_get_level() );
+		$this->assertArrayNotHasKey( 'bia_learn_suppressing_tutor_template', $GLOBALS );
+	}
+
+	/**
+	 * If the template leaves a buffer of its own open, ours still has to close —
+	 * otherwise it would keep swallowing the rest of the page.
+	 */
+	public function test_unbalanced_buffer_inside_the_template_cannot_leak() {
+		$modal = '/plugins/tutor/views/modal/login.php';
+		$level = ob_get_level();
+
+		bia_learn_suppress_tutor_template_start( $modal );
+		ob_start(); // the template forgets to close this
+		echo 'leftover';
+		bia_learn_suppress_tutor_template_end( $modal );
+
+		$this->assertSame( $level, ob_get_level(), 'buffers must unwind back to where we started' );
+	}
+
+	/**
 	 * The suppression exists because passwords are dead here. If Tutor's own login
 	 * is switched back on, its screens must render untouched.
 	 */

@@ -260,19 +260,76 @@ function bia_learn_tutor_native_login_enabled() {
 }
 
 /**
+ * Normalise a filesystem path for comparison.
+ *
+ * Windows separators become forward slashes and repeated slashes collapse —
+ * Tutor builds these paths as `tutor()->path . '/views/…'`, and `path` already
+ * ends in a slash, so the string it passes contains a double slash.
+ *
+ * @param string $path Path.
+ * @return string
+ */
+function bia_learn_normalize_path( $path ) {
+	$path = str_replace( '\\', '/', (string) $path );
+
+	return (string) preg_replace( '#(?<=.)/+#', '/', $path );
+}
+
+/**
+ * Tutor's plugin directory, or an empty string when Tutor is not loaded.
+ *
+ * @return string
+ */
+function bia_learn_tutor_plugin_path() {
+	if ( ! function_exists( 'tutor' ) ) {
+		return '';
+	}
+
+	$tutor = tutor();
+
+	return is_object( $tutor ) && isset( $tutor->path ) ? bia_learn_normalize_path( $tutor->path ) : '';
+}
+
+/**
  * Whether a template path is one we suppress.
  *
- * Matched on the path suffix rather than the absolute path, so it keeps working
- * wherever the plugin is installed. Kept pure for the tests.
+ * `tutor_load_template_from_custom_path()` is public API: any plugin may render
+ * its own templates through it, and those calls run this hook too. So the match
+ * is against Tutor's *own* file, resolved from `tutor()->path` — a plugin that
+ * happens to ship `views/modal/login.php` of its own keeps rendering normally.
+ * The suffix comparison is only a fallback for when `tutor()` is unavailable,
+ * which is also how the tests exercise it.
  *
- * @param string $template Absolute template path Tutor is about to include.
+ * @param string      $template Absolute template path Tutor is about to include.
+ * @param string|null $base     Tutor's plugin directory; resolved when omitted.
+ *                              Passed explicitly by the tests, which must not
+ *                              mock `tutor()` — Brain Monkey defines stubs as
+ *                              real global functions and they outlive the test.
  * @return bool
  */
-function bia_learn_is_suppressed_tutor_template( $template ) {
-	$template = str_replace( '\\', '/', (string) $template );
+function bia_learn_is_suppressed_tutor_template( $template, $base = null ) {
+	$template = bia_learn_normalize_path( $template );
 
-	foreach ( BIA_LEARN_SUPPRESSED_TUTOR_TEMPLATES as $needle ) {
-		if ( '' !== $needle && substr( $template, -strlen( $needle ) ) === $needle ) {
+	if ( '' === $template ) {
+		return false;
+	}
+
+	$base = null === $base ? bia_learn_tutor_plugin_path() : bia_learn_normalize_path( $base );
+
+	foreach ( BIA_LEARN_SUPPRESSED_TUTOR_TEMPLATES as $relative ) {
+		if ( '' === $relative ) {
+			continue;
+		}
+
+		if ( '' !== $base ) {
+			// Tutor is loaded: only its own copy of the file counts.
+			if ( $template === bia_learn_normalize_path( $base . $relative ) ) {
+				return true;
+			}
+			continue;
+		}
+
+		if ( substr( $template, -strlen( $relative ) ) === $relative ) {
 			return true;
 		}
 	}
@@ -306,8 +363,11 @@ add_action( 'tutor_load_template_from_custom_path_before', 'bia_learn_suppress_t
 /**
  * Drop the buffer opened above.
  *
- * The buffer level is remembered so a nested template cannot leave a stray
- * buffer open — if anything else has since opened one, leave it alone.
+ * Our buffer is always closed, even if the template left one of its own open —
+ * an unbalanced buffer inside a leaf template would be a bug in that template,
+ * and leaving ours open is far worse: it would go on swallowing the rest of the
+ * page. Nested calls for other templates fall through untouched, so a plugin
+ * rendering through the same function is never interrupted.
  *
  * @param string $template Template path.
  * @return void
@@ -321,11 +381,14 @@ function bia_learn_suppress_tutor_template_end( $template ) {
 		return;
 	}
 
-	if ( ob_get_level() === (int) $GLOBALS['bia_learn_suppressing_tutor_template'] ) {
-		ob_end_clean();
-	}
-
+	$ours = (int) $GLOBALS['bia_learn_suppressing_tutor_template'];
 	unset( $GLOBALS['bia_learn_suppressing_tutor_template'] );
+
+	while ( ob_get_level() >= $ours ) {
+		if ( ! ob_end_clean() ) {
+			break;
+		}
+	}
 }
 add_action( 'tutor_load_template_from_custom_path_after', 'bia_learn_suppress_tutor_template_end', 10, 1 );
 
