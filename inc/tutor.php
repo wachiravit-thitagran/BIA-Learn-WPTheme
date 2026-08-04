@@ -222,6 +222,114 @@ function bia_learn_redirect_wp_login() {
 add_action( 'login_init', 'bia_learn_redirect_wp_login' );
 
 /**
+ * Templates whose output must never reach the page on an SSO-only site.
+ *
+ * Tutor prints its username/password modal from `views/modal/login.php` in more
+ * than one place — `templates/archive-course-init.php` line 180 puts it on the
+ * course archive, and the public profile does the same — so removing the call
+ * from the theme's own template copies is not enough. On this site the markup is
+ * pure liability: password sign-in is disabled, so the form cannot succeed, and
+ * a hidden password field invites someone to revive it later.
+ *
+ * @var string[]
+ */
+const BIA_LEARN_SUPPRESSED_TUTOR_TEMPLATES = array( '/views/modal/login.php' );
+
+/**
+ * Whether Tutor's own login system is switched on.
+ *
+ * With it on, passwords are in play again and Tutor's screens should be left
+ * alone; every suppression here is conditional on it being off.
+ *
+ * @return bool
+ */
+function bia_learn_tutor_native_login_enabled() {
+	$enabled = function_exists( 'tutor_utils' )
+		? (bool) tutor_utils()->get_option( 'enable_tutor_native_login', null, true, true )
+		: false;
+
+	/**
+	 * Whether Tutor's own username/password login is considered active.
+	 *
+	 * Everything this theme suppresses for SSO-only operation keys off this, so a
+	 * site can force either behaviour without touching Tutor's settings.
+	 *
+	 * @param bool $enabled Value read from Tutor's settings.
+	 */
+	return (bool) apply_filters( 'bia_learn_tutor_native_login', $enabled );
+}
+
+/**
+ * Whether a template path is one we suppress.
+ *
+ * Matched on the path suffix rather than the absolute path, so it keeps working
+ * wherever the plugin is installed. Kept pure for the tests.
+ *
+ * @param string $template Absolute template path Tutor is about to include.
+ * @return bool
+ */
+function bia_learn_is_suppressed_tutor_template( $template ) {
+	$template = str_replace( '\\', '/', (string) $template );
+
+	foreach ( BIA_LEARN_SUPPRESSED_TUTOR_TEMPLATES as $needle ) {
+		if ( '' !== $needle && substr( $template, -strlen( $needle ) ) === $needle ) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
+/**
+ * Swallow the output of a suppressed Tutor template.
+ *
+ * `tutor_load_template_from_custom_path()` offers no filter on the path — it
+ * includes the file directly — but it does fire a before/after action pair, and
+ * both receive the path. Buffering between them discards exactly that
+ * template's markup and nothing else, so the password form never reaches the
+ * browser. Doing it server-side matters: hiding it with CSS would still ship a
+ * password field in the HTML.
+ *
+ * @param string $template Template path.
+ * @return void
+ */
+function bia_learn_suppress_tutor_template_start( $template ) {
+	if ( bia_learn_tutor_native_login_enabled() || ! bia_learn_is_suppressed_tutor_template( $template ) ) {
+		return;
+	}
+
+	ob_start();
+	$GLOBALS['bia_learn_suppressing_tutor_template'] = ob_get_level();
+}
+add_action( 'tutor_load_template_from_custom_path_before', 'bia_learn_suppress_tutor_template_start', 10, 1 );
+
+/**
+ * Drop the buffer opened above.
+ *
+ * The buffer level is remembered so a nested template cannot leave a stray
+ * buffer open — if anything else has since opened one, leave it alone.
+ *
+ * @param string $template Template path.
+ * @return void
+ */
+function bia_learn_suppress_tutor_template_end( $template ) {
+	if ( empty( $GLOBALS['bia_learn_suppressing_tutor_template'] ) ) {
+		return;
+	}
+
+	if ( ! bia_learn_is_suppressed_tutor_template( $template ) ) {
+		return;
+	}
+
+	if ( ob_get_level() === (int) $GLOBALS['bia_learn_suppressing_tutor_template'] ) {
+		ob_end_clean();
+	}
+
+	unset( $GLOBALS['bia_learn_suppressing_tutor_template'] );
+}
+add_action( 'tutor_load_template_from_custom_path_after', 'bia_learn_suppress_tutor_template_end', 10, 1 );
+
+/**
  * Tutor dashboard sub-pages that exist only to serve password sign-in.
  *
  * @param string $page Dashboard sub-page slug.

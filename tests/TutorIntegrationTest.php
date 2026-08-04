@@ -79,6 +79,69 @@ class TutorIntegrationTest extends TestCase {
 	}
 
 	/**
+	 * Tutor prints its username/password modal from views/modal/login.php in
+	 * several templates, so the theme suppresses that one template's output rather
+	 * than chasing each caller. Only that path may be swallowed.
+	 */
+	public function test_only_the_login_modal_template_is_suppressed() {
+		$this->assertTrue( bia_learn_is_suppressed_tutor_template( '/plugins/tutor/views/modal/login.php' ) );
+		$this->assertTrue( bia_learn_is_suppressed_tutor_template( 'C:\\wp\\plugins\\tutor\\views\\modal\\login.php' ) );
+
+		foreach (
+			array(
+				'/plugins/tutor/views/modal/enrol.php',
+				'/plugins/tutor/templates/login.php',
+				'/plugins/tutor/views/modal/login.php.bak',
+				'/themes/bia-learn/tutor/login.php',
+				'',
+			) as $path
+		) {
+			$this->assertFalse(
+				bia_learn_is_suppressed_tutor_template( $path ),
+				"'{$path}' must not be suppressed"
+			);
+		}
+	}
+
+	/**
+	 * The suppression exists because passwords are dead here. If Tutor's own login
+	 * is switched back on, its screens must render untouched.
+	 */
+	public function test_suppression_stands_down_when_native_login_is_on() {
+		$modal = '/plugins/tutor/views/modal/login.php';
+
+		// Stubbing tutor_utils() would leak a real global function into later tests
+		// and flip function_exists() guards elsewhere in the theme, so drive the
+		// decision through the filter instead.
+		Monkey\Filters\expectApplied( 'bia_learn_tutor_native_login' )->andReturn( true );
+
+		$level = ob_get_level();
+		bia_learn_suppress_tutor_template_start( $modal );
+
+		$this->assertSame( $level, ob_get_level(), 'no buffer may be opened while native login is on' );
+		$this->assertArrayNotHasKey( 'bia_learn_suppressing_tutor_template', $GLOBALS );
+	}
+
+	/**
+	 * With native login off the modal's markup must never reach the page — hiding
+	 * it with CSS would still ship a password field in the HTML.
+	 */
+	public function test_suppressed_template_output_is_discarded() {
+		$modal = '/plugins/tutor/views/modal/login.php';
+
+		// tutor_utils() is absent here, which is the SSO-only case: native login
+		// reads as off, so the modal must be swallowed.
+		$level = ob_get_level();
+
+		bia_learn_suppress_tutor_template_start( $modal );
+		echo '<input type="password" name="pwd">';
+		bia_learn_suppress_tutor_template_end( $modal );
+
+		$this->assertSame( $level, ob_get_level(), 'the buffer must be closed again' );
+		$this->assertArrayNotHasKey( 'bia_learn_suppressing_tutor_template', $GLOBALS );
+	}
+
+	/**
 	 * Both the Tailwind source and its build output are committed, so a rule added
 	 * to one and not rebuilt into the other ships as a silent no-op. Pin the quiz
 	 * footer fix — the submit button sat flush against the viewport edge without
