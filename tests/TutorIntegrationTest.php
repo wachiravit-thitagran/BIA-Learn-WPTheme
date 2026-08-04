@@ -235,16 +235,27 @@ class TutorIntegrationTest extends TestCase {
 
 		$this->assertNotFalse( $src, 'tutor/login.php override is missing' );
 
-		// Strip the docblock first: it names these calls while explaining the bug.
-		$code = preg_replace( '#/\*.*?\*/#s', '', $src );
+		// Strip comments first: they name these calls while explaining the bug.
+		$code = preg_replace( array( '#/\*.*?\*/#s', '#^\s*//.*$#m' ), '', $src );
 
-		foreach ( array( 'header(', 'wp_redirect', 'wp_safe_redirect' ) as $forbidden ) {
+		// A bare header() call is the bug; tutor_custom_header() is the fix, so the
+		// pattern must not match a function whose name merely ends in "header".
+		$this->assertDoesNotMatchRegularExpression( '/(?<![a-z_])header\s*\(/i', $code );
+
+		foreach ( array( 'wp_redirect', 'wp_safe_redirect' ) as $forbidden ) {
 			$this->assertStringNotContainsString(
 				$forbidden,
 				$code,
 				"tutor/login.php must not call {$forbidden} — output has already started by then"
 			);
 		}
+
+		// On routes where this template is the whole document (the guest dashboard)
+		// it must print the page chrome, and only there — a lesson page has already
+		// sent it, and a second <html> would be worse than a missing one.
+		$this->assertStringContainsString( "did_action( 'wp_head' )", $code );
+		$this->assertStringContainsString( 'tutor_custom_header()', $code );
+		$this->assertStringContainsString( 'tutor_custom_footer()', $code );
 
 		// The only permitted exit is the direct-access guard.
 		$this->assertStringContainsString( "defined( 'ABSPATH' ) || exit;", $code );

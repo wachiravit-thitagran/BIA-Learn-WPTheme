@@ -26,6 +26,20 @@ defined( 'ABSPATH' ) || exit;
 
 $bia_return_to = function_exists( 'tutor_utils' ) ? (string) tutor_utils()->get_current_url() : '';
 $bia_providers = array( 'google', 'oidc', 'facebook', 'line', 'oauth2' );
+
+/*
+ * Tutor's original template prints the theme's header and footer around the form,
+ * because on some routes — the student dashboard for a guest, for one — this
+ * template *is* the whole document. On others, such as a lesson, the page chrome
+ * has already been sent before Tutor gets here, and printing it again would
+ * produce a second <html>. `wp_head` having fired is the reliable signal for
+ * which case we are in.
+ */
+$bia_owns_document = function_exists( 'tutor_utils' ) && ! did_action( 'wp_head' );
+
+if ( $bia_owns_document ) {
+	tutor_utils()->tutor_custom_header();
+}
 ?>
 <div class="bia-tutor-login tutor-login-form-wrap max-w-lg mx-auto text-center bg-white rounded-2xl border border-paper-200 shadow-sm py-12 px-6 my-8">
 	<div class="w-16 h-16 mx-auto bg-red-50 text-brand rounded-full flex items-center justify-center text-2xl mb-4">
@@ -66,3 +80,7 @@ $bia_providers = array( 'google', 'oidc', 'facebook', 'line', 'oauth2' );
 		</p>
 	<?php endif; ?>
 </div>
+<?php
+if ( $bia_owns_document ) {
+	tutor_utils()->tutor_custom_footer();
+}
