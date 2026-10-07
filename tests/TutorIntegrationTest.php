@@ -349,12 +349,9 @@ class TutorIntegrationTest extends TestCase {
 	public function test_auth_url_never_falls_back_to_native_wordpress_login() {
 		Monkey\Functions\expect( 'get_page_by_path' )->once()->with( 'auth' )->andReturn( null );
 		Monkey\Functions\expect( 'get_option' )->once()->with( 'authorizenter_login_page_id' )->andReturn( 0 );
-		Monkey\Functions\when( 'home_url' )->alias(
-			static function ( $path = '' ) {
-				return 'https://example.com' . $path;
-			}
-		);
 
-		$this->assertSame( 'https://example.com/auth/', bia_learn_auth_url( 'login' ) );
+		// home_url() is a bootstrap stub defined before Patchwork; use its stable
+		// test value instead of trying to monkey-patch a function defined too early.
+		$this->assertSame( 'http://example.com/auth/', bia_learn_auth_url( 'login' ) );
 	}
 }
