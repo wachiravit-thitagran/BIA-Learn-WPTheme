@@ -213,9 +213,6 @@ function bia_learn_redirect_wp_login() {
 	if ( is_user_logged_in() && 'login' === $action ) {
 		return;
 	}
-	if ( ! get_page_by_path( 'auth' ) ) {
-		return; // no branded page yet — keep the default screen.
-	}
 	$redirect = isset( $_GET['redirect_to'] ) ? esc_url_raw( wp_unslash( $_GET['redirect_to'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 	wp_safe_redirect( bia_learn_auth_url( 'register' === $action ? 'register' : 'login', $redirect ) );
 	exit;
@@ -489,15 +486,7 @@ add_action( 'template_redirect', 'bia_learn_redirect_tutor_password_pages' );
  * @return string
  */
 function bia_learn_filter_login_url( $login_url, $redirect = '' ) {
-	$auth = get_page_by_path( 'auth' );
-	if ( $auth ) {
-		$url = get_permalink( $auth );
-		if ( $redirect ) {
-			$url = add_query_arg( 'redirect_to', rawurlencode( $redirect ), $url );
-		}
-		return $url;
-	}
-	return $login_url;
+	return bia_learn_auth_url( 'login', $redirect );
 }
 add_filter( 'login_url', 'bia_learn_filter_login_url', 99, 2 );
 
@@ -508,11 +497,7 @@ add_filter( 'login_url', 'bia_learn_filter_login_url', 99, 2 );
  * @return string
  */
 function bia_learn_filter_register_url( $register_url ) {
-	$auth = get_page_by_path( 'auth' );
-	if ( $auth ) {
-		return add_query_arg( 'tab', 'register', get_permalink( $auth ) );
-	}
-	return $register_url;
+	return bia_learn_auth_url( 'register' );
 }
 add_filter( 'register_url', 'bia_learn_filter_register_url', 99 );
 
