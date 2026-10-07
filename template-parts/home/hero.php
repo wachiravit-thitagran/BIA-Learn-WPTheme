@@ -45,22 +45,48 @@ $stats = bia_learn_get_stats();
 					<?php echo bia_learn_icon( 'arrow', 'h-5 w-5' ); // phpcs:ignore ?>
 				</a>
 			</div>
+
+			<!-- Keep social proof visible on small screens instead of hiding it. -->
+			<div class="mt-8 flex flex-wrap items-center gap-4 text-sm text-paper-300 lg:hidden">
+				<span class="inline-flex items-center gap-2">
+					<?php echo bia_learn_icon( 'book', 'h-4 w-4 text-gold-light' ); // phpcs:ignore ?>
+					<strong class="text-white"><?php echo esc_html( number_format_i18n( $stats['courses'] ) ); ?>+</strong>
+					<?php esc_html_e( 'คอร์ส', 'bia-learn' ); ?>
+				</span>
+				<span class="inline-flex items-center gap-2">
+					<?php echo bia_learn_icon( 'users', 'h-4 w-4 text-gold-light' ); // phpcs:ignore ?>
+					<strong class="text-white"><?php echo esc_html( number_format_i18n( $stats['students'] ) ); ?>+</strong>
+					<?php esc_html_e( 'ผู้เรียน', 'bia-learn' ); ?>
+				</span>
+				<span class="inline-flex items-center gap-2">
+					<?php echo bia_learn_icon( 'cert', 'h-4 w-4 text-gold-light' ); // phpcs:ignore ?>
+					<strong class="text-white"><?php esc_html_e( 'ฟรี', 'bia-learn' ); ?></strong>
+					<?php esc_html_e( 'เริ่มเรียนได้ทันที', 'bia-learn' ); ?>
+				</span>
+			</div>
 		</div>
 
-		<!-- stat cards -->
-		<div class="hidden flex-col gap-4 lg:flex">
-			<div class="rounded-2xl border border-white/15 bg-white/10 px-8 py-6 backdrop-blur-sm">
-				<p class="font-serif text-4xl font-bold text-white"><?php echo number_format_i18n( $stats['courses'] ); ?>+</p>
-				<p class="mt-1 text-base text-paper-300"><?php esc_html_e( 'คอร์สเรียน', 'bia-learn' ); ?></p>
+		<!-- Compact learning summary: easier to scan than three tall cards. -->
+		<div class="hidden rounded-3xl border border-white/15 bg-white/10 p-6 shadow-card backdrop-blur-sm lg:block">
+			<p class="eyebrow text-gold-light"><?php esc_html_e( 'เรียนรู้ได้ตามจังหวะของคุณ', 'bia-learn' ); ?></p>
+			<h2 class="mt-3 font-serif text-2xl font-bold text-white"><?php esc_html_e( 'เริ่มจากหัวข้อที่สนใจ แล้วเรียนต่อได้ทุกเวลา', 'bia-learn' ); ?></h2>
+			<p class="mt-3 text-sm leading-relaxed text-paper-300"><?php esc_html_e( 'ค้นหาคอร์สที่ต้องการ ลงทะเบียน และติดตามความคืบหน้าได้จากแดชบอร์ดเดียว', 'bia-learn' ); ?></p>
+
+			<div class="mt-6 grid grid-cols-2 gap-4">
+				<div class="rounded-2xl border border-white/15 bg-white/10 px-6 py-5">
+					<p class="font-serif text-3xl font-bold text-white"><?php echo esc_html( number_format_i18n( $stats['courses'] ) ); ?>+</p>
+					<p class="mt-1 text-sm text-paper-300"><?php esc_html_e( 'คอร์สเรียน', 'bia-learn' ); ?></p>
+				</div>
+				<div class="rounded-2xl border border-white/15 bg-white/10 px-6 py-5">
+					<p class="font-serif text-3xl font-bold text-white"><?php echo esc_html( number_format_i18n( $stats['students'] ) ); ?>+</p>
+					<p class="mt-1 text-sm text-paper-300"><?php esc_html_e( 'ผู้เรียน', 'bia-learn' ); ?></p>
+				</div>
 			</div>
-			<div class="rounded-2xl border border-white/15 bg-white/10 px-8 py-6 backdrop-blur-sm">
-				<p class="font-serif text-4xl font-bold text-white"><?php echo number_format_i18n( $stats['students'] ); ?>+</p>
-				<p class="mt-1 text-base text-paper-300"><?php esc_html_e( 'ผู้เรียน', 'bia-learn' ); ?></p>
-			</div>
-			<div class="rounded-2xl border border-white/15 bg-white/10 px-8 py-6 backdrop-blur-sm">
-				<p class="font-serif text-4xl font-bold text-gold-light"><?php esc_html_e( 'FREE', 'bia-learn' ); ?></p>
-				<p class="mt-1 text-base text-paper-300"><?php esc_html_e( 'เข้าถึงได้ฟรี', 'bia-learn' ); ?></p>
-			</div>
+
+			<a href="<?php echo esc_url( bia_learn_courses_url() ); ?>" class="btn-outline mt-6 w-full border-white/30 text-white hover:border-white hover:bg-white hover:text-crimson">
+				<?php esc_html_e( 'สำรวจคอร์สทั้งหมด', 'bia-learn' ); ?>
+				<?php echo bia_learn_icon( 'arrow', 'h-4 w-4' ); // phpcs:ignore ?>
+			</a>
 		</div>
 	</div>
 
