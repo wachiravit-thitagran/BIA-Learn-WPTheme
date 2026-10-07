@@ -196,6 +196,29 @@ function bia_learn_auth_url( $tab = 'login', $redirect = '' ) {
 }
 
 /**
+ * Enforce the site's authentication policy when Authorizenter is active.
+ *
+ * Learners and ordinary users authenticate through external providers only.
+ * Password authentication remains available solely to administrators through
+ * Authorizenter's narrow wp-login.php?external=wordpress escape hatch.
+ */
+function bia_learn_force_authorizenter_password_auth_disabled( $disabled ) {
+	return true;
+}
+add_filter( 'authorizenter_disable_password_auth', 'bia_learn_force_authorizenter_password_auth_disabled', 999 );
+
+/**
+ * Keep Authorizenter's administrator emergency password route enabled.
+ *
+ * The Core plugin still verifies that the request is the explicit escape hatch
+ * and that the submitted account has manage_options.
+ */
+function bia_learn_force_authorizenter_admin_password_bypass( $enabled ) {
+	return true;
+}
+add_filter( 'authorizenter_password_auth_admin_bypass', 'bia_learn_force_authorizenter_admin_password_bypass', 999 );
+
+/**
  * Resolve the courses archive URL (Tutor LMS course archive, else /courses/).
  *
  * @return string
@@ -246,7 +269,11 @@ add_filter(
  */
 function bia_learn_sso_login_message( $message ) {
 	$action = isset( $_GET['action'] ) ? sanitize_text_field( wp_unslash( $_GET['action'] ) ) : 'login';
-	if ( 'login' !== $action ) {
+
+	// The native WordPress screen is reserved for the administrator escape hatch.
+	// Do not mix SSO controls into that emergency credential-only surface.
+	$external = isset( $_GET['external'] ) ? sanitize_key( wp_unslash( $_GET['external'] ) ) : '';
+	if ( 'wordpress' === $external || 'login' !== $action ) {
 		return $message;
 	}
 
