@@ -1,7 +1,5 @@
 name: Release theme
 
-# A release is created only after the full WP Integration workflow succeeds on
-# main. workflow_dispatch remains available for an explicit/manual release.
 on:
   workflow_run:
     workflows: [ "WP Integration" ]
@@ -22,6 +20,7 @@ jobs:
       (github.event.workflow_run.conclusion == 'success' &&
        github.event.workflow_run.head_branch == 'main')
     runs-on: ubuntu-latest
+
     services:
       mysql:
         image: mysql:8.0
@@ -52,9 +51,9 @@ jobs:
           fi
           test -n "$target"
           echo "sha=$target" >> "$GITHUB_OUTPUT"
-          echo "Release target: $target"
 
-      - uses: actions/checkout@v4
+      - name: Checkout tested commit
+        uses: actions/checkout@v4
         with:
           ref: ${{ steps.target.outputs.sha }}
           fetch-depth: 0
@@ -63,44 +62,54 @@ jobs:
         id: changes
         run: |
           set -euo pipefail
-          latest_tag=$(git tag --list 'v*' --sort=-v:refname | grep -oE '^v[0-9]+\.[0-9]+\.[0-9]+
+          latest_tag="$(git tag --list 'v*' --sort=-v:refname | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' | head -n1 || true)"
+          if [ -z "$latest_tag" ]; then
+            echo "proceed=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          changed="$(git diff --name-only "$latest_tag"..HEAD --             .             ':(exclude).github/**'             ':(exclude)docs/**'             ':(exclude)tests/**'             ':(exclude)**/*.md')"
+
+          if [ -n "$changed" ]; then
+            echo "proceed=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "proceed=false" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Compute next version
         if: steps.changes.outputs.proceed == 'true'
         id: ver
         run: |
           set -euo pipefail
-          current=$(grep -iE '^[[:space:]]*Version:' style.css | head -1 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1 || true)
-          latest_tag=$(git tag --list 'v*' --sort=-v:refname | grep -oE '^v[0-9]+\.[0-9]+\.[0-9]+$' | head -1 | sed 's/^v//' || true)
-          echo "style.css=${current:-none} latest_tag=${latest_tag:-none}"
+          current="$(grep -iE '^[[:space:]]*Version:' style.css | head -1 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1 || true)"
+          latest_tag="$(git tag --list 'v*' --sort=-v:refname | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' | head -1 | sed 's/^v//' || true)"
 
-          if [ -z "${latest_tag}" ]; then
+          if [ -z "$latest_tag" ]; then
             next="${current:-1.0.0}"
           else
-            higher=$(printf '%s\n%s\n' "$current" "$latest_tag" | sort -V | tail -1)
+            higher="$(printf '%s\n%s\n' "$current" "$latest_tag" | sort -V | tail -1)"
             if [ -n "$current" ] && [ "$higher" = "$current" ] && [ "$current" != "$latest_tag" ]; then
               next="$current"
             else
-              IFS=. read -r MA MI PA <<< "$latest_tag"
-              next="${MA}.${MI}.$((PA + 1))"
+              IFS=. read -r ma mi pa <<< "$latest_tag"
+              next="${ma}.${mi}.$((pa + 1))"
             fi
           fi
 
-          if ! printf '%s' "$next" | grep -qE '^[0-9]+\.[0-9]+\.[0-9]+$'; then
-            echo "Computed version '$next' is not valid semver" >&2
-            exit 1
-          fi
-
+          printf '%s' "$next" | grep -qE '^[0-9]+\.[0-9]+\.[0-9]+$'
           echo "next=$next" >> "$GITHUB_OUTPUT"
           echo "tag=v$next" >> "$GITHUB_OUTPUT"
 
-      - uses: actions/setup-node@v4
+      - name: Setup Node.js
         if: steps.changes.outputs.proceed == 'true'
+        uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: npm
 
-      - uses: shivammathur/setup-php@v2
+      - name: Setup PHP and WP-CLI
         if: steps.changes.outputs.proceed == 'true'
+        uses: shivammathur/setup-php@v2
         with:
           php-version: '8.2'
           tools: wp-cli
@@ -125,18 +134,11 @@ jobs:
 
           rm -rf dist
           mkdir -p dist/bia-learn
-          rsync -a ./ dist/bia-learn/ \
-            --exclude '.git' --exclude '.github' --exclude 'node_modules' \
-            --exclude 'src' --exclude 'dist' --exclude 'docs' \
-            --exclude 'tests' --exclude 'vendor' --exclude 'composer.json' \
-            --exclude 'composer.lock' --exclude 'phpunit.xml.dist' \
-            --exclude 'package.json' --exclude 'package-lock.json' \
-            --exclude 'tailwind.config.js' --exclude 'postcss.config.js' \
-            --exclude '.gitignore' --exclude '*.log' --exclude '.DS_Store'
+          rsync -a ./ dist/bia-learn/             --exclude '.git' --exclude '.github' --exclude 'node_modules'             --exclude 'src' --exclude 'dist' --exclude 'docs'             --exclude 'tests' --exclude 'vendor' --exclude 'composer.json'             --exclude 'composer.lock' --exclude 'phpunit.xml.dist'             --exclude 'package.json' --exclude 'package-lock.json'             --exclude 'tailwind.config.js' --exclude 'postcss.config.js'             --exclude '.gitignore' --exclude '*.log' --exclude '.DS_Store'
 
           (cd dist && zip -rq bia-learn.zip bia-learn)
 
-      - name: Validate release package
+      - name: Validate ZIP structure
         if: steps.changes.outputs.proceed == 'true'
         env:
           NEXT: ${{ steps.ver.outputs.next }}
@@ -153,7 +155,7 @@ jobs:
             exit 1
           fi
 
-      - name: Validate packaged theme ZIP in clean WordPress
+      - name: Validate packaged theme in clean WordPress
         if: steps.changes.outputs.proceed == 'true'
         env:
           NEXT: ${{ steps.ver.outputs.next }}
@@ -166,13 +168,11 @@ jobs:
           wp core download --allow-root
           wp config create --dbname=wordpress --dbuser=root --dbpass=root --dbhost=127.0.0.1 --allow-root
           wp core install --url=http://localhost --title="Release Validation" --admin_user=admin --admin_password=admin --admin_email=admin@example.test --skip-email --allow-root
-
           wp plugin install tutor --activate --allow-root
+
           wp theme install "$GITHUB_WORKSPACE/dist/bia-learn.zip" --force --activate --allow-root
           wp theme is-active bia-learn --allow-root
-
-          installed="$(wp theme get bia-learn --field=version --allow-root)"
-          test "$installed" = "$NEXT"
+          test "$(wp theme get bia-learn --field=version --allow-root)" = "$NEXT"
 
           wp theme activate twentytwentyfive --allow-root || true
           wp theme activate bia-learn --allow-root
@@ -195,118 +195,4 @@ jobs:
           TARGET_SHA: ${{ steps.target.outputs.sha }}
         run: |
           set -euo pipefail
-          gh release create "$TAG" dist/bia-learn.zip \
-            --target "$TARGET_SHA" \
-            --title "$TAG" \
-            --generate-notes
- | head -1 || true)
-
-          if [ -z "$latest_tag" ]; then
-            echo "proceed=true" >> "$GITHUB_OUTPUT"
-            exit 0
-          fi
-
-          changed=$(git diff --name-only "$latest_tag"..HEAD -- \
-            . \
-            ':(exclude).github/**' \
-            ':(exclude)docs/**' \
-            ':(exclude)tests/**' \
-            ':(exclude)**/*.md')
-
-          if [ -n "$changed" ]; then
-            echo "Releasable changes since $latest_tag:"
-            printf '%s\n' "$changed"
-            echo "proceed=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "Only tests/docs/workflows changed since $latest_tag; no release needed."
-            echo "proceed=false" >> "$GITHUB_OUTPUT"
-          fi
-
-      - name: Compute next version
-        id: ver
-        run: |
-          set -euo pipefail
-          current=$(grep -iE '^[[:space:]]*Version:' style.css | head -1 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1 || true)
-          latest_tag=$(git tag --list 'v*' --sort=-v:refname | grep -oE '^v[0-9]+\.[0-9]+\.[0-9]+$' | head -1 | sed 's/^v//' || true)
-          echo "style.css=${current:-none} latest_tag=${latest_tag:-none}"
-
-          if [ -z "${latest_tag}" ]; then
-            next="${current:-1.0.0}"
-          else
-            higher=$(printf '%s\n%s\n' "$current" "$latest_tag" | sort -V | tail -1)
-            if [ -n "$current" ] && [ "$higher" = "$current" ] && [ "$current" != "$latest_tag" ]; then
-              next="$current"
-            else
-              IFS=. read -r MA MI PA <<< "$latest_tag"
-              next="${MA}.${MI}.$((PA + 1))"
-            fi
-          fi
-
-          if ! printf '%s' "$next" | grep -qE '^[0-9]+\.[0-9]+\.[0-9]+$'; then
-            echo "Computed version '$next' is not valid semver" >&2
-            exit 1
-          fi
-
-          echo "next=$next" >> "$GITHUB_OUTPUT"
-          echo "tag=v$next" >> "$GITHUB_OUTPUT"
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: npm
-
-      - name: Build production assets
-        run: |
-          set -euo pipefail
-          npm ci
-          npm run build
-          test -s assets/css/main.css
-          test -s assets/js/main.js
-
-      - name: Set version and package theme
-        env:
-          NEXT: ${{ steps.ver.outputs.next }}
-        run: |
-          set -euo pipefail
-          sed -i -E "s/^([[:space:]]*Version:[[:space:]]*).*/\1${NEXT}/" style.css
-
-          rm -rf dist
-          mkdir -p dist/bia-learn
-          rsync -a ./ dist/bia-learn/ \
-            --exclude '.git' --exclude '.github' --exclude 'node_modules' \
-            --exclude 'src' --exclude 'dist' --exclude 'docs' \
-            --exclude 'tests' --exclude 'vendor' --exclude 'composer.json' \
-            --exclude 'composer.lock' --exclude 'phpunit.xml.dist' \
-            --exclude 'package.json' --exclude 'package-lock.json' \
-            --exclude 'tailwind.config.js' --exclude 'postcss.config.js' \
-            --exclude '.gitignore' --exclude '*.log' --exclude '.DS_Store'
-
-          (cd dist && zip -rq bia-learn.zip bia-learn)
-
-      - name: Validate release package
-        env:
-          NEXT: ${{ steps.ver.outputs.next }}
-        run: |
-          set -euo pipefail
-          unzip -t dist/bia-learn.zip >/dev/null
-          unzip -l dist/bia-learn.zip | grep -q 'bia-learn/style.css'
-          unzip -l dist/bia-learn.zip | grep -q 'bia-learn/assets/css/main.css'
-          unzip -l dist/bia-learn.zip | grep -q 'bia-learn/assets/js/main.js'
-          unzip -p dist/bia-learn.zip bia-learn/style.css | grep -qE "^[[:space:]]*Version:[[:space:]]*${NEXT}$"
-
-          if unzip -l dist/bia-learn.zip | grep -Eq 'bia-learn/(node_modules|src|tests|\.github)/'; then
-            echo "Development files leaked into release ZIP" >&2
-            exit 1
-          fi
-
-      - name: Publish GitHub Release
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          TAG: ${{ steps.ver.outputs.tag }}
-          TARGET_SHA: ${{ steps.target.outputs.sha }}
-        run: |
-          set -euo pipefail
-          gh release create "$TAG" dist/bia-learn.zip \
-            --target "$TARGET_SHA" \
-            --title "$TAG" \
-            --generate-notes
+          gh release create "$TAG" dist/bia-learn.zip             --target "$TARGET_SHA"             --title "$TAG"             --generate-notes
