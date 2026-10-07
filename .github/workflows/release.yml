@@ -22,6 +22,19 @@ jobs:
       (github.event.workflow_run.conclusion == 'success' &&
        github.event.workflow_run.head_branch == 'main')
     runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: wordpress
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -proot"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
 
     steps:
       - name: Resolve release SHA
@@ -86,6 +99,13 @@ jobs:
           node-version: 20
           cache: npm
 
+      - uses: shivammathur/setup-php@v2
+        if: steps.changes.outputs.proceed == 'true'
+        with:
+          php-version: '8.2'
+          tools: wp-cli
+          coverage: none
+
       - name: Build production assets
         if: steps.changes.outputs.proceed == 'true'
         run: |
@@ -132,6 +152,40 @@ jobs:
             echo "Development files leaked into release ZIP" >&2
             exit 1
           fi
+
+      - name: Validate packaged theme ZIP in clean WordPress
+        if: steps.changes.outputs.proceed == 'true'
+        env:
+          NEXT: ${{ steps.ver.outputs.next }}
+        run: |
+          set -euo pipefail
+          rm -rf /tmp/release-wp
+          mkdir -p /tmp/release-wp
+          cd /tmp/release-wp
+
+          wp core download --allow-root
+          wp config create --dbname=wordpress --dbuser=root --dbpass=root --dbhost=127.0.0.1 --allow-root
+          wp core install --url=http://localhost --title="Release Validation" --admin_user=admin --admin_password=admin --admin_email=admin@example.test --skip-email --allow-root
+
+          wp plugin install tutor --activate --allow-root
+          wp theme install "$GITHUB_WORKSPACE/dist/bia-learn.zip" --force --activate --allow-root
+          wp theme is-active bia-learn --allow-root
+
+          installed="$(wp theme get bia-learn --field=version --allow-root)"
+          test "$installed" = "$NEXT"
+
+          wp theme activate twentytwentyfive --allow-root || true
+          wp theme activate bia-learn --allow-root
+          wp theme is-active bia-learn --allow-root
+
+          wp eval '
+          $theme = wp_get_theme();
+          if ( "bia-learn" !== $theme->get_stylesheet() ) {
+              fwrite( STDERR, "Packaged BIA Learn theme is not active.\n" );
+              exit( 1 );
+          }
+          echo "Packaged BIA Learn theme loaded successfully.\n";
+          ' --allow-root
 
       - name: Publish GitHub Release
         if: steps.changes.outputs.proceed == 'true'
