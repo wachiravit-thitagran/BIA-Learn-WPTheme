@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 $user_id = get_current_user_id();
 
 // Cap the grid — enrolled courses are unbounded and each card costs queries.
-$bia_max_cards = 12;
+$bia_max_cards = 6;
 
 // Get enrolled courses (standard order)
 $enrolled_courses = tutor_utils()->get_enrolled_courses_by_user( $user_id );
@@ -30,7 +30,14 @@ if ( $enrolled_courses && ! empty( $enrolled_courses->posts ) ) {
 	BIA_Learn_Tutor_UX::$analytics_table_exists = $has_tracker;
 
 	foreach ( $posts as $post ) {
-		$course_id   = $post->ID;
+		$course_id = $post->ID;
+
+		// Completed courses belong in history/certificates, not the resume queue.
+		$course_progress = bia_learn_course_progress( $course_id, $user_id );
+		if ( null !== $course_progress && $course_progress >= 100 ) {
+			continue;
+		}
+
 		$last_access = 0;
 		if ( $has_tracker ) {
 			$last_access = $wpdb->get_var( $wpdb->prepare( "
