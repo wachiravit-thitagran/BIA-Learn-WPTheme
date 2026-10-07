@@ -73,7 +73,7 @@ $is_enabled_wishlist = tutor_utils()->get_option( 'enable_wishlist', true );
 					<?php endif; ?>
 					<div class="tutor-tab tutor-pt-24">
 						<?php foreach ( $course_nav_item as $key => $subpage ) : ?>
-							<div id="tutor-course-details-tab-<?php echo esc_attr( $key ); ?>" class="tutor-tab-item<?php echo 'info' == $key ? ' is-active' : ''; ?>">
+							<div id="tutor-course-details-tab-<?php echo esc_attr( $key ); ?>" class="tutor-tab-item<?php echo 'info' === $key ? ' is-active' : ''; ?>">
 								<?php
 									do_action( 'tutor_course/single/tab/' . $key . '/before' );
 
