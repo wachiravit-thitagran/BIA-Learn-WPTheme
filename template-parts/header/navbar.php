@@ -59,10 +59,17 @@ $courses_url = bia_learn_courses_url();
 			<?php echo bia_learn_icon( 'search', 'h-5 w-5' ); // phpcs:ignore ?>
 		</button>
 
-		<a href="<?php echo esc_url( $courses_url ); ?>" class="btn-primary hidden sm:inline-flex">
-			<?php esc_html_e( 'เริ่มเรียน', 'bia-learn' ); ?>
-			<?php echo bia_learn_icon( 'arrow', 'h-4 w-4' ); // phpcs:ignore ?>
-		</a>
+		<?php if ( is_user_logged_in() ) : ?>
+			<a href="<?php echo esc_url( bia_learn_tutor_dashboard_url( admin_url() ) ); ?>" class="btn-primary hidden sm:inline-flex">
+				<?php echo bia_learn_icon( 'user', 'h-4 w-4' ); // phpcs:ignore ?>
+				<?php esc_html_e( 'แดชบอร์ดของฉัน', 'bia-learn' ); ?>
+			</a>
+		<?php else : ?>
+			<a href="<?php echo esc_url( $courses_url ); ?>" class="btn-primary hidden sm:inline-flex">
+				<?php esc_html_e( 'เริ่มเรียน', 'bia-learn' ); ?>
+				<?php echo bia_learn_icon( 'arrow', 'h-4 w-4' ); // phpcs:ignore ?>
+			</a>
+		<?php endif; ?>
 
 		<!-- Burger -->
 		<button
