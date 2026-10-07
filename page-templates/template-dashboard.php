@@ -22,6 +22,32 @@ get_header();
 $bia_user         = wp_get_current_user();
 $bia_display_name = $bia_user->first_name ? $bia_user->first_name : $bia_user->display_name;
 
+$bia_enrolled_total  = 0;
+$bia_in_progress     = 0;
+$bia_completed_total = 0;
+
+if ( function_exists( 'tutor_utils' ) ) {
+	$bia_enrolled_query = tutor_utils()->get_enrolled_courses_by_user( get_current_user_id() );
+
+	if ( $bia_enrolled_query && ! empty( $bia_enrolled_query->posts ) ) {
+		$bia_enrolled_total = count( $bia_enrolled_query->posts );
+
+		foreach ( $bia_enrolled_query->posts as $bia_course_post ) {
+			$bia_progress = bia_learn_course_progress( $bia_course_post->ID );
+
+			if ( null === $bia_progress ) {
+				continue;
+			}
+
+			if ( $bia_progress >= 100 ) {
+				++$bia_completed_total;
+			} elseif ( $bia_progress > 0 ) {
+				++$bia_in_progress;
+			}
+		}
+	}
+}
+
 while ( have_posts() ) :
 	the_post();
 	?>
@@ -50,6 +76,36 @@ while ( have_posts() ) :
 			</div>
 		</div>
 	</section>
+
+	<?php if ( $bia_enrolled_total > 0 ) : ?>
+		<section class="section-tight" style="padding-bottom:0">
+			<div class="container-bia max-w-6xl">
+				<div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
+					<div class="stat-card flex items-center gap-4">
+						<span class="icon-chip icon-chip-crimson"><?php echo bia_learn_icon( 'book', 'h-5 w-5' ); // phpcs:ignore ?></span>
+						<div>
+							<div class="stat-card__num"><?php echo esc_html( number_format_i18n( $bia_enrolled_total ) ); ?></div>
+							<div class="stat-card__label"><?php esc_html_e( 'คอร์สที่ลงทะเบียน', 'bia-learn' ); ?></div>
+						</div>
+					</div>
+					<div class="stat-card flex items-center gap-4">
+						<span class="icon-chip icon-chip-warning"><?php echo bia_learn_icon( 'play', 'h-5 w-5' ); // phpcs:ignore ?></span>
+						<div>
+							<div class="stat-card__num"><?php echo esc_html( number_format_i18n( $bia_in_progress ) ); ?></div>
+							<div class="stat-card__label"><?php esc_html_e( 'กำลังเรียน', 'bia-learn' ); ?></div>
+						</div>
+					</div>
+					<div class="stat-card flex items-center gap-4">
+						<span class="icon-chip icon-chip-success"><?php echo bia_learn_icon( 'cert', 'h-5 w-5' ); // phpcs:ignore ?></span>
+						<div>
+							<div class="stat-card__num"><?php echo esc_html( number_format_i18n( $bia_completed_total ) ); ?></div>
+							<div class="stat-card__label"><?php esc_html_e( 'เรียนจบแล้ว', 'bia-learn' ); ?></div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
+	<?php endif; ?>
 
 	<section class="section-tight pt-8">
 		<div class="container-bia max-w-6xl">
