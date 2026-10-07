@@ -179,20 +179,32 @@ function bia_learn_page_url( $slug, $fallback = '' ) {
  */
 function bia_learn_auth_url( $tab = 'login', $redirect = '' ) {
 	$auth = get_page_by_path( 'auth' );
+
 	if ( $auth ) {
 		$url = get_permalink( $auth );
-		if ( 'register' === $tab ) {
-			$url = add_query_arg( 'tab', 'register', $url );
+	} else {
+		// If the theme page was removed, prefer Authorizenter UI's generated
+		// login page. Never fall back to wp-login.php for ordinary users.
+		$authorizenter_page_id = (int) get_option( 'authorizenter_login_page_id' );
+		$url                   = $authorizenter_page_id ? get_permalink( $authorizenter_page_id ) : '';
+
+		if ( ! $url ) {
+			// The theme normally self-heals /auth/ on admin_init; keep links on
+			// the intended branded route until that happens instead of exposing
+			// WordPress's native credential screen.
+			$url = home_url( '/auth/' );
 		}
-		if ( $redirect ) {
-			$url = add_query_arg( 'redirect_to', rawurlencode( $redirect ), $url );
-		}
-		return $url;
 	}
+
 	if ( 'register' === $tab ) {
-		return wp_registration_url();
+		$url = add_query_arg( 'tab', 'register', $url );
 	}
-	return $redirect ? wp_login_url( $redirect ) : wp_login_url();
+
+	if ( $redirect ) {
+		$url = add_query_arg( 'redirect_to', rawurlencode( $redirect ), $url );
+	}
+
+	return $url;
 }
 
 /**
