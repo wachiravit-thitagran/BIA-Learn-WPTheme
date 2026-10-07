@@ -63,6 +63,7 @@ $sorted_courses    = array_slice( $sorted_courses, 0, $bia_max_cards );
 <div class="tutor-dashboard-content-inner">
 	<div class="tutor-dashboard-inline-links mb-6">
 		<h3 class="font-sans text-xl font-bold text-ink m-0"><?php esc_html_e( 'เรียนต่อจากที่ค้างไว้', 'bia-learn' ); ?></h3>
+		<p class="mt-2 text-sm text-ink-light"><?php esc_html_e( 'คอร์สที่คุณเปิดล่าสุดจะอยู่ด้านบน เพื่อกลับเข้าเรียนต่อได้ทันที', 'bia-learn' ); ?></p>
 	</div>
 
 	<?php if ( ! empty( $sorted_courses ) ) : ?>
@@ -83,24 +84,34 @@ $sorted_courses    = array_slice( $sorted_courses, 0, $bia_max_cards );
 					}
 				}
 				?>
-				<div class="card p-5 flex flex-col justify-between h-full bg-white border border-paper-200 hover:border-crimson/50 transition shadow-sm rounded-xl">
-					<div>
-						<h4 class="font-sans text-lg font-bold text-ink m-0 mb-3 line-clamp-2">
+				<article class="card card-hover flex h-full flex-col bg-white">
+					<a href="<?php echo esc_url( get_permalink( $course_id ) ); ?>" class="block aspect-[16/10] overflow-hidden bg-paper-100">
+						<?php if ( has_post_thumbnail( $course_id ) ) : ?>
+							<?php echo get_the_post_thumbnail( $course_id, 'bia-card', array( 'class' => 'h-full w-full object-cover' ) ); ?>
+						<?php else : ?>
+							<span class="flex h-full w-full items-center justify-center bg-crimson-wash text-paper-50">
+								<?php echo bia_learn_icon( 'book', 'h-10 w-10 opacity-60' ); // phpcs:ignore ?>
+							</span>
+						<?php endif; ?>
+					</a>
+
+					<div class="flex flex-1 flex-col p-5">
+						<h4 class="line-clamp-2 font-sans text-lg font-bold text-ink m-0 mb-4">
 							<a href="<?php echo esc_url( get_permalink( $course_id ) ); ?>" class="hover:text-crimson no-underline text-inherit">
 								<?php echo esc_html( get_the_title( $course_id ) ); ?>
 							</a>
 						</h4>
 
-						<!-- Segmented Progress Bar -->
 						<?php BIA_Learn_Tutor_UX::render_segmented_progress_bar( $course_id, $user_id ); ?>
-					</div>
 
-					<div class="mt-auto pt-2">
-						<a href="<?php echo esc_url( $resume_url ); ?>" class="bia-tutor-btn w-full justify-center">
-							<?php esc_html_e( 'เริ่มเรียนต่อเลย', 'bia-learn' ); ?>
-						</a>
+						<div class="mt-auto pt-4">
+							<a href="<?php echo esc_url( $resume_url ); ?>" class="bia-tutor-btn w-full justify-center">
+								<?php echo bia_learn_icon( 'play', 'h-4 w-4' ); // phpcs:ignore ?>
+								<?php esc_html_e( 'เรียนต่อ', 'bia-learn' ); ?>
+							</a>
+						</div>
 					</div>
-				</div>
+				</article>
 				<?php
 			}
 			?>
@@ -113,9 +124,9 @@ $sorted_courses    = array_slice( $sorted_courses, 0, $bia_max_cards );
 		<?php endif; ?>
 	<?php else : ?>
 		<div class="tutor-dashboard-content-inner text-center py-12 bg-paper-50 rounded-xl border border-dashed border-paper-200">
-			<i class="ti ti-book text-4xl text-paper-300 mb-4 block"></i>
+			<span class="icon-chip icon-chip-crimson mx-auto mb-4"><?php echo bia_learn_icon( 'book', 'h-5 w-5' ); // phpcs:ignore ?></span>
 			<p class="text-ink-light"><?php esc_html_e( 'คุณยังไม่ได้ลงทะเบียนเรียนคอร์สใดเลย', 'bia-learn' ); ?></p>
-			<a href="<?php echo esc_url( home_url( '/courses' ) ); ?>" class="bia-tutor-btn mt-4 inline-flex">
+			<a href="<?php echo esc_url( bia_learn_courses_url() ); ?>" class="bia-tutor-btn mt-4 inline-flex">
 				<?php esc_html_e( 'สำรวจคอร์สเรียน', 'bia-learn' ); ?>
 			</a>
 		</div>
