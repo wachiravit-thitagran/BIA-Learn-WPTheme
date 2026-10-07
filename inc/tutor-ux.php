@@ -442,16 +442,26 @@ class BIA_Learn_Tutor_UX {
 	 */
 	public static function register_dashboard_tab( $tabs ) {
 		$new_tabs = array();
-		
+
 		foreach ( $tabs as $key => $tab ) {
-			$new_tabs[$key] = $tab;
-			if ( $key === 'dashboard' || $key === 'index' ) {
+			if ( 'dashboard' === $key || 'index' === $key ) {
+				$tab['title'] = __( 'ภาพรวม', 'bia-learn' );
+			}
+
+			if ( 'enrolled-courses' === $key ) {
+				$tab['title'] = __( 'คอร์สของฉัน', 'bia-learn' );
+			}
+
+			$new_tabs[ $key ] = $tab;
+
+			if ( 'dashboard' === $key || 'index' === $key ) {
 				$new_tabs['continue-learning'] = array(
-					'title' => __( 'เรียนต่อจากที่ค้างไว้', 'bia-learn' ),
+					'title' => __( 'เรียนต่อ', 'bia-learn' ),
 					'icon'  => 'play-line',
 				);
 			}
 		}
+
 		return $new_tabs;
 	}
 }
