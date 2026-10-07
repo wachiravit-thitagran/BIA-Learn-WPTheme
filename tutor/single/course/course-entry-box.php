@@ -28,8 +28,8 @@ $monetize_by    = tutor_utils()->get_option( 'monetize_by' );
 $is_purchasable = tutor_utils()->is_course_purchasable();
 
 // Get login url if.
-$is_tutor_login_disabled = ! tutor_utils()->get_option( 'enable_tutor_native_login', null, true, true );
-$auth_url                = $is_tutor_login_disabled ? ( isset( $_SERVER['REQUEST_SCHEME'] ) ? wp_login_url( tutor_utils()->get_current_url() ) : '' ) : '';
+$is_tutor_login_disabled = ! bia_learn_tutor_native_login_enabled();
+$auth_url                = $is_tutor_login_disabled ? bia_learn_auth_url( 'login', tutor_utils()->get_current_url() ) : '';
 $default_meta            = array(
 	array(
 		'icon_class' => 'tutor-icon-mortarboard',
@@ -62,7 +62,7 @@ if ( tutor_utils()->get_option( 'enable_course_level', true, true ) ) {
 
 // Right sidebar meta data.
 $sidebar_meta = apply_filters( 'tutor/course/single/sidebar/metadata', $default_meta, get_the_ID() );
-$login_url    = tutor_utils()->get_option( 'enable_tutor_native_login', null, true, true ) ? '' : wp_login_url( tutor()->current_url );
+$login_url    = $is_tutor_login_disabled ? bia_learn_auth_url( 'login', tutor()->current_url ) : '';
 
 ?>
 
