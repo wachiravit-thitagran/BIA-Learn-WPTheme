@@ -92,7 +92,7 @@ $level_labels = array(
 			<?php echo $is_free ? esc_html__( 'เรียนฟรี', 'bia-learn' ) : wp_kses_post( $price_html ?: __( 'มีค่าใช้จ่าย', 'bia-learn' ) ); ?>
 		</span>
 		<?php if ( $category ) : ?>
-			<span class="absolute right-4 top-4 max-w-[45%] truncate badge bg-white/90 backdrop-blur"><?php echo esc_html( $category->name ); ?></span>
+			<span class="absolute right-4 top-4 truncate badge bg-white/90 backdrop-blur" style="max-width:45%"><?php echo esc_html( $category->name ); ?></span>
 		<?php endif; ?>
 	</a>
 
