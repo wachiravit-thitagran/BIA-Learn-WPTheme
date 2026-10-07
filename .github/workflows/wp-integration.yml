@@ -3,6 +3,10 @@ name: WP Integration
 on:
   push:
     branches: [ "main" ]
+    paths-ignore:
+      - '**.md'
+      - 'docs/**'
+      - '.github/**'
   pull_request:
     branches: [ "main" ]
 
