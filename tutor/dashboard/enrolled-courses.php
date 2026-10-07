@@ -25,15 +25,15 @@ $enrolled_courses = tutor_utils()->get_enrolled_courses_by_user( $user_id );
 			<?php
 			while ( $enrolled_courses->have_posts() ) {
 				$enrolled_courses->the_post();
-				tutor_load_template( 'loop.course-in-dashboard' );
+				get_template_part( 'template-parts/cards/course-card' );
 			}
 			wp_reset_postdata();
 			?>
 		</div>
 	<?php else : ?>
 		<div class="tutor-dashboard-content-inner text-center py-16 bg-white rounded-2xl border border-paper-200 shadow-sm flex flex-col items-center justify-center">
-			<div class="w-24 h-24 mb-6 rounded-full bg-blue-50 flex items-center justify-center text-blue-500 text-4xl shadow-inner">
-				🚀
+			<div class="icon-chip icon-chip-crimson mb-6 h-20 w-20">
+				<?php echo bia_learn_icon( 'book', 'h-9 w-9' ); // phpcs:ignore ?>
 			</div>
 			<h4 class="font-sans text-2xl font-bold text-ink m-0 mb-3"><?php esc_html_e( 'พร้อมจะเริ่มเรียนรู้หรือยัง?', 'bia-learn' ); ?></h4>
 			<p class="text-ink-light max-w-md mx-auto mb-8 leading-relaxed">
