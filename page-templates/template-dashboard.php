@@ -19,19 +19,39 @@ if ( ! is_user_logged_in() ) {
 
 get_header();
 
+$bia_user         = wp_get_current_user();
+$bia_display_name = $bia_user->first_name ? $bia_user->first_name : $bia_user->display_name;
+
 while ( have_posts() ) :
 	the_post();
-
-	bia_learn_page_hero(
-		array(
-			'eyebrow'  => __( 'พื้นที่การเรียนรู้', 'bia-learn' ),
-			'title'    => get_the_title(),
-			'subtitle' => __( 'จัดการการเรียนรู้ ติดตามความคืบหน้า และดูเกียรติบัตรของคุณ', 'bia-learn' ),
-		)
-	);
 	?>
 
-	<section class="section">
+	<section class="section-tight pb-0">
+		<div class="container-bia max-w-6xl">
+			<div class="dashboard-hero">
+				<div class="relative z-10 flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
+					<div>
+						<p class="text-sm font-semibold text-white/70"><?php esc_html_e( 'พื้นที่การเรียนรู้ของคุณ', 'bia-learn' ); ?></p>
+						<h1 class="dashboard-hero__title mt-1">
+							<?php
+							printf(
+								esc_html__( 'สวัสดี %s', 'bia-learn' ),
+								esc_html( $bia_display_name )
+							);
+							?>
+						</h1>
+						<p class="dashboard-hero__subtitle"><?php esc_html_e( 'เรียนต่อจากที่ค้างไว้ ติดตามความคืบหน้า และจัดการคอร์สของคุณได้จากที่นี่', 'bia-learn' ); ?></p>
+					</div>
+					<a href="<?php echo esc_url( bia_learn_courses_url() ); ?>" class="btn-gold shrink-0">
+						<?php esc_html_e( 'สำรวจคอร์สเพิ่มเติม', 'bia-learn' ); ?>
+						<?php echo bia_learn_icon( 'arrow', 'h-4 w-4' ); // phpcs:ignore ?>
+					</a>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<section class="section-tight pt-8">
 		<div class="container-bia max-w-6xl">
 			<?php
 			$bia_content = get_the_content();
