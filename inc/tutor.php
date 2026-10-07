@@ -261,6 +261,16 @@ function bia_learn_tutor_native_login_enabled() {
 }
 
 /**
+ * BIA Learn uses Authorizenter as the only learner-facing authentication UI.
+ * Keep Tutor's native username/password login disabled even if its setting is
+ * toggled accidentally in wp-admin.
+ */
+function bia_learn_force_tutor_native_login_disabled( $enabled ) {
+	return false;
+}
+add_filter( 'bia_learn_tutor_native_login', 'bia_learn_force_tutor_native_login_disabled', 999 );
+
+/**
  * Normalise a filesystem path for comparison.
  *
  * Windows separators become forward slashes and repeated slashes collapse —
@@ -458,7 +468,7 @@ function bia_learn_redirect_tutor_password_pages() {
 		return;
 	}
 
-	$native = (bool) tutor_utils()->get_option( 'enable_tutor_native_login', null, true, true );
+	$native = bia_learn_tutor_native_login_enabled();
 
 	if ( ! bia_learn_should_redirect_tutor_password_page( bia_learn_current_tutor_dashboard_page(), is_user_logged_in(), $native ) ) {
 		return;
