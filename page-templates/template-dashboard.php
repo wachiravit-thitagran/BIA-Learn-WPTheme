@@ -26,7 +26,7 @@ while ( have_posts() ) :
 	the_post();
 	?>
 
-	<section class="section-tight pb-0">
+	<section class="section-tight" style="padding-bottom:0">
 		<div class="container-bia max-w-6xl">
 			<div class="dashboard-hero">
 				<div class="relative z-10 flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
