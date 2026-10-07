@@ -341,24 +341,20 @@ class TutorIntegrationTest extends TestCase {
 	}
 
 	/**
-	 * Without the marker the function walks past the exemption and consults the
-	 * branded page, which is what decides the redirect. The redirect itself cannot
-	 * be asserted here: bia_learn_redirect_wp_login() ends in exit, which would
-	 * take the PHPUnit process down with it.
+	 * The auth resolver must never fall back to wp-login.php for ordinary users.
+	 * When the theme /auth page is missing and Authorizenter UI has not created
+	 * its own login page yet, links still point at the intended branded /auth/
+	 * route until the theme's self-heal recreates it.
 	 */
-	public function test_wp_login_redirect_consults_the_branded_page_without_the_marker() {
-		$_SERVER['REQUEST_METHOD'] = 'GET';
-		$_GET                      = array();
-
-		Monkey\Functions\when( 'sanitize_key' )->returnArg();
-		Monkey\Functions\when( 'wp_unslash' )->returnArg();
-		Monkey\Functions\when( 'is_user_logged_in' )->justReturn( false );
-		// No /auth page: the function returns before redirecting (and before exit).
+	public function test_auth_url_never_falls_back_to_native_wordpress_login() {
 		Monkey\Functions\expect( 'get_page_by_path' )->once()->with( 'auth' )->andReturn( null );
-		Monkey\Functions\expect( 'wp_safe_redirect' )->never();
+		Monkey\Functions\expect( 'get_option' )->once()->with( 'authorizenter_login_page_id' )->andReturn( 0 );
+		Monkey\Functions\when( 'home_url' )->alias(
+			static function ( $path = '' ) {
+				return 'https://example.com' . $path;
+			}
+		);
 
-		bia_learn_redirect_wp_login();
-
-		$this->addToAssertionCount( 1 );
+		$this->assertSame( 'https://example.com/auth/', bia_learn_auth_url( 'login' ) );
 	}
 }
