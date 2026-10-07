@@ -62,7 +62,7 @@ $bia_cats = get_terms(
 		</div>
 
 		<?php if ( ! is_wp_error( $bia_cats ) && ! empty( $bia_cats ) ) : ?>
-			<nav class="-mx-5 mt-6 flex gap-2 overflow-x-auto px-5 pb-2 sm:mx-0 sm:flex-wrap sm:overflow-visible sm:px-0" aria-label="<?php esc_attr_e( 'หมวดหมู่คอร์ส', 'bia-learn' ); ?>">
+			<nav class="mt-6 flex gap-2 pb-2" style="overflow-x:auto" aria-label="<?php esc_attr_e( 'หมวดหมู่คอร์ส', 'bia-learn' ); ?>">
 				<a href="<?php echo esc_url( $bia_courses_url ); ?>"
 					class="pill shrink-0 whitespace-nowrap <?php echo $bia_active ? 'bg-paper-100 text-ink-light hover:bg-crimson-50 hover:text-crimson' : 'pill-crimson'; ?>">
 					<?php esc_html_e( 'ทั้งหมด', 'bia-learn' ); ?>
