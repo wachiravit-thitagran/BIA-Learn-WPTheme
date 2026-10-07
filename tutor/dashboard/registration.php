@@ -17,7 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<p class="text-ink-light mb-8 max-w-sm mx-auto">
 		<?php esc_html_e( 'ระบบสงวนสิทธิ์สำหรับผู้ใช้งานที่ยืนยันตัวตนผ่าน Single Sign-On (SSO) แล้วเท่านั้น ไม่สามารถสมัครสมาชิกด้วยอีเมลปกติได้', 'bia-learn' ); ?>
 	</p>
-	<a href="<?php echo esc_url( wp_login_url( tutor_utils()->get_current_url() ) ); ?>" class="btn-primary px-8 py-3">
+	<a href="<?php echo esc_url( bia_learn_auth_url( 'login', tutor_utils()->get_current_url() ) ); ?>" class="btn-primary px-8 py-3">
 		<?php esc_html_e( 'เข้าสู่ระบบด้วยบัญชีกลาง (SSO)', 'bia-learn' ); ?>
 	</a>
 </div>
