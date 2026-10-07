@@ -206,8 +206,9 @@ function bia_learn_redirect_wp_login() {
 		return;
 	}
 	$action = isset( $_GET['action'] ) ? sanitize_key( wp_unslash( $_GET['action'] ) ) : 'login'; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-	if ( ! in_array( $action, array( 'login', 'register' ), true ) ) {
-		return; // leave logout / lostpassword / rp / resetpass to WordPress.
+	if ( ! in_array( $action, array( 'login', 'register', 'lostpassword', 'retrievepassword' ), true ) ) {
+		// Keep logout and signed password-reset links (rp/resetpass) working.
+		return;
 	}
 	if ( is_user_logged_in() && 'login' === $action ) {
 		return;
