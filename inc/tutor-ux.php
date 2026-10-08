@@ -372,6 +372,22 @@ class BIA_Learn_Tutor_UX {
 		}
 		$percent = (int) $percent;
 
+		// Render the CSS once, even when a page contains many course cards.
+		static $tooltip_styles_printed = false;
+		if ( ! $tooltip_styles_printed ) {
+			$tooltip_styles_printed = true;
+			?>
+			<style id="bia-course-progress-tooltips">
+			.bia-course-progress-segments { height: 24px; align-items: center; position: relative; overflow: visible; }
+			.bia-progress-segment { position: relative; display: block; height: 24px; min-width: 0; cursor: help; outline-offset: 2px; }
+			.bia-progress-segment-color { display: block; width: 100%; height: 6px; margin-top: 9px; border-radius: 999px; }
+			.bia-progress-segment::after { content: attr(data-tooltip); position: absolute; bottom: calc(100% + 5px); left: 50%; transform: translate(-50%, 4px); z-index: 9999; min-width: 160px; max-width: 260px; width: max-content; padding: 8px 10px; border-radius: 8px; color: #fff; background: #26252b; font-size: 12px; font-weight: 500; line-height: 1.5; white-space: normal; overflow-wrap: anywhere; text-align: left; box-shadow: 0 4px 16px rgba(0,0,0,.18); opacity: 0; visibility: hidden; pointer-events: none; transition: opacity .12s ease, transform .12s ease; }
+			.bia-progress-segment:hover::after, .bia-progress-segment:focus::after, .bia-progress-segment:focus-visible::after { opacity: 1; visibility: visible; transform: translate(-50%, 0); }
+			.bia-progress-segment:focus-visible { outline: 2px solid #861d38; border-radius: 3px; }
+			@media (max-width: 640px) { .bia-progress-segment::after { max-width: min(210px, 75vw); } }
+			</style>
+			<?php
+		}
 		?>
 		<div class="mb-4">
 			<div class="flex items-center justify-between text-xs text-ink-light mb-1.5">
