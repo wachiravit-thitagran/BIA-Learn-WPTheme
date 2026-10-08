@@ -149,12 +149,21 @@ $login_url    = $is_tutor_login_disabled ? bia_learn_auth_url( 'login', tutor()-
 					}
 				}
 
+				// Privileged content access does not imply a Tutor LMS enrollment.
+				$is_privileged_only = ! $is_enrolled && $is_privileged_user;
+				if ( $is_privileged_only ) {
+					$link_text = __( 'เข้าดูเนื้อหาคอร์ส', 'bia-learn' );
+				}
+
 				if ( strlen( $link_text ) > 0 ) {
 					?>
 					<a 	href="<?php echo esc_url( $lesson_url ); ?>" 
 						class="tutor-btn tutor-btn-block tutor-btn-primary tutor-mt-20">
 						<?php echo esc_html( $link_text ); ?>
 					</a>
+					<?php if ( $is_privileged_only ) : ?>
+						<p class="tutor-fs-7 tutor-color-muted tutor-mt-12"><?php esc_html_e( 'คุณสามารถเข้าถึงเนื้อหาคอร์สนี้ได้ตามสิทธิ์ของบัญชี แต่ยังไม่ได้ลงทะเบียนเป็นผู้เรียน', 'bia-learn' ); ?></p>
+					<?php endif; ?>
 					<?php
 				}
 
