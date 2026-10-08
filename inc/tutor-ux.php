@@ -379,7 +379,7 @@ class BIA_Learn_Tutor_UX {
 				<span class="font-semibold text-crimson"><?php echo esc_html( $percent ); ?>%</span>
 			</div>
 			
-			<div class="flex gap-0.5 w-full h-1.5">
+			<div class="bia-course-progress-segments flex gap-0.5 w-full" role="group" aria-label="<?php esc_attr_e( 'สถานะความคืบหน้าของบทเรียน', 'bia-learn' ); ?>">
 				<?php
 				$status_meta = array(
 					'completed'    => array( 'bg-success', __( 'ผ่านแล้ว', 'bia-learn' ) ),
@@ -396,7 +396,7 @@ class BIA_Learn_Tutor_UX {
 					$status_share = round( 100 * $status_count / $total, 1 );
 					$tooltip = sprintf( '%s — %s: %s%% (%d/%d)', $segment['title'], $status_label, $status_share, $status_count, $total );
 				?>
-					<div class="flex-1 rounded-full <?php echo esc_attr( $bg_class ); ?> transition-colors duration-500" tabindex="0" role="img" aria-label="<?php echo esc_attr( $tooltip ); ?>" title="<?php echo esc_attr( $tooltip ); ?>"></div>
+					<span class="bia-progress-segment flex-1" tabindex="0" role="img" aria-label="<?php echo esc_attr( $tooltip ); ?>" data-tooltip="<?php echo esc_attr( $tooltip ); ?>"><span aria-hidden="true" class="bia-progress-segment-color <?php echo esc_attr( $bg_class ); ?>"></span></span>
 				<?php endforeach; ?>
 			</div>
 		</div>
