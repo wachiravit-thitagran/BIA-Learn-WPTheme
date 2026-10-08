@@ -387,13 +387,16 @@ class BIA_Learn_Tutor_UX {
 					'quiz_failed'  => array( 'bg-danger', __( 'ยังไม่ผ่าน', 'bia-learn' ) ),
 					'unattempted'  => array( 'bg-paper-100', __( 'ยังไม่ได้เริ่ม', 'bia-learn' ) ),
 				);
-				foreach ( $segments as $segment ) :
+				$status_counts = array_count_values( array_column( $segments, 'status' ) );
+			foreach ( $segments as $segment ) :
 					list( $bg_class, $status_label ) = isset( $status_meta[ $segment['status'] ] )
 						? $status_meta[ $segment['status'] ]
 						: $status_meta['unattempted'];
-					$tooltip = $segment['title'] . ' — ' . $status_label;
+					$status_count = isset( $status_counts[ $segment['status'] ] ) ? (int) $status_counts[ $segment['status'] ] : 0;
+					$status_share = round( 100 * $status_count / $total, 1 );
+					$tooltip = sprintf( '%s — %s: %s%% (%d/%d)', $segment['title'], $status_label, $status_share, $status_count, $total );
 				?>
-					<div class="flex-1 rounded-full <?php echo esc_attr( $bg_class ); ?> transition-colors duration-500" title="<?php echo esc_attr( $tooltip ); ?>"></div>
+					<div class="flex-1 rounded-full <?php echo esc_attr( $bg_class ); ?> transition-colors duration-500" tabindex="0" role="img" aria-label="<?php echo esc_attr( $tooltip ); ?>" title="<?php echo esc_attr( $tooltip ); ?>"></div>
 				<?php endforeach; ?>
 			</div>
 		</div>

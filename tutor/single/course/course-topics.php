@@ -34,7 +34,8 @@ if ( $topics->have_posts() ) {
 					<i class="ti ti-refresh text-xl"></i>
 				</button>
 			</div>
-			<div class="w-full bg-paper-200 rounded-full h-2">
+			<?php $progress_hint = sprintf( __( 'เรียนจบแล้ว %d%% — ยังไม่เสร็จ %d%%', 'bia-learn' ), $completed_percent, max( 0, 100 - $completed_percent ) ); ?>
+			<div class="w-full bg-paper-200 rounded-full h-2" tabindex="0" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="<?php echo esc_attr( $completed_percent ); ?>" aria-label="<?php echo esc_attr( $progress_hint ); ?>" title="<?php echo esc_attr( $progress_hint ); ?>">
 				<div class="h-2 rounded-full bg-success transition-all duration-500" style="width: <?php echo esc_attr( $completed_percent ); ?>%;"></div>
 			</div>
 		</div>
