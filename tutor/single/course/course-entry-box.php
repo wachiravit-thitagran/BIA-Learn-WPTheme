@@ -149,7 +149,8 @@ $login_url    = $is_tutor_login_disabled ? bia_learn_auth_url( 'login', tutor()-
 					}
 				}
 
-				// Privileged content access does not imply a Tutor LMS enrollment.
+				// Privileged content access does not imply a Tutor LMS enrollment;
+				// show an access-only action so the dashboard enrollment count remains unambiguous.
 				$is_privileged_only = ! $is_enrolled && $is_privileged_user;
 				if ( $is_privileged_only ) {
 					$link_text = __( 'เข้าดูเนื้อหาคอร์ส', 'bia-learn' );
