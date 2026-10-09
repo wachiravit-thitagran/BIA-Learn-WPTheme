@@ -372,20 +372,70 @@ class BIA_Learn_Tutor_UX {
 		}
 		$percent = (int) $percent;
 
-		// Render the CSS once, even when a page contains many course cards.
-		static $tooltip_styles_printed = false;
-		if ( ! $tooltip_styles_printed ) {
-			$tooltip_styles_printed = true;
+		// A single viewport-positioned tooltip escapes clipped course cards.
+		static $tooltip_assets_printed = false;
+		if ( ! $tooltip_assets_printed ) {
+			$tooltip_assets_printed = true;
 			?>
 			<style id="bia-course-progress-tooltips">
-			.bia-course-progress-segments { height: 24px; align-items: center; position: relative; overflow: visible; }
-			.bia-progress-segment { position: relative; display: block; height: 24px; min-width: 0; cursor: help; outline-offset: 2px; }
-			.bia-progress-segment-color { display: block; width: 100%; height: 6px; margin-top: 9px; border-radius: 999px; }
-			.bia-progress-segment::after { content: attr(data-tooltip); position: absolute; bottom: calc(100% + 5px); left: 50%; transform: translate(-50%, 4px); z-index: 9999; min-width: 160px; max-width: 260px; width: max-content; padding: 8px 10px; border-radius: 8px; color: #fff; background: #26252b; font-size: 12px; font-weight: 500; line-height: 1.5; white-space: normal; overflow-wrap: anywhere; text-align: left; box-shadow: 0 4px 16px rgba(0,0,0,.18); opacity: 0; visibility: hidden; pointer-events: none; transition: opacity .12s ease, transform .12s ease; }
-			.bia-progress-segment:hover::after, .bia-progress-segment:focus::after, .bia-progress-segment:focus-visible::after { opacity: 1; visibility: visible; transform: translate(-50%, 0); }
+			.bia-course-progress-segments { height: 28px; align-items: center; }
+			.bia-progress-segment { display: block; height: 28px; min-width: 0; cursor: help; outline-offset: 2px; }
+			.bia-progress-segment-color { display: block; width: 100%; height: 6px; margin-top: 11px; border-radius: 999px; }
 			.bia-progress-segment:focus-visible { outline: 2px solid #861d38; border-radius: 3px; }
-			@media (max-width: 640px) { .bia-progress-segment::after { max-width: min(210px, 75vw); } }
+			#bia-progress-floating-tooltip { position: fixed; z-index: 2147483647; width: max-content; max-width: min(280px, calc(100vw - 16px)); padding: 8px 12px; background: #25262b; color: #fff; border-radius: 6px; font-size: 12px; font-weight: 500; line-height: 1.5; text-align: center; overflow-wrap: anywhere; box-shadow: 0 5px 18px rgba(0,0,0,.22); pointer-events: none; opacity: 0; visibility: hidden; transition: opacity .1s ease; }
+			#bia-progress-floating-tooltip.bia-is-visible { opacity: 1; visibility: visible; }
+			#bia-progress-floating-tooltip::after { content: ""; position: absolute; left: var(--bia-tooltip-arrow-x,50%); transform: translateX(-50%); bottom: -6px; border-left: 6px solid transparent; border-right: 6px solid transparent; border-top: 6px solid #25262b; }
+			#bia-progress-floating-tooltip.bia-placement-bottom::after { bottom: auto; top: -6px; border-top: 0; border-bottom: 6px solid #25262b; }
 			</style>
+			<script>
+			(function () {
+			  if (window.biaProgressTooltipReady) return;
+			  window.biaProgressTooltipReady = true;
+			  var active = null, popup = null;
+			  function getPopup() {
+			    if (!popup) {
+			      popup = document.createElement('div');
+			      popup.id = 'bia-progress-floating-tooltip';
+			      popup.setAttribute('role', 'tooltip');
+			      document.body.appendChild(popup);
+			    }
+			    return popup;
+			  }
+			  function position() {
+			    if (!active || !document.body.contains(active)) return hide();
+			    var tip = getPopup(), rect = active.getBoundingClientRect(), gap = 9;
+			    var width = tip.offsetWidth, height = tip.offsetHeight;
+			    var left = Math.max(8, Math.min(rect.left + rect.width / 2 - width / 2, innerWidth - width - 8));
+			    var below = rect.top - gap - height < 8 && rect.bottom + gap + height <= innerHeight - 8;
+			    var top = below ? rect.bottom + gap : Math.max(8, rect.top - gap - height);
+			    tip.classList.toggle('bia-placement-bottom', below);
+			    tip.style.left = left + 'px';
+			    tip.style.top = top + 'px';
+			    tip.style.setProperty('--bia-tooltip-arrow-x', Math.max(8, Math.min(width - 8, rect.left + rect.width / 2 - left)) + 'px');
+			  }
+			  function show(el) {
+			    active = el;
+			    var tip = getPopup();
+			    tip.textContent = el.getAttribute('data-tooltip') || '';
+			    tip.classList.add('bia-is-visible');
+			    el.setAttribute('aria-describedby', tip.id);
+			    position();
+			  }
+			  function hide() {
+			    if (active) active.removeAttribute('aria-describedby');
+			    active = null;
+			    if (popup) popup.classList.remove('bia-is-visible');
+			  }
+			  function segment(target) { return target && target.closest ? target.closest('.bia-progress-segment') : null; }
+			  document.addEventListener('pointerover', function (e) { var el = segment(e.target); if (el && el !== active) show(el); });
+			  document.addEventListener('pointerout', function (e) { if (active && active.contains(e.target) && !active.contains(e.relatedTarget)) hide(); });
+			  document.addEventListener('focusin', function (e) { var el = segment(e.target); if (el) show(el); });
+			  document.addEventListener('focusout', function (e) { if (active && active.contains(e.target)) hide(); });
+			  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') hide(); });
+			  window.addEventListener('scroll', function () { if (active) position(); }, true);
+			  window.addEventListener('resize', function () { if (active) position(); });
+			})();
+			</script>
 			<?php
 		}
 		?>
