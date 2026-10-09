@@ -551,7 +551,10 @@ function bia_learn_get_course_reviews( $course_id ) {
 	$comments = get_comments(
 		array(
 			'post_id' => $course_id,
-			'status'  => 'approve',
+			'type'    => 'tutor_course_rating',
+			// Tutor stores approved reviews as the literal "approved" as well as WP's "1".
+			// Query all and explicitly allow only those two approved values below.
+			'status'  => 'all',
 			'number'  => 100,
 			'orderby' => 'comment_date_gmt',
 			'order'   => 'DESC',
@@ -560,6 +563,9 @@ function bia_learn_get_course_reviews( $course_id ) {
 
 	$rows = array();
 	foreach ( $comments as $c ) {
+		if ( ! in_array( (string) $c->comment_approved, array( '1', 'approved' ), true ) ) {
+			continue;
+		}
 		$rating = (float) get_comment_meta( $c->comment_ID, 'tutor_rating', true );
 		if ( $rating <= 0 ) {
 			$rating = (float) get_comment_meta( $c->comment_ID, 'rating', true );
