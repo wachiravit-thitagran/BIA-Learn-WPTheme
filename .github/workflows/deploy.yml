@@ -1,0 +1,143 @@
+name: Deploy theme to WordPress
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      release_tag:
+        description: 'Existing release tag to deploy (for example v1.0.97)'
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: bia-learn-production-deploy
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Deploy release ZIP to bia-learn.psu.ac.th
+    runs-on: ubuntu-latest
+    environment: production
+    timeout-minutes: 15
+    env:
+      WP_URL: https://bia-learn.psu.ac.th
+      WP_USERNAME: ${{ secrets.BIA_WP_USERNAME }}
+      WP_APP_PASSWORD: ${{ secrets.BIA_WP_APP_PASSWORD }}
+      GH_TOKEN: ${{ github.token }}
+      RELEASE_TAG: ${{ github.event_name == 'release' && github.event.release.tag_name || inputs.release_tag }}
+    steps:
+      - name: Check deployment configuration and release tag
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ -z "$WP_USERNAME" ] || [ -z "$WP_APP_PASSWORD" ]; then
+            echo "::error::Configure BIA_WP_USERNAME and BIA_WP_APP_PASSWORD in GitHub Actions secrets."
+            exit 1
+          fi
+          if [[ ! "$RELEASE_TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "::error::Invalid release tag."
+            exit 1
+          fi
+          echo "::add-mask::$WP_APP_PASSWORD"
+
+      - name: Verify release is current and includes ZIP
+        id: release
+        shell: bash
+        run: |
+          set -euo pipefail
+          release_json="$(gh api "repos/$GITHUB_REPOSITORY/releases/tags/$RELEASE_TAG")"
+          if [ "$(jq -r '.draft or .prerelease' <<<"$release_json")" != "false" ]; then
+            echo "::error::Refusing to deploy a draft/prerelease."
+            exit 1
+          fi
+          latest_tag="$(gh api "repos/$GITHUB_REPOSITORY/releases/latest" --jq '.tag_name')"
+          if [ "$RELEASE_TAG" != "$latest_tag" ]; then
+            echo "::error::Refusing to deploy older release $RELEASE_TAG; latest is $latest_tag."
+            exit 1
+          fi
+          asset_count="$(jq '[.assets[] | select(.name == "bia-learn.zip")] | length' <<<"$release_json")"
+          if [ "$asset_count" != "1" ]; then
+            echo "::error::Release must include exactly one bia-learn.zip asset."
+            exit 1
+          fi
+          echo "expected_version=${RELEASE_TAG#v}" >> "$GITHUB_OUTPUT"
+          echo "package_url=https://github.com/$GITHUB_REPOSITORY/releases/download/$RELEASE_TAG/bia-learn.zip" >> "$GITHUB_OUTPUT"
+
+      - name: Check WordPress API access (read-only)
+        shell: bash
+        env:
+          API: ${{ env.WP_URL }}/wp-json/wp-abilities/v1
+        run: |
+          set -euo pipefail
+          response_file="$(mktemp)"
+          trap 'rm -f "$response_file"' EXIT
+          http_code="$(curl --silent --show-error --location --retry 2 --max-time 40 \
+            --user "$WP_USERNAME:$WP_APP_PASSWORD" \
+            --get --data-urlencode 'input={"stylesheet":"bia-learn"}' \
+            --output "$response_file" --write-out '%{http_code}' \
+            "$API/wordpress/theme-get/run")"
+          if [ "$http_code" != "200" ] || ! jq -e 'type == "object" and (.stylesheet == "bia-learn" or .data.stylesheet == "bia-learn")' "$response_file" >/dev/null; then
+            echo "::error::WordPress theme-get REST access failed (HTTP $http_code). Check REST exposure and Application Password permissions."
+            jq -r '.code // .message // "Unexpected API response"' "$response_file" 2>/dev/null || true
+            exit 1
+          fi
+
+      - name: Install and overwrite existing theme from release ZIP
+        shell: bash
+        env:
+          API: ${{ env.WP_URL }}/wp-json/wp-abilities/v1
+          PACKAGE_URL: ${{ steps.release.outputs.package_url }}
+        run: |
+          set -euo pipefail
+          response_file="$(mktemp)"
+          trap 'rm -f "$response_file"' EXIT
+          payload="$(jq -n --arg url "$PACKAGE_URL" '{input:{package_url:$url,overwrite:true,activate:false}}')"
+          http_code="$(curl --silent --show-error --location --retry 0 --max-time 240 \
+            --user "$WP_USERNAME:$WP_APP_PASSWORD" \
+            --header 'Content-Type: application/json' \
+            --data "$payload" --output "$response_file" --write-out '%{http_code}' \
+            "$API/wordpress/theme-install-package/run")"
+          if [ "$http_code" != "200" ] || ! jq -e '(.success == true or .installed == true) and (.data.installed == true or .installed == true)' "$response_file" >/dev/null; then
+            echo "::error::Theme package installation failed (HTTP $http_code)."
+            jq -r '.code // .message // .data.message // "Unexpected API response"' "$response_file" 2>/dev/null || true
+            exit 1
+          fi
+
+      - name: Verify installed version and active status
+        shell: bash
+        env:
+          API: ${{ env.WP_URL }}/wp-json/wp-abilities/v1
+          EXPECTED_VERSION: ${{ steps.release.outputs.expected_version }}
+        run: |
+          set -euo pipefail
+          response_file="$(mktemp)"
+          trap 'rm -f "$response_file"' EXIT
+          http_code="$(curl --silent --show-error --location --retry 2 --max-time 40 \
+            --user "$WP_USERNAME:$WP_APP_PASSWORD" \
+            --get --data-urlencode 'input={"stylesheet":"bia-learn"}' \
+            --output "$response_file" --write-out '%{http_code}' \
+            "$API/wordpress/theme-get/run")"
+          if [ "$http_code" != "200" ]; then
+            echo "::error::Unable to verify active theme (HTTP $http_code)."
+            exit 1
+          fi
+          version="$(jq -r '.data.version // .version // empty' "$response_file")"
+          active="$(jq -r '.data.active // .active // false' "$response_file")"
+          stylesheet="$(jq -r '.data.stylesheet // .stylesheet // empty' "$response_file")"
+          if [ "$stylesheet" != "bia-learn" ] || [ "$version" != "$EXPECTED_VERSION" ] || [ "$active" != "true" ]; then
+            echo "::error::Verification mismatch: stylesheet=$stylesheet version=$version expected=$EXPECTED_VERSION active=$active"
+            exit 1
+          fi
+          {
+            echo "### WordPress production deployment"
+            echo "- Release: $RELEASE_TAG"
+            echo "- Site: $WP_URL"
+            echo "- Theme: $stylesheet"
+            echo "- Installed version: $version"
+            echo "- Active: $active"
+          } >> "$GITHUB_STEP_SUMMARY"
+          echo "Deployed $RELEASE_TAG successfully."
