@@ -193,6 +193,7 @@ class TutorUXTest extends TestCase {
 		$tutor_utils_mock = Mockery::mock();
 		Monkey\Functions\when( 'tutor_utils' )->justReturn( $tutor_utils_mock );
 		Monkey\Functions\when( 'esc_html_e' )->echoArg( 1 );
+		Monkey\Functions\when( 'esc_attr_e' )->echoArg( 1 );
 
 		ob_start();
 		BIA_Learn_Tutor_UX::render_segmented_progress_bar( 55, 9, 42 );
