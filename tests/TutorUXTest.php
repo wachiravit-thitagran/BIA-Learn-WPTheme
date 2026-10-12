@@ -141,18 +141,18 @@ class TutorUXTest extends TestCase {
 		$result = BIA_Learn_Tutor_UX::get_course_curriculum_status( 123, 1 );
 
 		$expected = array(
-			array( 'title' => 'Title', 'status' => 'unattempted' ),  // 101 lesson
-			array( 'title' => 'Title', 'status' => 'completed' ),    // 102 lesson
-			array( 'title' => 'Title', 'status' => 'unattempted' ),  // 301 quiz
-			array( 'title' => 'Title', 'status' => 'completed' ),    // 302 quiz passed
-			array( 'title' => 'Title', 'status' => 'quiz_failed' ),  // 303 quiz failed → red
-			array( 'title' => 'Title', 'status' => 'quiz_pending' ), // 304 quiz awaiting review → yellow
-			array( 'title' => 'Title', 'status' => 'completed' ),    // 305 legacy quiz passed by marks
-			array( 'title' => 'Title', 'status' => 'quiz_failed' ),  // 306 legacy quiz failed by marks
-			array( 'title' => 'Title', 'status' => 'unattempted' ),  // 401 assignment
-			array( 'title' => 'Title', 'status' => 'completed' ),    // 402 assignment passed
-			array( 'title' => 'Title', 'status' => 'quiz_failed' ),  // 403 assignment below pass mark → red
-			array( 'title' => 'Title', 'status' => 'quiz_pending' ), // 404 assignment not graded → yellow
+			array( 'title' => 'Title', 'section_id' => 1, 'section_title' => 'Title', 'status' => 'unattempted' ),  // 101 lesson
+			array( 'title' => 'Title', 'section_id' => 1, 'section_title' => 'Title', 'status' => 'completed' ),    // 102 lesson
+			array( 'title' => 'Title', 'section_id' => 1, 'section_title' => 'Title', 'status' => 'unattempted' ),  // 301 quiz
+			array( 'title' => 'Title', 'section_id' => 1, 'section_title' => 'Title', 'status' => 'completed' ),    // 302 quiz passed
+			array( 'title' => 'Title', 'section_id' => 1, 'section_title' => 'Title', 'status' => 'quiz_failed' ),  // 303 quiz failed → red
+			array( 'title' => 'Title', 'section_id' => 1, 'section_title' => 'Title', 'status' => 'quiz_pending' ), // 304 quiz awaiting review → yellow
+			array( 'title' => 'Title', 'section_id' => 1, 'section_title' => 'Title', 'status' => 'completed' ),    // 305 legacy quiz passed by marks
+			array( 'title' => 'Title', 'section_id' => 1, 'section_title' => 'Title', 'status' => 'quiz_failed' ),  // 306 legacy quiz failed by marks
+			array( 'title' => 'Title', 'section_id' => 1, 'section_title' => 'Title', 'status' => 'unattempted' ),  // 401 assignment
+			array( 'title' => 'Title', 'section_id' => 1, 'section_title' => 'Title', 'status' => 'completed' ),    // 402 assignment passed
+			array( 'title' => 'Title', 'section_id' => 1, 'section_title' => 'Title', 'status' => 'quiz_failed' ),  // 403 assignment below pass mark → red
+			array( 'title' => 'Title', 'section_id' => 1, 'section_title' => 'Title', 'status' => 'quiz_pending' ), // 404 assignment not graded → yellow
 		);
 
 		$this->assertEquals( $expected, $result );
