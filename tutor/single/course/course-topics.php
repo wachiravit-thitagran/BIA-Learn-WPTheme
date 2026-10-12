@@ -15,29 +15,18 @@ $course_id   = get_the_ID();
 $user_id     = get_current_user_id();
 $is_enrolled = tutor_utils()->is_enrolled( $course_id, $user_id );
 
-// Overall course progress
-$course_progress   = tutor_utils()->get_course_completed_percent( $course_id, $user_id, true );
-$completed_percent = is_array( $course_progress ) && isset( $course_progress['completed_percent'] ) ? (int) $course_progress['completed_percent'] : 0;
+// Display passed-only progress; native Tutor completion still controls enrollment.
+$course_progress = BIA_Learn_Tutor_UX::get_course_passed_progress( $course_id, $user_id );
+$completed_percent = $course_progress['percent'];
 
 if ( $topics->have_posts() ) {
 	?>
 	<div class="tutor-course-topics-wrap mb-8 pb-8">
 		
 		<?php if ( $is_enrolled ) : ?>
-		<!-- Overall Progress Header -->
+		<!-- BIA passed-only progress for this course -->
 		<div class="tutor-course-overall-progress mb-6 bg-white p-5 rounded-2xl border border-paper-100 shadow-sm">
-			<div class="flex justify-between items-center mb-3">
-				<h4 class="font-sans text-lg font-bold text-ink m-0">
-					<?php echo esc_html( $completed_percent ); ?>% <?php esc_html_e( 'Completed', 'bia-learn' ); ?>
-				</h4>
-				<button class="text-ink-light hover:text-primary-600 transition" onclick="window.location.reload();" title="<?php esc_attr_e( 'Refresh', 'bia-learn' ); ?>">
-					<i class="ti ti-refresh text-xl"></i>
-				</button>
-			</div>
-			<?php $progress_hint = sprintf( __( 'เรียนจบแล้ว %d%% — ยังไม่เสร็จ %d%%', 'bia-learn' ), $completed_percent, max( 0, 100 - $completed_percent ) ); ?>
-			<div class="w-full bg-paper-200 rounded-full h-2" tabindex="0" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="<?php echo esc_attr( $completed_percent ); ?>" aria-label="<?php echo esc_attr( $progress_hint ); ?>" title="<?php echo esc_attr( $progress_hint ); ?>">
-				<div class="h-2 rounded-full bg-success transition-all duration-500" style="width: <?php echo esc_attr( $completed_percent ); ?>%;"></div>
-			</div>
+			<?php BIA_Learn_Tutor_UX::render_segmented_progress_bar( $course_id, $user_id, $completed_percent ); ?>
 		</div>
 		<?php else: ?>
 		<h3 class="tutor-segment-title font-sans text-lg font-bold text-ink mb-4"><?php esc_html_e( 'เนื้อหาคอร์สเรียน', 'bia-learn' ); ?></h3>
