@@ -28,7 +28,7 @@ if ( empty( $certificates ) ) {
 }
 ?>
 
-<div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 	<?php foreach ( $certificates as $cert ) : ?>
 		<?php 
 			$date_formatted = '';
@@ -36,11 +36,11 @@ if ( empty( $certificates ) ) {
 				$date_formatted = date_i18n( get_option( 'date_format' ), strtotime( $cert['issued_at'] ) );
 			}
 		?>
-		<article class="card card-hover flex flex-col overflow-hidden">
+		<article class="card card-hover flex flex-col overflow-hidden bg-white">
 			<?php 
 			$is_image = preg_match( '/\.(jpg|jpeg|png|webp|gif)$/i', $cert['certificate_url'] );
 			?>
-			<a href="<?php echo esc_url( $cert['certificate_url'] ); ?>" target="_blank" class="relative block aspect-[16/11] overflow-hidden bg-paper-100 border-b border-paper-200 group-hover:bg-paper-200 transition">
+			<a href="<?php echo esc_url( $cert['certificate_url'] ); ?>" target="_blank" rel="noopener noreferrer" class="relative block aspect-[16/11] overflow-hidden bg-paper-100 border-b border-paper-200 group-hover:bg-paper-200 transition">
 				<?php if ( $is_image ) : ?>
 					<img src="<?php echo esc_url( $cert['certificate_url'] ); ?>" alt="<?php echo esc_attr( $cert['title'] ); ?>" class="h-full w-full object-cover transition duration-500 ease-out-expo group-hover:scale-105" loading="lazy" />
 				<?php else : ?>
@@ -52,7 +52,7 @@ if ( empty( $certificates ) ) {
 			
 			<div class="flex flex-col flex-1 p-6">
 				<h3 class="font-sans text-lg font-bold leading-snug text-ink line-clamp-2">
-					<a href="<?php echo esc_url( $cert['certificate_url'] ); ?>" target="_blank" class="hover:text-crimson transition">
+					<a href="<?php echo esc_url( $cert['certificate_url'] ); ?>" target="_blank" rel="noopener noreferrer" class="hover:text-crimson transition">
 						<?php echo esc_html( $cert['title'] ); ?>
 					</a>
 				</h3>
@@ -63,7 +63,7 @@ if ( empty( $certificates ) ) {
 				
 				<?php if ( ! empty( $cert['certificate_url'] ) ) : ?>
 					<div class="mt-auto pt-5">
-						<a href="<?php echo esc_url( $cert['certificate_url'] ); ?>" target="_blank" class="btn-outline w-full justify-center">
+						<a href="<?php echo esc_url( $cert['certificate_url'] ); ?>" target="_blank" rel="noopener noreferrer" class="bia-tutor-btn w-full justify-center">
 							<?php esc_html_e( 'ดูใบประกาศนียบัตร', 'bia-learn' ); ?>
 						</a>
 					</div>
