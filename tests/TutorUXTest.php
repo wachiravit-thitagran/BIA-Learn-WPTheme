@@ -226,9 +226,9 @@ class TutorUXTest extends TestCase {
 	}
 
 	/**
-	 * Tooltip summarizes the section rather than a lesson status/percentage.
+	 * Tooltip shows only each lesson or assessment title, without section totals.
 	 */
-	public function test_course_progress_tooltip_displays_section_passed_ratio() {
+	public function test_course_progress_tooltip_displays_only_content_title() {
 		$segments = array(
 			array( 'title' => 'Video', 'section_id' => 7, 'section_title' => 'Section A', 'status' => 'completed' ),
 			array( 'title' => 'Quiz', 'section_id' => 7, 'section_title' => 'Section A', 'status' => 'quiz_failed' ),
@@ -244,7 +244,10 @@ class TutorUXTest extends TestCase {
 		$html = ob_get_clean();
 
 		$this->assertStringContainsString( '50%', $html );
-		$this->assertStringContainsString( 'Section A - (1/2)', $html );
+		$this->assertStringContainsString( 'data-tooltip="Video"', $html );
+		$this->assertStringContainsString( 'data-tooltip="Quiz"', $html );
+		$this->assertStringNotContainsString( 'data-tooltip="Section A', $html );
+		$this->assertStringNotContainsString( 'data-tooltip="Video - (1/2)"', $html );
 		$this->assertStringNotContainsString( 'ยังไม่ผ่าน:', $html );
 	}
 

@@ -419,19 +419,6 @@ class BIA_Learn_Tutor_UX {
 		$progress = self::get_course_passed_progress( $course_id, $user_id );
 		$percent = $progress['percent'];
 
-		// Every item within one section shares the same section summary tooltip.
-		$section_counts = array();
-		foreach ( $segments as $segment ) {
-			$section_key = isset( $segment['section_id'] ) ? (int) $segment['section_id'] : $segment['title'];
-			if ( ! isset( $section_counts[ $section_key ] ) ) {
-				$section_counts[ $section_key ] = array( 'completed' => 0, 'total' => 0 );
-			}
-			++$section_counts[ $section_key ]['total'];
-			if ( 'completed' === $segment['status'] ) {
-				++$section_counts[ $section_key ]['completed'];
-			}
-		}
-
 		// A single viewport-positioned tooltip escapes clipped course cards.
 		static $tooltip_assets_printed = false;
 		if ( ! $tooltip_assets_printed ) {
@@ -517,10 +504,8 @@ class BIA_Learn_Tutor_UX {
 					$bg_class = isset( $status_meta[ $segment['status'] ] )
 						? $status_meta[ $segment['status'] ][0]
 						: $status_meta['unattempted'][0];
-					$section_key = isset( $segment['section_id'] ) ? (int) $segment['section_id'] : $segment['title'];
-					$section = $section_counts[ $section_key ];
-					$section_title = isset( $segment['section_title'] ) ? $segment['section_title'] : $segment['title'];
-					$tooltip = sprintf( '%s - (%d/%d)', $section_title, $section['completed'], $section['total'] );
+					// Tooltip identifies the individual Tutor LMS content item only.
+					$tooltip = $segment['title'];
 				?>
 					<span class="bia-progress-segment flex-1" tabindex="0" role="img" aria-label="<?php echo esc_attr( $tooltip ); ?>" data-tooltip="<?php echo esc_attr( $tooltip ); ?>"><span aria-hidden="true" class="bia-progress-segment-color <?php echo esc_attr( $bg_class ); ?>"></span></span>
 				<?php endforeach; ?>
