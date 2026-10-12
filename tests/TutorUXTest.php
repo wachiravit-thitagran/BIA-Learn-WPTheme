@@ -226,7 +226,7 @@ class TutorUXTest extends TestCase {
 	}
 
 	/**
-	 * Tooltip summarizes the section rather than a lesson status/percentage.
+	 * Tooltip shows only each lesson or assessment title, without section totals.
 	 */
 	public function test_course_progress_tooltip_displays_only_content_title() {
 		$segments = array(
