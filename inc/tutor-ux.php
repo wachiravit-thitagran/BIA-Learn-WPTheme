@@ -218,6 +218,21 @@ class BIA_Learn_Tutor_UX {
 		global $wpdb;
 
 		if ( 'tutor_quiz' === $type ) {
+			// Use Tutor LMS's canonical aggregate quiz result. Tutor considers a quiz
+			// passed if *any* attempt meets the passing grade; a failed individual
+			// attempt on the results screen does not override a prior pass.
+			if ( class_exists( '\\Tutor\\Models\\QuizModel' ) ) {
+				$result = \\Tutor\\Models\\QuizModel::get_quiz_result( (int) $content_id, (int) $user_id );
+				if ( \\Tutor\\Models\\QuizModel::RESULT_PASS === $result ) {
+					return 'completed';
+				}
+				if ( \\Tutor\\Models\\QuizModel::RESULT_FAIL === $result ) {
+					return 'quiz_failed';
+				}
+				return 'quiz_pending';
+			}
+
+			// Fallback for older Tutor versions and isolated PHPUnit tests.
 			// Only count submitted attempts (exclude in-progress `attempt_started`),
 			// matching Tutor's own get_course_completed_percent() criteria — otherwise
 			// a quiz the learner merely opened would be misread as failed.
