@@ -460,7 +460,9 @@ class BIA_Learn_Tutor_UX {
 						: $status_meta['unattempted'];
 					$status_count = isset( $status_counts[ $segment['status'] ] ) ? (int) $status_counts[ $segment['status'] ] : 0;
 					$status_share = round( 100 * $status_count / $total, 1 );
-					$tooltip = sprintf( '%s — %s: %s%% (%d/%d)', $segment['title'], $status_label, $status_share, $status_count, $total );
+					$tooltip = 'unattempted' === $segment['status']
+						? $segment['title']
+						: sprintf( '%s — %s: %s%% (%d/%d)', $segment['title'], $status_label, $status_share, $status_count, $total );
 				?>
 					<span class="bia-progress-segment flex-1" tabindex="0" role="img" aria-label="<?php echo esc_attr( $tooltip ); ?>" data-tooltip="<?php echo esc_attr( $tooltip ); ?>"><span aria-hidden="true" class="bia-progress-segment-color <?php echo esc_attr( $bg_class ); ?>"></span></span>
 				<?php endforeach; ?>
