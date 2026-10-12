@@ -214,9 +214,9 @@ class TutorUXTest extends TestCase {
 			array( 'title' => 'Pre-test', 'section_id' => 7, 'section_title' => 'Section A', 'status' => 'quiz_failed' ),
 			array( 'title' => 'Post-test', 'section_id' => 7, 'section_title' => 'Section A', 'status' => 'unattempted' ),
 		);
-		Monkey\\Functions\\when( 'wp_cache_get' )->justReturn( $segments );
-		Monkey\\Functions\\when( 'wp_cache_set' )->justReturn( true );
-		Monkey\\Functions\\when( 'tutor_utils' )->justReturn( Mockery::mock() );
+		Monkey\Functions\when( 'wp_cache_get' )->justReturn( $segments );
+		Monkey\Functions\when( 'wp_cache_set' )->justReturn( true );
+		Monkey\Functions\when( 'tutor_utils' )->justReturn( Mockery::mock() );
 
 		$progress = BIA_Learn_Tutor_UX::get_course_passed_progress( 77, 9 );
 
@@ -233,11 +233,11 @@ class TutorUXTest extends TestCase {
 			array( 'title' => 'Video', 'section_id' => 7, 'section_title' => 'Section A', 'status' => 'completed' ),
 			array( 'title' => 'Quiz', 'section_id' => 7, 'section_title' => 'Section A', 'status' => 'quiz_failed' ),
 		);
-		Monkey\\Functions\\when( 'wp_cache_get' )->justReturn( $segments );
-		Monkey\\Functions\\when( 'wp_cache_set' )->justReturn( true );
-		Monkey\\Functions\\when( 'tutor_utils' )->justReturn( Mockery::mock() );
-		Monkey\\Functions\\when( 'esc_html_e' )->echoArg( 1 );
-		Monkey\\Functions\\when( 'esc_attr_e' )->echoArg( 1 );
+		Monkey\Functions\when( 'wp_cache_get' )->justReturn( $segments );
+		Monkey\Functions\when( 'wp_cache_set' )->justReturn( true );
+		Monkey\Functions\when( 'tutor_utils' )->justReturn( Mockery::mock() );
+		Monkey\Functions\when( 'esc_html_e' )->echoArg( 1 );
+		Monkey\Functions\when( 'esc_attr_e' )->echoArg( 1 );
 
 		ob_start();
 		BIA_Learn_Tutor_UX::render_segmented_progress_bar( 77, 9 );
