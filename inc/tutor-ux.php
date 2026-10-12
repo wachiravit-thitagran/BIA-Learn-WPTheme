@@ -222,11 +222,16 @@ class BIA_Learn_Tutor_UX {
 			// passed if *any* attempt meets the passing grade; a failed individual
 			// attempt on the results screen does not override a prior pass.
 			if ( class_exists( '\\Tutor\\Models\\QuizModel' ) ) {
-				$result = \\Tutor\\Models\\QuizModel::get_quiz_result( (int) $content_id, (int) $user_id );
-				if ( \\Tutor\\Models\\QuizModel::RESULT_PASS === $result ) {
+				// Tutor's aggregate result defaults to pending even without an attempt.
+				$latest_attempt = ( new \Tutor\Models\QuizModel() )->get_first_or_last_attempt( (int) $content_id, (int) $user_id );
+				if ( ! $latest_attempt ) {
+					return 'unattempted';
+				}
+				$result = \Tutor\Models\QuizModel::get_quiz_result( (int) $content_id, (int) $user_id );
+				if ( \Tutor\Models\QuizModel::RESULT_PASS === $result ) {
 					return 'completed';
 				}
-				if ( \\Tutor\\Models\\QuizModel::RESULT_FAIL === $result ) {
+				if ( \Tutor\Models\QuizModel::RESULT_FAIL === $result ) {
 					return 'quiz_failed';
 				}
 				return 'quiz_pending';
@@ -327,10 +332,13 @@ class BIA_Learn_Tutor_UX {
 			$contents = tutor_utils()->get_course_contents_by_topic( $topic->ID, -1 );
 			$items    = is_object( $contents ) && isset( $contents->posts ) ? $contents->posts : ( is_array( $contents ) ? $contents : array() );
 
+			$section_title = get_the_title( $topic->ID );
 			foreach ( $items as $content ) {
 				$status_list[] = array(
-					'title'  => get_the_title( $content->ID ),
-					'status' => self::get_content_status( $content, $user_id ),
+					'title'         => get_the_title( $content->ID ),
+					'section_id'    => (int) $topic->ID,
+					'section_title' => $section_title,
+					'status'        => self::get_content_status( $content, $user_id ),
 				);
 			}
 		}
@@ -338,6 +346,33 @@ class BIA_Learn_Tutor_UX {
 		wp_cache_set( $cache_key, $status_list, 'bia-learn', 5 * MINUTE_IN_SECONDS );
 
 		return $status_list;
+	}
+
+	/**
+	 * Display-only progress: Tutor lesson completion and Tutor quiz/assignment
+	 * pass results. Failed or pending submissions do not count as passed.
+	 *
+	 * Tutor LMS keeps its own submission-based completion percentage for
+	 * enrollment, retakes and certificates; never overwrite that data here.
+	 *
+	 * @return array{completed:int,total:int,percent:int}
+	 */
+	public static function get_course_passed_progress( $course_id, $user_id = 0 ) {
+		$user_id = $user_id ? (int) $user_id : get_current_user_id();
+		$segments = self::get_course_curriculum_status( (int) $course_id, $user_id );
+		$total = count( $segments );
+		$completed = 0;
+		foreach ( $segments as $segment ) {
+			if ( 'completed' === $segment['status'] ) {
+				++$completed;
+			}
+		}
+
+		return array(
+			'completed' => $completed,
+			'total'     => $total,
+			'percent'   => $total ? (int) round( ( $completed / $total ) * 100 ) : 0,
+		);
 	}
 
 	/**
@@ -378,14 +413,24 @@ class BIA_Learn_Tutor_UX {
 			return; // No lessons, don't show progress
 		}
 
-		if ( null === $percent ) {
-			// Use Tutor LMS actual percentage calculation to ensure absolute
-			// consistency. Callers that already computed it (course cards) pass
-			// it in to avoid running the same queries twice per card.
-			$course_progress = tutor_utils()->get_course_completed_percent( $course_id, $user_id, true );
-			$percent = is_array( $course_progress ) && isset( $course_progress['completed_percent'] ) ? (int) $course_progress['completed_percent'] : 0;
+		// The optional third argument is retained for backwards compatibility.
+		// Always calculate the displayed percentage from Tutor's pass statuses,
+		// never from its submission-based course completion percentage.
+		$progress = self::get_course_passed_progress( $course_id, $user_id );
+		$percent = $progress['percent'];
+
+		// Every item within one section shares the same section summary tooltip.
+		$section_counts = array();
+		foreach ( $segments as $segment ) {
+			$section_key = isset( $segment['section_id'] ) ? (int) $segment['section_id'] : $segment['title'];
+			if ( ! isset( $section_counts[ $section_key ] ) ) {
+				$section_counts[ $section_key ] = array( 'completed' => 0, 'total' => 0 );
+			}
+			++$section_counts[ $section_key ]['total'];
+			if ( 'completed' === $segment['status'] ) {
+				++$section_counts[ $section_key ]['completed'];
+			}
 		}
-		$percent = (int) $percent;
 
 		// A single viewport-positioned tooltip escapes clipped course cards.
 		static $tooltip_assets_printed = false;
@@ -468,16 +513,14 @@ class BIA_Learn_Tutor_UX {
 					'quiz_failed'  => array( 'bg-danger', __( 'ยังไม่ผ่าน', 'bia-learn' ) ),
 					'unattempted'  => array( 'bg-paper-100', __( 'ยังไม่ได้เริ่ม', 'bia-learn' ) ),
 				);
-				$status_counts = array_count_values( array_column( $segments, 'status' ) );
-			foreach ( $segments as $segment ) :
-					list( $bg_class, $status_label ) = isset( $status_meta[ $segment['status'] ] )
-						? $status_meta[ $segment['status'] ]
-						: $status_meta['unattempted'];
-					$status_count = isset( $status_counts[ $segment['status'] ] ) ? (int) $status_counts[ $segment['status'] ] : 0;
-					$status_share = round( 100 * $status_count / $total, 1 );
-					$tooltip = 'unattempted' === $segment['status']
-						? $segment['title']
-						: sprintf( '%s — %s: %s%% (%d/%d)', $segment['title'], $status_label, $status_share, $status_count, $total );
+				foreach ( $segments as $segment ) :
+					$bg_class = isset( $status_meta[ $segment['status'] ] )
+						? $status_meta[ $segment['status'] ][0]
+						: $status_meta['unattempted'][0];
+					$section_key = isset( $segment['section_id'] ) ? (int) $segment['section_id'] : $segment['title'];
+					$section = $section_counts[ $section_key ];
+					$section_title = isset( $segment['section_title'] ) ? $segment['section_title'] : $segment['title'];
+					$tooltip = sprintf( '%s - (%d/%d)', $section_title, $section['completed'], $section['total'] );
 				?>
 					<span class="bia-progress-segment flex-1" tabindex="0" role="img" aria-label="<?php echo esc_attr( $tooltip ); ?>" data-tooltip="<?php echo esc_attr( $tooltip ); ?>"><span aria-hidden="true" class="bia-progress-segment-color <?php echo esc_attr( $bg_class ); ?>"></span></span>
 				<?php endforeach; ?>

@@ -134,13 +134,10 @@ $level_labels = array(
 			<div class="mt-auto border-t border-paper-100 pt-4">
 				<?php 
 				if ( class_exists( 'BIA_Learn_Tutor_UX' ) ) {
-					if ( $progress > 0 ) {
-						// Pass the already-computed percent — avoids re-running
-						// get_course_completed_percent() for every card.
-						BIA_Learn_Tutor_UX::render_segmented_progress_bar( $course_id, get_current_user_id(), $progress );
-					}
+					// Include 0% progress for learners who have not yet passed content.
+					BIA_Learn_Tutor_UX::render_segmented_progress_bar( $course_id, get_current_user_id(), $progress );
 				} else {
-					if ( $progress > 0 ) {
+					if ( null !== $progress ) {
 				?>
 				<div class="flex items-center justify-between text-xs text-ink-light mb-1.5">
 					<span><?php esc_html_e( 'ความคืบหน้า', 'bia-learn' ); ?></span>

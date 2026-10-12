@@ -443,6 +443,11 @@ function bia_learn_course_progress( $course_id, $user_id = 0 ) {
 		return null;
 	}
 
+	if ( class_exists( 'BIA_Learn_Tutor_UX' ) ) {
+		$progress = BIA_Learn_Tutor_UX::get_course_passed_progress( $course_id, $user_id );
+		return $progress['percent'];
+	}
+
 	if ( method_exists( $tutils, 'get_course_completed_percent' ) ) {
 		return (int) $tutils->get_course_completed_percent( $course_id, $user_id );
 	}
