@@ -222,11 +222,11 @@ class BIA_Learn_Tutor_UX {
 			// passed if *any* attempt meets the passing grade; a failed individual
 			// attempt on the results screen does not override a prior pass.
 			if ( class_exists( '\\Tutor\\Models\\QuizModel' ) ) {
-				$result = \\Tutor\\Models\\QuizModel::get_quiz_result( (int) $content_id, (int) $user_id );
-				if ( \\Tutor\\Models\\QuizModel::RESULT_PASS === $result ) {
+				$result = \Tutor\Models\QuizModel::get_quiz_result( (int) $content_id, (int) $user_id );
+				if ( \Tutor\Models\QuizModel::RESULT_PASS === $result ) {
 					return 'completed';
 				}
-				if ( \\Tutor\\Models\\QuizModel::RESULT_FAIL === $result ) {
+				if ( \Tutor\Models\QuizModel::RESULT_FAIL === $result ) {
 					return 'quiz_failed';
 				}
 				return 'quiz_pending';
