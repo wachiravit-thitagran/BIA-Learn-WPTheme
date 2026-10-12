@@ -117,15 +117,7 @@ while ( have_posts() ) :
 						<h2 class="mt-3 font-sans text-2xl font-bold text-ink">
 							<?php echo esc_html( $bia_is_register ? __( 'สมัครใช้งานด้วยบัญชีที่คุณมีอยู่แล้ว', 'bia-learn' ) : __( 'เข้าสู่ระบบเพื่อเรียนต่อ', 'bia-learn' ) ); ?>
 						</h2>
-						<p class="mt-2 text-sm leading-relaxed text-ink-light">
-							<?php
-							echo esc_html(
-								$bia_is_register
-									? __( 'เลือกผู้ให้บริการบัญชีด้านล่าง ระบบจะสร้างบัญชีผู้เรียนให้โดยอัตโนมัติตามนโยบายที่กำหนด', 'bia-learn' )
-									: __( 'เลือกช่องทางเข้าสู่ระบบด้านล่าง ระบบจะพาคุณกลับไปยังหน้าที่ต้องการหลังยืนยันตัวตนสำเร็จ', 'bia-learn' )
-							);
-							?>
-						</p>
+						
 
 						<div class="bia-auth-social mt-7">
 							<?php if ( '' !== $bia_auth_shortcode ) : ?>
@@ -142,9 +134,7 @@ while ( have_posts() ) :
 							<?php endif; ?>
 						</div>
 
-						<p class="mt-6 text-xs leading-relaxed text-ink-light">
-							<?php esc_html_e( 'เพื่อความปลอดภัย ผู้ใช้งานทั่วไปไม่สามารถเข้าสู่ระบบด้วยรหัสผ่าน WordPress จากหน้านี้ได้', 'bia-learn' ); ?>
-						</p>
+						
 					</div>
 				<?php endif; ?>
 			</div>
