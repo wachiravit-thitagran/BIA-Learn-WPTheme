@@ -548,16 +548,22 @@ add_filter( 'gettext', 'bia_learn_hide_tutor_free_label', 20, 3 );
  * @return array<int, array{rating:float,content:string,author:string,author_id:int,date:int}>
  */
 function bia_learn_get_course_reviews( $course_id ) {
-	$comments = get_comments(
-		array(
-			'post_id' => $course_id,
-			'type'    => 'tutor_course_rating',
-			// Tutor stores approved reviews as the literal "approved" as well as WP's "1".
-			// Query all and explicitly allow only those two approved values below.
-			'status'  => 'all',
-			'number'  => 100,
-			'orderby' => 'comment_date_gmt',
-			'order'   => 'DESC',
+	global $wpdb;
+
+	// Tutor LMS writes the literal 'approved' into comment_approved. WP_Comment_Query
+	// normalizes comment status and may silently exclude these reviews.
+	$comments = $wpdb->get_results(
+		$wpdb->prepare(
+			"SELECT c.comment_ID, c.comment_content, c.comment_author, c.user_id, c.comment_date_gmt, c.comment_approved
+			FROM {$wpdb->comments} c
+			INNER JOIN {$wpdb->commentmeta} m ON m.comment_id = c.comment_ID AND m.meta_key = 'tutor_rating'
+			WHERE c.comment_post_ID = %d
+			AND c.comment_type = 'tutor_course_rating'
+			AND c.comment_approved IN ('approved', '1')
+			AND CAST(m.meta_value AS DECIMAL(5,2)) > 0
+			ORDER BY c.comment_date_gmt DESC
+			LIMIT 100",
+			(int) $course_id
 		)
 	);
 
