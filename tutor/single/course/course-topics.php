@@ -15,22 +15,12 @@ $course_id   = get_the_ID();
 $user_id     = get_current_user_id();
 $is_enrolled = tutor_utils()->is_enrolled( $course_id, $user_id );
 
-// Display passed-only progress; native Tutor completion still controls enrollment.
-$course_progress = BIA_Learn_Tutor_UX::get_course_passed_progress( $course_id, $user_id );
-$completed_percent = $course_progress['percent'];
-
 if ( $topics->have_posts() ) {
 	?>
 	<div class="tutor-course-topics-wrap mb-8 pb-8">
 		
-		<?php if ( $is_enrolled ) : ?>
-		<!-- BIA passed-only progress for this course -->
-		<div class="tutor-course-overall-progress mb-6 bg-white p-5 rounded-2xl border border-paper-100 shadow-sm">
-			<?php BIA_Learn_Tutor_UX::render_segmented_progress_bar( $course_id, $user_id, $completed_percent ); ?>
-		</div>
-		<?php else: ?>
+		<!-- One course progress widget lives in the enrollment/action sidebar. -->
 		<h3 class="tutor-segment-title font-sans text-lg font-bold text-ink mb-4"><?php esc_html_e( 'เนื้อหาคอร์สเรียน', 'bia-learn' ); ?></h3>
-		<?php endif; ?>
 
 		<div class="tutor-accordion space-y-2">
 			<?php
