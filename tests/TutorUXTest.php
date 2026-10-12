@@ -181,7 +181,7 @@ class TutorUXTest extends TestCase {
 	 * The course card already knows the learner's percent — passing it in must
 	 * skip the duplicate get_course_completed_percent() query.
 	 */
-	public function test_render_progress_bar_uses_supplied_percent_without_requery() {
+	public function test_render_progress_bar_uses_passed_percent_without_tutor_query() {
 		$segments = array(
 			array( 'title' => 'บทที่ 1', 'status' => 'completed' ),
 			array( 'title' => 'แบบทดสอบ', 'status' => 'quiz_failed' ),
@@ -199,9 +199,53 @@ class TutorUXTest extends TestCase {
 		BIA_Learn_Tutor_UX::render_segmented_progress_bar( 55, 9, 42 );
 		$html = ob_get_clean();
 
-		$this->assertStringContainsString( '42%', $html );
+		$this->assertStringContainsString( '50%', $html );
 		$this->assertStringContainsString( 'bg-success', $html );
 		$this->assertStringContainsString( 'bg-danger', $html );
+	}
+
+	/**
+	 * Passed progress excludes failed and unattempted assessments, even when
+	 * Tutor LMS considers a submitted (failed) quiz as "completed".
+	 */
+	public function test_course_passed_progress_excludes_failed_and_unattempted_quiz() {
+		$segments = array(
+			array( 'title' => 'Lesson', 'section_id' => 7, 'section_title' => 'Section A', 'status' => 'completed' ),
+			array( 'title' => 'Pre-test', 'section_id' => 7, 'section_title' => 'Section A', 'status' => 'quiz_failed' ),
+			array( 'title' => 'Post-test', 'section_id' => 7, 'section_title' => 'Section A', 'status' => 'unattempted' ),
+		);
+		Monkey\\Functions\\when( 'wp_cache_get' )->justReturn( $segments );
+		Monkey\\Functions\\when( 'wp_cache_set' )->justReturn( true );
+		Monkey\\Functions\\when( 'tutor_utils' )->justReturn( Mockery::mock() );
+
+		$progress = BIA_Learn_Tutor_UX::get_course_passed_progress( 77, 9 );
+
+		$this->assertSame( 1, $progress['completed'] );
+		$this->assertSame( 3, $progress['total'] );
+		$this->assertSame( 33, $progress['percent'] );
+	}
+
+	/**
+	 * Tooltip summarizes the section rather than a lesson status/percentage.
+	 */
+	public function test_course_progress_tooltip_displays_section_passed_ratio() {
+		$segments = array(
+			array( 'title' => 'Video', 'section_id' => 7, 'section_title' => 'Section A', 'status' => 'completed' ),
+			array( 'title' => 'Quiz', 'section_id' => 7, 'section_title' => 'Section A', 'status' => 'quiz_failed' ),
+		);
+		Monkey\\Functions\\when( 'wp_cache_get' )->justReturn( $segments );
+		Monkey\\Functions\\when( 'wp_cache_set' )->justReturn( true );
+		Monkey\\Functions\\when( 'tutor_utils' )->justReturn( Mockery::mock() );
+		Monkey\\Functions\\when( 'esc_html_e' )->echoArg( 1 );
+		Monkey\\Functions\\when( 'esc_attr_e' )->echoArg( 1 );
+
+		ob_start();
+		BIA_Learn_Tutor_UX::render_segmented_progress_bar( 77, 9 );
+		$html = ob_get_clean();
+
+		$this->assertStringContainsString( '50%', $html );
+		$this->assertStringContainsString( 'Section A - (1/2)', $html );
+		$this->assertStringNotContainsString( 'ยังไม่ผ่าน:', $html );
 	}
 
 	/**
