@@ -49,4 +49,13 @@ class QuizExperienceTest extends TestCase {
 		$this->assertStringContainsString( 'tutor-quiz-time-expired', $script, 'Review must close on Tutor automatic timeout.' );
 		$this->assertStringContainsString( 'tutor-quiz-attempt-completed', $script, 'Review must close after Tutor submission.' );
 	}
+	/**
+	 * WordPress production installs are performed explicitly via WP Abilities.
+	 * Publishing a release must not trigger automatic GitHub deployments.
+	 */
+	public function test_release_does_not_auto_deploy_wordpress() {
+		$workflow = (string) file_get_contents( dirname( __DIR__ ) . '/.github/workflows/deploy.yml' );
+		$this->assertStringNotContainsString( "  release:\\n", $workflow );
+	}
+
 }
