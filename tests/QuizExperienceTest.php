@@ -36,6 +36,18 @@ class QuizExperienceTest extends TestCase {
 		$this->assertStringContainsString( "bia_learn_asset_version( 'assets/js/bia-quiz-ux.js' )", $enqueue );
 	}
 
+	/**
+	 * Specialized canvas and puzzle questions need Tutor's native sizing to
+	 * remain intact rather than inheriting extra question-card padding.
+	 */
+	public function test_special_quiz_interactions_keep_native_canvas_dimensions() {
+		$css = (string) file_get_contents( dirname( __DIR__ ) . '/assets/css/bia-quiz-ux.css' );
+		$this->assertStringContainsString( '[data-question="draw_image"]', $css );
+		$this->assertStringContainsString( '[data-question="pin_image"]', $css );
+		$this->assertStringContainsString( '[data-question="puzzle"]', $css );
+		$this->assertMatchesRegularExpression( '/data-question="puzzle"\\]\\s*\\{[^}]*padding:\\s*0;/s', $css );
+	}
+
 	public function test_tutor_owns_quiz_submission_timer_scoring_and_attempts() {
 		$root = dirname( __DIR__ );
 		foreach ( array( 'attempt.php', 'progress-bar.php', 'modals/result.php' ) as $file ) {
