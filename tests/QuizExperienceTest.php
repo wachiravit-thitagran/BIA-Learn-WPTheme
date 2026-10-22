@@ -55,7 +55,7 @@ class QuizExperienceTest extends TestCase {
 	 */
 	public function test_release_does_not_auto_deploy_wordpress() {
 		$workflow = (string) file_get_contents( dirname( __DIR__ ) . '/.github/workflows/deploy.yml' );
-		$this->assertStringNotContainsString( "  release:\\n", $workflow );
+		$this->assertDoesNotMatchRegularExpression( '/^  release:/m', $workflow );
 	}
 
 }
