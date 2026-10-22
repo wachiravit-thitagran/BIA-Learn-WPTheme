@@ -46,5 +46,7 @@ class QuizExperienceTest extends TestCase {
 		$this->assertStringNotContainsString( 'fetch(', $script, 'Quiz UX must not send quiz submissions itself.' );
 		$this->assertStringNotContainsString( 'XMLHttpRequest', $script );
 		$this->assertStringNotContainsString( 'setInterval(', $script, 'Tutor LMS alone controls the timer.' );
+		$this->assertStringContainsString( 'tutor-quiz-time-expired', $script, 'Review must close on Tutor automatic timeout.' );
+		$this->assertStringContainsString( 'tutor-quiz-attempt-completed', $script, 'Review must close after Tutor submission.' );
 	}
 }
