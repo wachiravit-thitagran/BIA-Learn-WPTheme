@@ -168,6 +168,12 @@
 .tutor-quiz-submission .tutor-quiz-question[data-question="draw_image"],
 .tutor-quiz-submission .tutor-quiz-question[data-question="pin_image"],
 .tutor-quiz-submission .tutor-quiz-question[data-question="puzzle"] {
+  /* Tutor uses a size container for these interactions. Extra card padding
+     can move click targets away from their canvas coordinates. */
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
   box-shadow: none;
 }
 
