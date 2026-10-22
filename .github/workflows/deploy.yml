@@ -1,8 +1,7 @@
 name: Deploy theme to WordPress
 
+# Production deployment is manual, never triggered merely by publishing a release.
 on:
-  release:
-    types: [published]
   workflow_dispatch:
     inputs:
       release_tag:

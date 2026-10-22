@@ -12,6 +12,19 @@ on:
   workflow_dispatch:
 
 jobs:
+  quiz-ux:
+    name: "Quiz UX JavaScript tests"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Run quiz UI logic tests
+        run: node --test tests/quiz-ux.test.cjs
+
   unit:
     name: "PHPUnit (PHP ${{ matrix.php-version }})"
     runs-on: ubuntu-latest

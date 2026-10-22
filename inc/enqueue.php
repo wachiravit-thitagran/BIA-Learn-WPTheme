@@ -43,6 +43,25 @@ function bia_learn_enqueue_assets() {
 		true
 	);
 
+	// Quiz presentation only: Tutor LMS retains all timer, grading, attempts,
+	// question validation and submission behavior. Scope these assets to Tutor
+	// course and learning-area routes (which can use the lesson post type).
+	if ( function_exists( 'tutor_utils' ) && is_singular( array( 'tutor_quiz', 'lesson', 'courses' ) ) ) {
+		wp_enqueue_style(
+			'bia-quiz-ux-style',
+			BIA_LEARN_URI . '/assets/css/bia-quiz-ux.css',
+			array( 'bia-learn-style' ),
+			bia_learn_asset_version( 'assets/css/bia-quiz-ux.css' )
+		);
+		wp_enqueue_script(
+			'bia-quiz-ux-script',
+			BIA_LEARN_URI . '/assets/js/bia-quiz-ux.js',
+			array( 'bia-learn-main' ),
+			bia_learn_asset_version( 'assets/js/bia-quiz-ux.js' ),
+			true
+		);
+	}
+
 	// Tutor LMS UX Enhancements (Phase 3: Celebration).
 	// Self-hosted canvas-confetti — no third-party CDN (consistent with the
 	// font policy above, and a CDN outage used to block lesson completion).

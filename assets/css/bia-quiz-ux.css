@@ -1,0 +1,387 @@
+/*
+ * BIA Quiz Experience (Tutor LMS 4.1).
+ * Presentation only: native Tutor form controls, timer, validation and
+ * submission still provide the behavior and accessibility semantics.
+ */
+
+.tutor-quiz-intro,
+.tutor-quiz-summary-page,
+.tutor-quiz-submission {
+  --bia-quiz-crimson: #7c2021;
+  --bia-quiz-outline: var(--tutor-border-idle, #dfe2e7);
+  --bia-quiz-card: var(--tutor-surface-l1, #fff);
+  --bia-quiz-ink: var(--tutor-text-primary, #20212a);
+  --bia-quiz-muted: var(--tutor-text-secondary, #5e626e);
+  font-family: Anuphan, Sarabun, system-ui, sans-serif;
+}
+
+/* 1. Preflight: keep Tutor's real question counts, time and pass criteria. */
+.tutor-quiz-intro {
+  max-width: 1000px;
+  margin-inline: auto;
+  border: 1px solid var(--bia-quiz-outline);
+  border-radius: 24px;
+  background: var(--bia-quiz-card);
+  box-shadow: 0 12px 34px rgb(30 34 44 / 5%);
+}
+
+.tutor-quiz-intro .tutor-quiz-intro-icon {
+  border-radius: 18px;
+}
+
+.tutor-quiz-intro .tutor-quiz-intro-title {
+  color: var(--bia-quiz-ink);
+  font-size: clamp(1.35rem, 3vw, 1.875rem);
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+
+.tutor-quiz-intro .bia-quiz-intro-help {
+  margin-block: 14px 2px;
+  border-inline-start: 3px solid var(--bia-quiz-crimson);
+  padding: 10px 14px;
+  border-radius: 0 10px 10px 0;
+  background: var(--tutor-surface-l2, #f7f5f5);
+  color: var(--bia-quiz-muted);
+  font-size: 0.95rem;
+  line-height: 1.75;
+}
+
+.tutor-quiz-intro .tutor-quiz-intro-params {
+  border-radius: 16px;
+  overflow: auto;
+  border: 1px solid var(--bia-quiz-outline);
+}
+
+.tutor-quiz-intro .tutor-quiz-intro-params td {
+  vertical-align: middle;
+  padding-block: 14px;
+}
+
+.tutor-quiz-intro .tutor-quiz-intro-params td:last-child {
+  color: var(--bia-quiz-ink);
+  font-weight: 600;
+}
+
+.tutor-quiz-intro .tutor-btn {
+  min-height: 46px;
+}
+
+/* 2. Attempt: readable question cards without touching Tutor layouts. */
+.tutor-quiz-submission .tutor-quiz-progress-title {
+  font-weight: 700;
+}
+
+.tutor-quiz-submission .tutor-quiz-progress-bar-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.tutor-quiz-submission .tutor-quiz-progress-bar-wrapper > .tutor-progress-bar {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.tutor-quiz-submission .bia-quiz-answered-count {
+  flex: 0 0 auto;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--bia-quiz-muted);
+  white-space: nowrap;
+}
+
+.tutor-quiz-submission .tutor-quiz-question-indicator {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--bia-quiz-crimson);
+}
+
+.tutor-quiz-submission .tutor-quiz-question {
+  width: 100%;
+  border: 1px solid var(--bia-quiz-outline);
+  border-radius: 20px;
+  background: var(--bia-quiz-card);
+  box-shadow: 0 8px 24px rgb(30 34 44 / 5%);
+  padding: clamp(16px, 2.7vw, 30px);
+}
+
+.tutor-quiz-submission .tutor-quiz-question-title {
+  color: var(--bia-quiz-ink);
+  font-size: clamp(1.05rem, 2vw, 1.32rem);
+  line-height: 1.7;
+  overflow-wrap: anywhere;
+}
+
+.tutor-quiz-submission .tutor-quiz-question-options {
+  gap: 10px;
+}
+
+.tutor-quiz-submission .tutor-quiz-question-option {
+  min-height: 52px;
+  border: 1.5px solid var(--bia-quiz-outline);
+  border-radius: 14px;
+  padding: 12px 15px;
+  line-height: 1.65;
+  cursor: pointer;
+  transition: border-color 140ms ease, background-color 140ms ease;
+}
+
+.tutor-quiz-submission .tutor-quiz-question-option:focus-visible,
+.tutor-quiz-submission .tutor-quiz-question-option:focus-within {
+  outline: 3px solid color-mix(in srgb, var(--bia-quiz-crimson), transparent 70%);
+  outline-offset: 2px;
+}
+
+.tutor-quiz-submission .tutor-quiz-question-option:has(input:checked):not([data-option]) {
+  border-color: var(--bia-quiz-crimson);
+  background: color-mix(in srgb, var(--bia-quiz-crimson), transparent 95%);
+}
+
+/* Tutor's feedback colors take precedence over merely selected options. */
+.tutor-quiz-submission .tutor-quiz-question-option[data-option="correct"] {
+  border-color: var(--tutor-color-success, #278451);
+}
+
+.tutor-quiz-submission .tutor-quiz-question-option[data-option="incorrect"] {
+  border-color: var(--tutor-color-danger, #cc3d3d);
+}
+
+.tutor-quiz-submission .tutor-quiz-footer-actions .tutor-btn,
+.tutor-quiz-submission .tutor-quiz-footer .tutor-btn {
+  min-height: 46px;
+  border-radius: 12px;
+  font-weight: 600;
+}
+
+.tutor-quiz-submission .tutor-quiz-questions-error {
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
+.tutor-quiz-submission .tutor-quiz-question-paginate-item:focus-visible {
+  outline: 3px solid var(--bia-quiz-crimson);
+  outline-offset: 3px;
+}
+
+/* Preserve Tutor's fullscreen canvas dimensions for draw/pin/puzzle. */
+.tutor-quiz-submission .tutor-quiz-question[data-question="draw_image"],
+.tutor-quiz-submission .tutor-quiz-question[data-question="pin_image"],
+.tutor-quiz-submission .tutor-quiz-question[data-question="puzzle"] {
+  /* Tutor uses a size container for these interactions. Extra card padding
+     can move click targets away from their canvas coordinates. */
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+/* 3. Review layer: only manual submits use this dialog. */
+.bia-quiz-review-dialog {
+  inset: 0;
+  width: min(94vw, 580px);
+  max-height: min(86dvh, 740px);
+  padding: 0;
+  border: 1px solid var(--tutor-border-idle, #e2e2e7);
+  border-radius: 22px;
+  background: var(--tutor-surface-l1, #fff);
+  color: var(--tutor-text-primary, #20212a);
+  box-shadow: 0 28px 95px rgb(0 0 0 / 24%);
+  overflow: auto;
+}
+
+.bia-quiz-review-dialog::backdrop {
+  background: rgb(21 23 30 / 60%);
+}
+
+.bia-quiz-review-card {
+  padding: clamp(18px, 4vw, 30px);
+  font-family: Anuphan, Sarabun, system-ui, sans-serif;
+}
+
+.bia-quiz-review-title {
+  margin: 0;
+  font-size: clamp(1.24rem, 3vw, 1.55rem);
+  font-weight: 700;
+  line-height: 1.45;
+}
+
+.bia-quiz-review-description {
+  margin: 8px 0 18px;
+  color: var(--tutor-text-secondary, #60616b);
+  line-height: 1.7;
+}
+
+.bia-quiz-review-stats {
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: var(--tutor-surface-l2, #f5f5f7);
+  color: var(--tutor-text-primary, #20212a);
+  font-weight: 700;
+}
+
+.bia-quiz-review-warning:not(:empty) {
+  margin-top: 10px;
+  color: var(--tutor-color-warning, #926316);
+  line-height: 1.6;
+}
+
+.bia-quiz-review-list {
+  max-height: 240px;
+  overflow: auto;
+  padding: 0;
+  margin: 16px 0 22px;
+  list-style: none;
+  display: grid;
+  gap: 8px;
+}
+
+.bia-quiz-review-item {
+  display: flex;
+  min-height: 43px;
+  align-items: center;
+  gap: 10px;
+  border-radius: 12px;
+  border: 1px solid var(--tutor-border-idle, #e2e2e7);
+  padding: 8px 12px;
+}
+
+.bia-quiz-review-jump {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  gap: 10px;
+  padding: 0;
+  background: transparent;
+  border: 0;
+  color: inherit;
+  text-align: start;
+  cursor: pointer;
+}
+
+.bia-quiz-review-jump:focus-visible,
+.bia-quiz-review-actions button:focus-visible {
+  outline: 3px solid #7c2021;
+  outline-offset: 2px;
+}
+
+.bia-quiz-review-marker {
+  display: grid;
+  place-items: center;
+  flex: 0 0 25px;
+  height: 25px;
+  border-radius: 50%;
+  background: var(--tutor-surface-l2, #efeff1);
+  color: var(--tutor-text-secondary, #616773);
+  font-weight: 700;
+}
+
+.bia-quiz-review-marker.is-answered {
+  color: #126f3b;
+  background: #e8f8ef;
+}
+
+.bia-quiz-review-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.bia-quiz-review-actions button {
+  flex: 1 1 190px;
+  min-height: 48px;
+  padding: 11px 18px;
+  border-radius: 12px;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.bia-quiz-review-back {
+  border: 1px solid var(--tutor-border-idle, #cacdd2);
+  background: transparent;
+  color: var(--tutor-text-primary, #20212a);
+}
+
+.bia-quiz-review-confirm {
+  border: 1px solid #7c2021;
+  color: #fff;
+  background: #7c2021;
+}
+
+/* 4. Result: make clear that this is a single attempt's report. */
+.tutor-quiz-summary-page .tutor-quiz-summary-header-inner {
+  gap: 12px;
+}
+
+.tutor-quiz-summary-page .bia-quiz-attempt-label {
+  border-radius: 999px;
+  padding: 5px 10px;
+  background: var(--tutor-surface-l2, #f4f1f2);
+  color: var(--tutor-text-secondary, #555963);
+  font-size: 0.78rem;
+  line-height: 1.45;
+  white-space: nowrap;
+}
+
+.tutor-quiz-summary-page .tutor-quiz-summary-content {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.tutor-quiz-summary-page .tutor-quiz-summary-footer .tutor-btn {
+  min-height: 46px;
+  border-radius: 12px;
+}
+
+@media (max-width: 767px) {
+  .tutor-quiz-intro {
+    max-width: 100%;
+    padding: 12px;
+    border: none;
+    box-shadow: none;
+    background: transparent;
+  }
+
+  .tutor-quiz-intro .tutor-quiz-intro-icon {
+    height: 132px;
+  }
+
+  .tutor-quiz-intro .tutor-quiz-intro-params {
+    overflow-x: auto;
+  }
+
+  .tutor-quiz-submission .tutor-quiz-question {
+    padding: 15px;
+    border-radius: 15px;
+  }
+
+  .tutor-quiz-submission .tutor-quiz-question-option {
+    min-height: 48px;
+    padding: 12px;
+  }
+
+  .tutor-quiz-submission .tutor-quiz-progress-bar-wrapper {
+    gap: 8px;
+  }
+
+  .tutor-quiz-submission .bia-quiz-answered-count {
+    font-size: 0.69rem;
+  }
+
+  .tutor-quiz-submission .tutor-quiz-footer-actions {
+    flex-wrap: wrap;
+  }
+
+  .bia-quiz-review-dialog {
+    max-height: calc(100dvh - 24px);
+    width: calc(100vw - 20px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tutor-quiz-submission .tutor-quiz-question-option {
+    transition: none;
+  }
+}
