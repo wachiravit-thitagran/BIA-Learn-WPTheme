@@ -288,6 +288,16 @@
       openReview(submitter);
     }, true);
 
+    // Tutor alone decides timeout/auto-submit. Close our visual layer as
+    // soon as its native timer expires or its attempt is completed.
+    function closeWhenTutorFinishes(event) {
+      const detail = event && event.detail;
+      if (detail && detail.formId && detail.formId !== form.id) return;
+      if (dialog.open) dialog.close();
+    }
+    doc.addEventListener('tutor-quiz-time-expired', closeWhenTutorFinishes);
+    doc.addEventListener('tutor-quiz-attempt-completed', closeWhenTutorFinishes);
+
     // Escape and backdrop dismissal must never trigger a submission.
     dialog.addEventListener('click', (event) => {
       if (event.target === dialog) dialog.close();
