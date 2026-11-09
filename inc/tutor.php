@@ -37,30 +37,45 @@ defined( 'ABSPATH' ) || exit;
  * @return array|null Tooltip data for locked episodes.
  */
 function bia_learn_episode_card_lock( $course_id ) {
-	$prerequisites = array(
-		489 => 249, // EP2 requires EP1.
-		490 => 489, // EP3 requires EP2.
-		491 => 490, // EP4 requires EP3.
-	);
 	$course_id = (int) $course_id;
-	if ( ! isset( $prerequisites[ $course_id ] ) ) {
+	if ( $course_id <= 0 || ! function_exists( 'tlp_can_user_access_course' ) || ! function_exists( 'tlp_get_course_prerequisites' ) ) {
 		return null;
 	}
 
-	$required_id = $prerequisites[ $course_id ];
-	if ( is_user_logged_in() && bia_learn_tutor_utils_supports( 'is_completed_course' ) ) {
-		if ( bia_learn_tutor_utils()->is_completed_course( $required_id, get_current_user_id() ) ) {
-			return null;
-		}
+	// Ask Tutor Learning Paths for the authoritative enrollment decision.
+	// 'view' is intentionally not used: visible_locked permits catalog views.
+	$result = tlp_can_user_access_course( get_current_user_id(), $course_id, 'enroll' );
+	if ( ! is_object( $result ) || ! isset( $result->allowed ) || $result->allowed ) {
+		return null;
 	}
 
-	$previous_title = get_the_title( $required_id );
-	if ( ! $previous_title ) {
-		$previous_title = sprintf( 'EP%d', array_search( $required_id, array( 249, 489, 490, 491 ), true ) + 1 );
+	$missing = isset( $result->missing_courses ) && is_array( $result->missing_courses )
+		? array_map( 'absint', $result->missing_courses )
+		: array();
+	$required = array_values( array_filter( $missing ) );
+
+	// Some rule combinations may yield no missing list. Use the public
+	// prerequisites API as a fallback, never inspect plugin database tables.
+	if ( ! $required ) {
+		$required = array_values( array_filter( array_map( 'absint', tlp_get_course_prerequisites( $course_id ) ) ) );
 	}
+
+	if ( 1 === count( $required ) ) {
+		$previous_title = get_the_title( $required[0] );
+		$tooltip = $previous_title
+			? sprintf( 'เรียน %s ให้จบเพื่อปลดล็อกหลักสูตรนี้', $previous_title )
+			: __( 'เรียนหลักสูตรที่กำหนดให้จบเพื่อปลดล็อกหลักสูตรนี้', 'bia-learn' );
+	} elseif ( count( $required ) > 1 ) {
+		$tooltip = __( 'เรียนหลักสูตรที่กำหนดให้ครบตามเงื่อนไขเพื่อปลดล็อกหลักสูตรนี้', 'bia-learn' );
+	} else {
+		$tooltip = isset( $result->message ) && is_string( $result->message ) && '' !== $result->message
+			? $result->message
+			: __( 'เรียนหลักสูตรที่กำหนดให้จบเพื่อปลดล็อกหลักสูตรนี้', 'bia-learn' );
+	}
+
 	return array(
-		'required_id' => $required_id,
-		'tooltip'     => sprintf( 'เรียน %s ให้จบเพื่อปลดล็อกหลักสูตรนี้', $previous_title ),
+		'required_id' => $required ? $required[0] : 0,
+		'tooltip'     => $tooltip,
 	);
 }
 
