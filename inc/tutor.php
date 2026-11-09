@@ -74,6 +74,8 @@ function bia_learn_episode_lock_styles() {
 	}
 	?>
 	<style id="bia-learn-episode-card-lock">
+	.bia-episode-course-card{overflow:visible}
+	.bia-episode-course-card>a:first-child{border-radius:16px 16px 0 0}
 	.bia-episode-lock-wrap{margin:.2rem 0 .45rem}
 	.bia-episode-lock{display:inline-flex;align-items:center;gap:6px;position:relative;max-width:100%;padding:6px 11px;border:1px solid #dda95e;border-radius:999px;background:#fff1d8;color:#815319;font-size:12px;font-weight:700;line-height:1.3;cursor:help}
 	.bia-episode-lock svg{flex:none}
