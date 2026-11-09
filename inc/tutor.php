@@ -103,6 +103,36 @@ function bia_learn_episode_lock_styles() {
 }
 add_action( 'wp_head', 'bia_learn_episode_lock_styles', 20 );
 
+/**
+ * Readable course overview and compact prerequisite notices.
+ * Scoped to Tutor course pages, without changing the underlying lessons.
+ */
+function bia_learn_course_readability_styles() {
+	if ( ! is_singular( 'courses' ) ) {
+		return;
+	}
+	?>
+	<style id="bia-learn-course-readability">
+	.bia-course-overview{max-width:72ch;margin-inline:auto;padding:clamp(8px,2vw,24px) 0 24px;color:#35303e;font-size:16px;line-height:1.9}
+	.bia-course-overview h2{font-size:clamp(23px,2.4vw,29px);font-weight:750;line-height:1.4;margin:0 0 18px;color:#2f2b3d}
+	.bia-course-overview h3{font-size:19px;font-weight:700;line-height:1.45;margin:30px 0 12px;color:#80202d}
+	.bia-course-overview p{margin:0 0 20px;line-height:1.95}
+	.bia-course-overview ul{padding:0;margin:0 0 24px;list-style:none;display:grid;gap:12px}
+	.bia-course-overview li{position:relative;padding:12px 18px 12px 37px;background:#f8f7fa;border:1px solid #e7e3e9;border-radius:12px;line-height:1.75}
+	.bia-course-overview li:before{content:"✓";position:absolute;left:14px;top:12px;font-weight:800;color:#9d1c2b}
+	.tlp-locked-notice{margin:18px 0 26px;padding:16px 20px;background:#fffaf2;border:1px solid #ead5ae;border-left:4px solid #b98235;border-radius:12px;color:#4a3d2c;box-shadow:0 4px 16px rgba(46,33,15,.035)}
+	.tlp-locked-notice__headline{font-weight:700;line-height:1.7;margin:0 0 8px}
+	.tlp-locked-notice__progress{font-size:13px;color:#725a3e;margin:0 0 8px}
+	.tlp-locked-notice__item{padding:6px 0;line-height:1.6}
+	.tlp-enroll-locked{cursor:not-allowed!important;background:#a1a1aa!important;border-color:#a1a1aa!important;opacity:1!important}
+	.tlp-enroll-locked-help{line-height:1.7;margin-top:12px!important}
+	@media(max-width:640px){.bia-course-overview{font-size:15px}.bia-course-overview li{padding:12px 14px 12px 34px}.tlp-locked-notice{padding:14px 15px}}
+	</style>
+	<?php
+}
+add_action( 'wp_head', 'bia_learn_course_readability_styles', 21 );
+
+
 
 /**
  * Declare Tutor monetization / spotlight support and let Tutor use the theme
@@ -608,9 +638,9 @@ function bia_learn_hide_tutor_free_label( $translation, $text, $domain ) {
 
 	// Match the rendered label only (avoids blanking other "Free" strings such
 	// as the price-filter option).
-	$free_labels = array( 'เข้าถึงได้ฟรี', 'Free Access', 'Free access' );
-	if ( in_array( $translation, $free_labels, true ) ) {
-		return '';
+	// Normalize the common Thai typo instead of hiding the free-access label.
+	if ( in_array( $translation, array( 'เขาถึงได้ฟรี', 'เข้าถึงได้ฟรี' ), true ) ) {
+		return 'เข้าถึงได้ฟรี';
 	}
 
 	return $translation;
