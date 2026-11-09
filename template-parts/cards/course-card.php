@@ -70,7 +70,7 @@ $level_labels = array(
 	'all_levels'   => __( 'ทุกระดับ', 'bia-learn' ),
 );
 ?>
-<article <?php post_class( 'card card-hover group flex flex-col h-full' ); ?>>
+<article <?php post_class( 'card card-hover bia-episode-course-card group flex flex-col h-full' ); ?>>
 	<a href="<?php the_permalink(); ?>" class="relative block aspect-[16/10] overflow-hidden bg-paper-100" aria-label="<?php echo esc_attr( sprintf( __( 'ดูคอร์ส %s', 'bia-learn' ), get_the_title() ) ); ?>">
 		<?php if ( has_post_thumbnail() ) : ?>
 			<?php
@@ -110,7 +110,7 @@ $level_labels = array(
 
 		<?php if ( $episode_lock ) : ?>
 			<div class="bia-episode-lock-wrap">
-				<span class="bia-episode-lock" tabindex="0" role="note" aria-label="<?php echo esc_attr( $episode_lock['tooltip'] ); ?>" title="<?php echo esc_attr( $episode_lock['tooltip'] ); ?>">
+				<span class="bia-episode-lock" tabindex="0" role="note" aria-label="<?php echo esc_attr( $episode_lock['tooltip'] ); ?>">
 					<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
 					<span><?php esc_html_e( 'ล็อกอยู่', 'bia-learn' ); ?></span>
 					<span class="bia-episode-lock-tooltip" role="tooltip"><?php echo esc_html( $episode_lock['tooltip'] ); ?></span>
