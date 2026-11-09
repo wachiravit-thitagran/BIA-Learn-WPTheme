@@ -28,6 +28,66 @@
 defined( 'ABSPATH' ) || exit;
 
 /**
+ * Theme-native episode card lock state for the four BIA youth-learning courses.
+ *
+ * This is a visual indicator only; Tutor Learning Paths must separately enforce
+ * prerequisites server-side. Returning null means no lock badge is needed.
+ *
+ * @param int $course_id Course being rendered.
+ * @return array|null Tooltip data for locked episodes.
+ */
+function bia_learn_episode_card_lock( $course_id ) {
+	$prerequisites = array(
+		489 => 249, // EP2 requires EP1.
+		490 => 489, // EP3 requires EP2.
+		491 => 490, // EP4 requires EP3.
+	);
+	$course_id = (int) $course_id;
+	if ( ! isset( $prerequisites[ $course_id ] ) ) {
+		return null;
+	}
+
+	$required_id = $prerequisites[ $course_id ];
+	if ( is_user_logged_in() && bia_learn_tutor_utils_supports( 'is_completed_course' ) ) {
+		if ( bia_learn_tutor_utils()->is_completed_course( $required_id, get_current_user_id() ) ) {
+			return null;
+		}
+	}
+
+	$previous_title = get_the_title( $required_id );
+	if ( ! $previous_title ) {
+		$previous_title = sprintf( 'EP%d', array_search( $required_id, array( 249, 489, 490, 491 ), true ) + 1 );
+	}
+	return array(
+		'required_id' => $required_id,
+		'tooltip'     => sprintf( 'เรียน %s ให้จบเพื่อปลดล็อกหลักสูตรนี้', $previous_title ),
+	);
+}
+
+/**
+ * Accessible, theme-scoped visual styles for hover/focus and touch tooltips.
+ * These are tiny, so no Tailwind rebuild is needed for this component.
+ */
+function bia_learn_episode_lock_styles() {
+	if ( is_admin() ) {
+		return;
+	}
+	?>
+	<style id="bia-learn-episode-card-lock">
+	.bia-episode-lock-wrap{margin:.2rem 0 .45rem}
+	.bia-episode-lock{display:inline-flex;align-items:center;gap:6px;position:relative;max-width:100%;padding:6px 11px;border:1px solid #dda95e;border-radius:999px;background:#fff1d8;color:#815319;font-size:12px;font-weight:700;line-height:1.3;cursor:help}
+	.bia-episode-lock svg{flex:none}
+	.bia-episode-lock-tooltip{position:absolute;bottom:calc(100% + 10px);left:0;z-index:20;min-width:200px;width:max-content;max-width:min(300px,80vw);padding:10px 12px;border-radius:8px;background:#2f2b3d;color:#fff;box-shadow:0 8px 24px rgba(0,0,0,.18);font-size:13px;font-weight:500;line-height:1.6;white-space:normal;visibility:hidden;opacity:0;pointer-events:none;transition:opacity .15s ease}
+	.bia-episode-lock:hover .bia-episode-lock-tooltip,.bia-episode-lock:focus .bia-episode-lock-tooltip,.bia-episode-lock:focus-within .bia-episode-lock-tooltip{visibility:visible;opacity:1}
+	.bia-episode-lock:focus-visible{outline:2px solid #9d1c2b;outline-offset:3px}
+	@media(hover:none){.bia-episode-lock-tooltip{top:calc(100% + 10px);bottom:auto}}
+	</style>
+	<?php
+}
+add_action( 'wp_head', 'bia_learn_episode_lock_styles', 20 );
+
+
+/**
  * Declare Tutor monetization / spotlight support and let Tutor use the theme
  * header & footer for its pages.
  */
