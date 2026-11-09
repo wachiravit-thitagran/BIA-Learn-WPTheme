@@ -91,13 +91,14 @@ function bia_learn_episode_lock_styles() {
 	<style id="bia-learn-episode-card-lock">
 	.bia-episode-course-card{overflow:visible}
 	.bia-episode-course-card>a:first-child{border-radius:16px 16px 0 0}
-	.bia-episode-lock-wrap{margin:.2rem 0 .45rem}
-	.bia-episode-lock{display:inline-flex;align-items:center;gap:6px;position:relative;max-width:100%;padding:6px 11px;border:1px solid #dda95e;border-radius:999px;background:#fff1d8;color:#815319;font-size:12px;font-weight:700;line-height:1.3;cursor:help}
+	.bia-course-top-badges{position:absolute;top:16px;left:16px;z-index:15;display:flex;align-items:center;gap:6px;max-width:calc(100% - 32px);pointer-events:none}
+	.bia-course-top-badges>span{flex:none;pointer-events:auto}
+	.bia-episode-lock{display:inline-flex;align-items:center;gap:4px;position:relative;padding:4px 8px;border:1px solid #dda95e;border-radius:999px;background:#fff1d8;color:#815319;font-size:10px;font-weight:700;line-height:1.25;white-space:nowrap;cursor:help;box-shadow:0 1px 4px rgba(0,0,0,.08)}
 	.bia-episode-lock svg{flex:none}
-	.bia-episode-lock-tooltip{position:absolute;bottom:calc(100% + 10px);left:0;z-index:20;min-width:200px;width:max-content;max-width:min(300px,80vw);padding:10px 12px;border-radius:8px;background:#2f2b3d;color:#fff;box-shadow:0 8px 24px rgba(0,0,0,.18);font-size:13px;font-weight:500;line-height:1.6;white-space:normal;visibility:hidden;opacity:0;pointer-events:none;transition:opacity .15s ease}
+	.bia-episode-lock-tooltip{position:absolute;top:calc(100% + 8px);left:0;z-index:25;min-width:200px;width:max-content;max-width:min(300px,75vw);padding:10px 12px;border-radius:8px;background:#2f2b3d;color:#fff;box-shadow:0 8px 24px rgba(0,0,0,.18);font-size:13px;font-weight:500;line-height:1.6;white-space:normal;visibility:hidden;opacity:0;pointer-events:none;transition:opacity .15s ease}
 	.bia-episode-lock:hover .bia-episode-lock-tooltip,.bia-episode-lock:focus .bia-episode-lock-tooltip,.bia-episode-lock:focus-within .bia-episode-lock-tooltip{visibility:visible;opacity:1}
 	.bia-episode-lock:focus-visible{outline:2px solid #9d1c2b;outline-offset:3px}
-	@media(hover:none){.bia-episode-lock-tooltip{top:calc(100% + 10px);bottom:auto}}
+	@media(max-width:420px){.bia-course-top-badges{top:12px;left:12px;max-width:calc(100% - 24px)}.bia-episode-lock{font-size:9px;padding:3px 6px}}
 	</style>
 	<?php
 }
