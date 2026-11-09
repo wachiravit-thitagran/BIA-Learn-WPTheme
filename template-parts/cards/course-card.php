@@ -59,6 +59,7 @@ if ( $has_tutor ) {
 // progress is non-null only for an enrolled, logged-in learner).
 $instructor = bia_learn_course_instructor( $course_id );
 $progress   = bia_learn_course_progress( $course_id );
+$episode_lock = function_exists( 'bia_learn_episode_card_lock' ) ? bia_learn_episode_card_lock( $course_id ) : null;
 $cat_terms  = get_the_terms( $course_id, 'course-category' );
 $category   = ( $cat_terms && ! is_wp_error( $cat_terms ) ) ? $cat_terms[0] : null;
 
@@ -106,6 +107,16 @@ $level_labels = array(
 				<span class="inline-flex items-center gap-1.5"><?php echo bia_learn_icon( 'clock', 'h-4 w-4 text-crimson' ); // phpcs:ignore ?><?php echo esc_html( $duration ); ?></span>
 			<?php endif; ?>
 		</div>
+
+		<?php if ( $episode_lock ) : ?>
+			<div class="bia-episode-lock-wrap">
+				<span class="bia-episode-lock" tabindex="0" role="note" aria-label="<?php echo esc_attr( $episode_lock['tooltip'] ); ?>" title="<?php echo esc_attr( $episode_lock['tooltip'] ); ?>">
+					<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+					<span><?php esc_html_e( 'ล็อกอยู่', 'bia-learn' ); ?></span>
+					<span class="bia-episode-lock-tooltip" role="tooltip"><?php echo esc_html( $episode_lock['tooltip'] ); ?></span>
+				</span>
+			</div>
+		<?php endif; ?>
 
 		<h3 class="line-clamp-2 font-serif text-xl font-bold leading-snug text-ink transition group-hover:text-crimson">
 			<a href="<?php the_permalink(); ?>"><?php the_title(); ?></a>
