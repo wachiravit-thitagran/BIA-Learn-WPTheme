@@ -265,7 +265,7 @@ $login_url    = $is_tutor_login_disabled ? bia_learn_auth_url( 'login', tutor()-
 					</div>
 
 					<div class="tutor-fs-7 tutor-color-muted tutor-mt-20 tutor-text-center">
-						<?php esc_html_e( 'Free access this course', 'tutor' ); ?>
+						<?php esc_html_e( 'เข้าถึงได้ฟรี', 'bia-learn' ); ?>
 					</div>
 				<?php
 				echo apply_filters( 'tutor/course/single/entry-box/free', ob_get_clean(), get_the_ID() );//phpcs:ignore
