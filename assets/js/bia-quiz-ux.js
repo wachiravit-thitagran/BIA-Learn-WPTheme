@@ -155,7 +155,7 @@
     if (nav || (form.dataset.questionLayoutView === 'question_below_each_other' && wrapper)) {
       const button = el('button', 'bia-quiz-review-jump', '');
       button.type = 'button';
-      button.setAttribute('aria-label', copy.jumpTo(index + 1));
+      button.setAttribute('aria-label', `${copy.jumpTo(index + 1)}: ${question.answered ? copy.answeredLabel : copy.unansweredLabel}`);
       button.append(marker, text);
       button.addEventListener('click', () => {
         dialog.close();
@@ -195,6 +195,50 @@
       progressLabel.hidden = false;
     }
 
+
+    let stateEffect = null;
+    let effectOwner = null;
+    function bindStateEffect() {
+      const owner = window.Alpine;
+      const tutor = window.TutorCore && window.TutorCore.form;
+      if (!stateEffect && owner && typeof owner.effect === 'function' &&
+          tutor && tutor.hasForm(form.id)) {
+        // Tutor's state-change event only reports dirty/clean transitions.
+        // Track its reactive values through the same owner for every edit.
+        effectOwner = owner;
+        stateEffect = owner.effect(updateCount);
+      }
+    }
+    function onTutorState(event) {
+      if (!form.isConnected) { cleanup(); return; }
+      const id = event.detail && (event.detail.formId || event.detail.id);
+      if (!id || id === form.id) updateCount();
+    }
+    function cleanup() {
+      if (stateEffect && effectOwner) effectOwner.release(stateEffect);
+      stateEffect = null;
+      doc.removeEventListener('tutor-form-register', onRegister);
+      window.removeEventListener('tutor-form-reset', onTutorState);
+      doc.removeEventListener('tutor-form-state-change', onTutorState);
+      doc.removeEventListener('tutor-form-reset', onTutorState);
+      doc.removeEventListener('tutor-form-unregister', onUnregister);
+    }
+    function onUnregister(event) {
+      const id = event.detail && (event.detail.formId || event.detail.id);
+      if (id === form.id || !form.isConnected) cleanup();
+    }
+    function onRegister(event) {
+      if (event.detail && event.detail.id === form.id) bindStateEffect();
+    }
+    doc.addEventListener('tutor-form-register', onRegister);
+    window.addEventListener('tutor-form-reset', onTutorState);
+    bindStateEffect();
+    doc.addEventListener('tutor-form-state-change', onTutorState);
+    doc.addEventListener('tutor-form-reset', onTutorState);
+    doc.addEventListener('tutor-form-unregister', onUnregister);
+    window.addEventListener('pagehide', event => {
+      if (!event.persisted) cleanup();
+    });
     form.addEventListener('input', updateCount);
     form.addEventListener('change', updateCount);
     window.requestAnimationFrame(updateCount);

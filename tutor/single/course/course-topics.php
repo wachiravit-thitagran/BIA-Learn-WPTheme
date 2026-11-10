@@ -43,30 +43,30 @@ if ( $topics->have_posts() ) {
 
 				?>
 				<div class="tutor-accordion-item bg-white border border-paper-100 rounded-xl overflow-hidden shadow-sm transition-all">
-					<div class="tutor-accordion-item-header flex justify-between items-center p-4 bg-white cursor-pointer hover:bg-paper-50 transition group">
-						<div class="flex items-center gap-3 flex-1">
+					<button type="button" aria-expanded="false" aria-controls="bia-topic-<?php echo esc_attr( get_the_ID() ); ?>" class="tutor-accordion-item-header w-full text-left focus-visible:outline focus-visible:outline-2 flex justify-between items-center p-4 bg-white cursor-pointer hover:bg-paper-50 transition group">
+						<span class="flex items-center gap-3 flex-1">
 							<!-- Status Icon -->
-							<div class="flex-shrink-0">
+							<span class="flex-shrink-0">
 								<?php if ( $is_enrolled && $is_section_completed ) : ?>
-									<div class="w-6 h-6 rounded-full bg-success text-white flex items-center justify-center">
+									<span class="w-6 h-6 rounded-full bg-success text-white flex items-center justify-center">
 										<i class="ti ti-check text-sm"></i>
-									</div>
+									</span>
 								<?php else : ?>
-									<div class="w-6 h-6 rounded-full border-2 border-paper-300 group-hover:border-primary-400 transition-colors"></div>
+									<span class="w-6 h-6 rounded-full border-2 border-paper-300 group-hover:border-primary-400 transition-colors"></span>
 								<?php endif; ?>
-							</div>
-							<h4 class="tutor-accordion-item-title font-sans text-base font-medium text-ink m-0"><?php the_title(); ?></h4>
-						</div>
-						<div class="flex items-center gap-2 text-ink-light">
+							</span>
+							<span class="tutor-accordion-item-title font-sans text-base font-medium text-ink m-0"><?php the_title(); ?></span>
+						</span>
+						<span class="flex items-center gap-2 text-ink-light">
 							<!-- Info Icon (optional, could show section duration) -->
 							<?php if ( ! $is_section_completed ) : ?>
 								<i class="ti ti-info-circle text-lg opacity-0 group-hover:opacity-100 transition-opacity"></i>
 							<?php endif; ?>
 							<i class="ti ti-chevron-down tutor-accordion-indicator text-lg transition-transform duration-300"></i>
-						</div>
-					</div>
+						</span>
+					</button>
 
-					<div class="tutor-accordion-item-body p-2 border-t border-paper-100 bg-white">
+					<div id="bia-topic-<?php echo esc_attr( get_the_ID() ); ?>" class="tutor-accordion-item-body p-2 border-t border-paper-100 bg-white">
 						<ul class="tutor-course-topic-contents m-0 p-0 list-none space-y-1">
 							<?php
 							foreach ( $lesson_posts as $content ) {

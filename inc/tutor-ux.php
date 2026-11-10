@@ -25,6 +25,7 @@ class BIA_Learn_Tutor_UX {
 	 * Initialize all hooks.
 	 */
 	public static function init() {
+		add_action( 'tutor_lesson_completed_after', array( __CLASS__, 'confirm_lesson_completion' ), 99, 2 );
 		// 1. Smart Continue Button Redirect
 		add_filter( 'tutor_course_continue_url', array( __CLASS__, 'smart_continue_url' ), 10, 2 );
 
@@ -40,6 +41,41 @@ class BIA_Learn_Tutor_UX {
 
 		// 4. Estimated Time Remaining Badge
 		add_action( 'tutor_course/single/before/inner-wrap', array( __CLASS__, 'render_estimated_time' ), 10, 1 );
+	}
+
+	/** Reply only after Tutor authorized, saved and confirmed this exact lesson. */
+	public static function confirm_lesson_completion( $lesson_id, $user_id ) {
+		if ( empty( $_POST['bia_complete_and_next'] ) || (int) $user_id !== get_current_user_id()
+			|| (int) $lesson_id !== absint( $_POST['lesson_id'] ?? 0 ) ) {
+			return;
+		}
+		if ( tutor_utils()->is_completed_lesson( $lesson_id, $user_id ) !== false ) {
+			wp_send_json_success( array( 'lesson_completed' => true ) );
+		}
+	}
+
+	/** Six candidates per page, ordered by one grouped activity query. */
+	public static function get_continue_candidates( $user_id, $page = 1, $limit = 6 ) {
+		global $wpdb;
+		$limit = min( 24, max( 1, (int) $limit ) );
+		$page = max( 1, (int) $page );
+		$table = $wpdb->prefix . 'tutorlms_analytics_events';
+		$has_tracker = $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $wpdb->esc_like( $table ) ) ) === $table;
+		self::$analytics_table_exists = $has_tracker;
+		$join = '';
+		$order = 'course.post_modified';
+		if ( $has_tracker ) {
+			$join = $wpdb->prepare( "LEFT JOIN (SELECT course_id, MAX(created_at) AS last_access FROM {$table} WHERE user_id = %d GROUP BY course_id) activity ON activity.course_id = course.ID", $user_id );
+			$order = 'COALESCE(activity.last_access, course.post_modified)';
+		}
+		return $wpdb->get_results( $wpdb->prepare(
+			"SELECT course.* FROM {$wpdb->posts} course {$join}
+			WHERE course.post_type = 'courses' AND course.post_status IN ('publish', 'private')
+			AND EXISTS (SELECT 1 FROM {$wpdb->posts} enrollment WHERE enrollment.post_type = 'tutor_enrolled' AND enrollment.post_status = 'completed' AND enrollment.post_parent = course.ID AND enrollment.post_author = %d)
+			AND NOT EXISTS (SELECT 1 FROM {$wpdb->comments} completed WHERE completed.comment_type = 'course_completed' AND completed.comment_post_ID = course.ID AND completed.user_id = %d)
+			ORDER BY {$order} DESC, course.ID DESC LIMIT %d OFFSET %d",
+			$user_id, $user_id, $limit + 1, ( $page - 1 ) * $limit
+		) );
 	}
 
 	/**
