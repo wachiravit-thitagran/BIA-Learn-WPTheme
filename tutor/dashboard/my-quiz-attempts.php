@@ -10,7 +10,20 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 $user_id = get_current_user_id();
-$attempts = tutor_utils()->get_all_quiz_attempts_by_user( $user_id );
+if ( isset( $_GET['attempt_id'] ) ) {
+	// Keep Tutor's own visibility and owner/instructor authorization checks.
+	include tutor()->path . 'templates/dashboard/my-quiz-attempts/attempts-details.php';
+	return;
+}
+global $wpdb;
+$bia_page = max( 1, absint( $_GET['attempt_page'] ?? 1 ) );
+$bia_limit = 20;
+$attempts = $wpdb->get_results( $wpdb->prepare(
+	"SELECT * FROM {$wpdb->prefix}tutor_quiz_attempts WHERE user_id = %d AND attempt_status <> 'attempt_started' ORDER BY attempt_id DESC LIMIT %d OFFSET %d",
+	$user_id, $bia_limit + 1, ( $bia_page - 1 ) * $bia_limit
+) );
+$bia_has_more = count( $attempts ) > $bia_limit;
+$attempts = array_slice( $attempts, 0, $bia_limit );
 
 ?>
 
@@ -57,18 +70,6 @@ $attempts = tutor_utils()->get_all_quiz_attempts_by_user( $user_id );
 					$is_fail    = ( $attempt->result === 'fail' );
 					$is_pending = ! $is_pass && ! $is_fail;
 
-					// Parse attempt info
-					$attempt_info = $attempt->attempt_info;
-					if ( is_string( $attempt_info ) ) {
-						$attempt_info = unserialize( $attempt_info, array( 'allowed_classes' => false ) );
-					}
-					
-					$total_questions = isset( $attempt_info['total_questions'] ) ? $attempt_info['total_questions'] : 0;
-					$total_answered = isset( $attempt->total_answered_questions ) ? $attempt->total_answered_questions : 0;
-					// Assuming 1 mark per question for display purposes if actual question counts aren't easily accessible
-					$correct = $earned_marks;
-					$incorrect = max( 0, $total_marks - $earned_marks );
-
 					// Time Taken
 					$time_taken = '-';
 					if ( ! empty( $attempt->attempt_ended_at ) && ! empty( $attempt->attempt_started_at ) ) {
@@ -93,6 +94,7 @@ $attempts = tutor_utils()->get_all_quiz_attempts_by_user( $user_id );
 						</div>
 						<div class="text-xs text-paper-400 font-medium">
 							<?php echo esc_html( $date ); ?>
+							<a class="ml-2 underline" href="<?php echo esc_url( add_query_arg( 'attempt_id', (int) $attempt->attempt_id ) ); ?>"><?php esc_html_e( 'ดูรายละเอียด', 'bia-learn' ); ?></a>
 						</div>
 					</div>
 					
@@ -106,11 +108,11 @@ $attempts = tutor_utils()->get_all_quiz_attempts_by_user( $user_id );
 						<div class="text-xs font-medium space-y-1">
 							<div class="flex items-center gap-1 text-ink-light">
 								<span class="w-2 h-2 rounded-full bg-success inline-block"></span>
-								<?php echo esc_html( $correct ); ?> correct
+								<?php echo esc_html( $earned_marks ); ?> <?php esc_html_e( 'คะแนนที่ได้', 'bia-learn' ); ?>
 							</div>
 							<div class="flex items-center gap-1 text-ink-light">
 								<span class="w-2 h-2 rounded-full bg-danger inline-block"></span>
-								<?php echo esc_html( $incorrect ); ?> incorrect
+								<?php echo esc_html( $total_marks ); ?> <?php esc_html_e( 'คะแนนเต็ม', 'bia-learn' ); ?>
 							</div>
 						</div>
 					</div>
@@ -143,3 +145,8 @@ $attempts = tutor_utils()->get_all_quiz_attempts_by_user( $user_id );
 		</div>
 	<?php endif; ?>
 </div>
+
+<nav aria-label="<?php esc_attr_e( 'หน้าผลสอบ', 'bia-learn' ); ?>">
+<?php if ( $bia_page > 1 ) : ?><a href="<?php echo esc_url( add_query_arg( 'attempt_page', $bia_page - 1 ) ); ?>"><?php esc_html_e( 'ก่อนหน้า', 'bia-learn' ); ?></a><?php endif; ?>
+<?php if ( $bia_has_more ) : ?><a href="<?php echo esc_url( add_query_arg( 'attempt_page', $bia_page + 1 ) ); ?>"><?php esc_html_e( 'ถัดไป', 'bia-learn' ); ?></a><?php endif; ?>
+</nav>

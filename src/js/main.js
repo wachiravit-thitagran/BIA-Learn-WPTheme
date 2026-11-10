@@ -7,92 +7,107 @@ import Alpine from 'alpinejs';
 import collapse from '@alpinejs/collapse';
 import focus from '@alpinejs/focus';
 
-Alpine.plugin(collapse);
-Alpine.plugin(focus);
+const registeredInstances = new WeakSet();
 
-/* ---------------------------------------------------------------------------
- * Reusable Alpine data components
- * ------------------------------------------------------------------------- */
+// Components must belong to the instance that walks the page. Tutor exposes its
+// own Alpine before alpine:init; registering on our unused import loses them.
+function registerThemeComponents(alpine) {
+  if (registeredInstances.has(alpine)) return;
+  registeredInstances.add(alpine);
+  // External owners (including Tutor) manage their own plugin lifecycle.
+  if (alpine === Alpine) {
+    alpine.plugin(collapse);
+    alpine.plugin(focus);
+  }
 
-// Count-up animation for the statistics strip. Honors reduced-motion.
-Alpine.data('countUp', (target = 0, duration = 1600) => ({
-  current: 0,
-  started: false,
-  init() {
-    const prefersReduced = window.matchMedia(
-      '(prefers-reduced-motion: reduce)'
-    ).matches;
+  /* ---------------------------------------------------------------------------
+   * Reusable Alpine data components
+   * ------------------------------------------------------------------------- */
 
-    if (prefersReduced) {
-      this.current = target;
-      return;
-    }
+  // Count-up animation for the statistics strip. Honors reduced-motion.
+  alpine.data('countUp', (target = 0, duration = 1600) => ({
+    current: 0,
+    started: false,
+    init() {
+      const prefersReduced = window.matchMedia(
+        '(prefers-reduced-motion: reduce)'
+      ).matches;
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting && !this.started) {
-            this.started = true;
-            this.run(duration);
-            observer.disconnect();
-          }
-        });
-      },
-      { threshold: 0.4 }
-    );
-    observer.observe(this.$el);
-  },
-  run(duration) {
-    const start = performance.now();
-    const step = (now) => {
-      const progress = Math.min((now - start) / duration, 1);
-      // easeOutExpo
-      const eased = progress === 1 ? 1 : 1 - Math.pow(2, -10 * progress);
-      this.current = Math.round(eased * target);
-      if (progress < 1) requestAnimationFrame(step);
-    };
-    requestAnimationFrame(step);
-  },
-  get display() {
-    return this.current.toLocaleString('th-TH');
-  },
-}));
+      if (prefersReduced) {
+        this.current = target;
+        return;
+      }
 
-// Header that gains a shadow / solid background once the user scrolls.
-Alpine.data('siteHeader', () => ({
-  scrolled: false,
-  mobileOpen: false,
-  init() {
-    this.onScroll();
-    window.addEventListener('scroll', () => this.onScroll(), { passive: true });
-  },
-  onScroll() {
-    this.scrolled = window.scrollY > 24;
-  },
-  toggleMobile() {
-    this.mobileOpen = !this.mobileOpen;
-    document.body.classList.toggle('overflow-hidden', this.mobileOpen);
-  },
-  closeMobile() {
-    this.mobileOpen = false;
-    document.body.classList.remove('overflow-hidden');
-  },
-}));
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting && !this.started) {
+              this.started = true;
+              this.run(duration);
+              observer.disconnect();
+            }
+          });
+        },
+        { threshold: 0.4 }
+      );
+      observer.observe(this.$el);
+    },
+    run(duration) {
+      const start = performance.now();
+      const step = (now) => {
+        const progress = Math.min((now - start) / duration, 1);
+        // easeOutExpo
+        const eased = progress === 1 ? 1 : 1 - Math.pow(2, -10 * progress);
+        this.current = Math.round(eased * target);
+        if (progress < 1) requestAnimationFrame(step);
+      };
+      requestAnimationFrame(step);
+    },
+    get display() {
+      return this.current.toLocaleString('th-TH');
+    },
+  }));
 
-// Tutor LMS 4.x bundles and starts its OWN Alpine instance on its pages
-// (dashboard, courses, lessons, auth). Running a second Alpine instance on the
-// same page breaks reactivity across the whole document — Tutor's dashboard
-// popovers stop working and the theme's own x-show/x-data (e.g. the auth tabs)
-// misbehave, and the console fills with "slides/currentSlide/handleClickOutside
-// is not defined" as our Alpine tries to evaluate Tutor's component expressions.
-// So only bootstrap our Alpine when the page has none; otherwise leave Tutor's
-// instance to run cleanly.
-// Tutor bundles its Alpine and defers the DOM walk, and it does not set
-// window.Alpine, so we can't reliably detect it at this instant via window.Alpine
-// or _x_dataStack. Instead detect it synchronously from the server-rendered DOM:
-// every Tutor Alpine root uses an x-data that references a "tutor…" component
-// (tutorHeader, tutorPopover, tutorTour, tutorModal, tutorCourseCompletionChart…).
-// If any are present, Tutor owns Alpine on this page — do not start a second one.
+  // Header that gains a shadow / solid background once the user scrolls.
+  alpine.data('siteHeader', () => ({
+    scrolled: false,
+    mobileOpen: false,
+    init() {
+      this.onScroll();
+      window.addEventListener('scroll', () => this.onScroll(), { passive: true });
+    },
+    onScroll() {
+      this.scrolled = window.scrollY > 24;
+    },
+    toggleMobile() {
+      this.mobileOpen = !this.mobileOpen;
+      document.body.classList.toggle('overflow-hidden', this.mobileOpen);
+    },
+    closeMobile() {
+      this.mobileOpen = false;
+      document.body.classList.remove('overflow-hidden');
+    },
+  }));
+}
+
+// If the theme arrives after an owner's initial walk, only repair theme roots
+// that failed to acquire their data. Never restart Alpine or reset Tutor state.
+function repairThemeRoots(alpine) {
+  document.querySelectorAll('[x-data]').forEach((root) => {
+    const expression = root.getAttribute('x-data').trim();
+    const key = expression === 'siteHeader' ? 'mobileOpen'
+      : expression.startsWith('countUp(') ? 'current' : null;
+    const state = root._x_dataStack && root._x_dataStack[0];
+    if (!key || !state || key in state) return;
+    alpine.destroyTree(root);
+    alpine.initTree(root);
+  });
+}
+
+document.addEventListener('alpine:init', () => {
+  registerThemeComponents(window.Alpine || Alpine);
+});
+
 const otherAlpineOwnsPage =
   !!window.Alpine ||
   !!document.querySelector('[x-data*="tutor"]') ||
@@ -101,8 +116,12 @@ const otherAlpineOwnsPage =
     (el) => !!el._x_dataStack
   );
 
-if (!otherAlpineOwnsPage) {
+if (window.Alpine) {
+  registerThemeComponents(window.Alpine);
+  repairThemeRoots(window.Alpine);
+} else if (!otherAlpineOwnsPage) {
   window.Alpine = Alpine;
+  registerThemeComponents(Alpine);
   Alpine.start();
 }
 
@@ -138,19 +157,39 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  const completeAndNavigate = (href) => {
+  let completing = false;
+  const completeAndNavigate = async (href) => {
+    if (completing) return;
+    completing = true;
+    const controller = new AbortController();
+    const timeout = window.setTimeout(() => controller.abort(), 15000);
+    let errorBox = completeForm.querySelector('[data-bia-completion-error]');
+    if (errorBox) errorBox.remove();
+    completeForm.setAttribute('aria-busy', 'true');
     const formData = new FormData(completeForm);
-    fetch(window.location.href, {
-      method: 'POST',
-      body: formData,
-      keepalive: true
-    }).finally(() => {
-      if (href) {
-        window.location.href = href;
-      } else {
-        completeForm.submit();
+    formData.set('bia_complete_and_next', '1');
+    try {
+      const response = await fetch(window.location.href, {
+        method: 'POST', body: formData, credentials: 'same-origin', signal: controller.signal
+      });
+      if (!response.ok) throw new Error('Completion rejected');
+      const result = await response.json();
+      if (result.success !== true || result.data?.lesson_completed !== true) {
+        throw new Error('Completion not confirmed');
       }
-    });
+      if (href) window.location.assign(href);
+    } catch (error) {
+      errorBox = document.createElement('p');
+      errorBox.dataset.biaCompletionError = '1';
+      errorBox.setAttribute('role', 'alert');
+      errorBox.textContent = document.documentElement.lang.startsWith('th')
+        ? 'บันทึกการเรียนไม่สำเร็จ กรุณาลองอีกครั้ง' : 'Could not save lesson completion. Please try again.';
+      completeForm.appendChild(errorBox);
+    } finally {
+      window.clearTimeout(timeout);
+      completing = false;
+      completeForm.removeAttribute('aria-busy');
+    }
   };
 
   // 1. Text Lessons: Intercept "Next" button click
@@ -220,4 +259,13 @@ document.addEventListener('DOMContentLoaded', () => {
       .querySelectorAll('.tutor-lesson-video-wrapper video, .tutor-video-player video')
       .forEach((vid) => vid.addEventListener('ended', finish));
   }
+});
+
+// Tutor owns accordion expansion; reflect its class changes for assistive tech.
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('button.tutor-accordion-item-header').forEach(button => {
+    const sync = () => button.setAttribute('aria-expanded', String(button.classList.contains('is-active')));
+    sync();
+    new MutationObserver(sync).observe(button, { attributes: true, attributeFilter: ['class'] });
+  });
 });

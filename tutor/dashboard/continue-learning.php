@@ -11,60 +11,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 $user_id = get_current_user_id();
 
-// Cap the grid — enrolled courses are unbounded and each card costs queries.
 $bia_max_cards = 6;
-
-// Get enrolled courses (standard order)
-$enrolled_courses = tutor_utils()->get_enrolled_courses_by_user( $user_id );
-$sorted_courses   = array();
-
-if ( $enrolled_courses && ! empty( $enrolled_courses->posts ) ) {
-	$posts = $enrolled_courses->posts;
-
-	global $wpdb;
-	$table_name = $wpdb->prefix . 'tutorlms_analytics_events';
-
-	// Fetch last access time for each course if tracker table exists.
-	$has_tracker = $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $wpdb->esc_like( $table_name ) ) ) === $table_name;
-	// Share the result so get_last_viewed_lesson_url() doesn't re-check per card.
-	BIA_Learn_Tutor_UX::$analytics_table_exists = $has_tracker;
-
-	foreach ( $posts as $post ) {
-		$course_id = $post->ID;
-
-		// Completed courses belong in history/certificates, not the resume queue.
-		$course_progress = bia_learn_course_progress( $course_id, $user_id );
-		if ( null !== $course_progress && $course_progress >= 100 ) {
-			continue;
-		}
-
-		$last_access = 0;
-		if ( $has_tracker ) {
-			$last_access = $wpdb->get_var( $wpdb->prepare( "
-				SELECT MAX(created_at)
-				FROM {$table_name}
-				WHERE course_id = %d AND user_id = %d
-			", $course_id, $user_id ) );
-			$last_access = $last_access ? strtotime( $last_access ) : 0;
-		}
-
-		// If no access found, fallback to post modification date or 0
-		if ( ! $last_access ) {
-			$last_access = strtotime( $post->post_modified );
-		}
-
-		$post->bia_last_access = $last_access;
-		$sorted_courses[]      = $post;
-	}
-
-	// Sort by bia_last_access descending
-	usort( $sorted_courses, function( $a, $b ) {
-		return $b->bia_last_access <=> $a->bia_last_access;
-	});
+$bia_page = max( 1, absint( $_GET['continue_page'] ?? 1 ) );
+$bia_candidates = BIA_Learn_Tutor_UX::get_continue_candidates( $user_id, $bia_page, $bia_max_cards );
+$bia_has_more = count( $bia_candidates ) > $bia_max_cards;
+$sorted_courses = array();
+foreach ( array_slice( $bia_candidates, 0, $bia_max_cards ) as $candidate ) {
+	$progress = bia_learn_course_progress( $candidate->ID, $user_id );
+	if ( null === $progress || $progress < 100 ) $sorted_courses[] = $candidate;
 }
-
-$bia_total_courses = count( $sorted_courses );
-$sorted_courses    = array_slice( $sorted_courses, 0, $bia_max_cards );
 
 ?>
 <div class="tutor-dashboard-content-inner">
@@ -124,18 +79,18 @@ $sorted_courses    = array_slice( $sorted_courses, 0, $bia_max_cards );
 			?>
 		</div>
 
-		<?php if ( $bia_total_courses > $bia_max_cards ) : ?>
-			<p class="mt-6 text-sm text-ink-light">
-				<?php printf( esc_html__( 'แสดง %1$d จาก %2$d คอร์สที่เรียนล่าสุด — ดูทั้งหมดได้ที่เมนู "คอร์สที่ลงทะเบียน"', 'bia-learn' ), (int) $bia_max_cards, (int) $bia_total_courses ); ?>
-			</p>
-		<?php endif; ?>
 	<?php else : ?>
 		<div class="tutor-dashboard-content-inner text-center py-12 bg-paper-50 rounded-xl border border-dashed border-paper-200">
 			<span class="icon-chip icon-chip-crimson mx-auto mb-4"><?php echo bia_learn_icon( 'book', 'h-5 w-5' ); // phpcs:ignore ?></span>
-			<p class="text-ink-light"><?php esc_html_e( 'คุณยังไม่ได้ลงทะเบียนเรียนคอร์สใดเลย', 'bia-learn' ); ?></p>
+			<p class="text-ink-light"><?php esc_html_e( 'ไม่มีคอร์สที่เรียนค้างไว้ในหน้านี้', 'bia-learn' ); ?></p>
 			<a href="<?php echo esc_url( bia_learn_courses_url() ); ?>" class="bia-tutor-btn mt-4 inline-flex">
 				<?php esc_html_e( 'สำรวจคอร์สเรียน', 'bia-learn' ); ?>
 			</a>
 		</div>
 	<?php endif; ?>
 </div>
+
+<nav aria-label="<?php esc_attr_e( 'หน้าคอร์สเรียนต่อ', 'bia-learn' ); ?>">
+<?php if ( $bia_page > 1 ) : ?><a href="<?php echo esc_url( add_query_arg( 'continue_page', $bia_page - 1 ) ); ?>"><?php esc_html_e( 'ก่อนหน้า', 'bia-learn' ); ?></a><?php endif; ?>
+<?php if ( $bia_has_more ) : ?><a href="<?php echo esc_url( add_query_arg( 'continue_page', $bia_page + 1 ) ); ?>"><?php esc_html_e( 'ถัดไป', 'bia-learn' ); ?></a><?php endif; ?>
+</nav>

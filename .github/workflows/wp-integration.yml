@@ -13,7 +13,7 @@ on:
 
 jobs:
   quiz-ux:
-    name: "Quiz UX JavaScript tests"
+    name: "Theme JavaScript regressions"
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
@@ -22,8 +22,11 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-      - name: Run quiz UI logic tests
-        run: node --test tests/quiz-ux.test.cjs
+          cache: 'npm'
+      - name: Install JavaScript dependencies
+        run: npm ci
+      - name: Run theme JavaScript regressions
+        run: npm run test:js
 
   unit:
     name: "PHPUnit (PHP ${{ matrix.php-version }})"
