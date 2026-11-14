@@ -27,7 +27,7 @@ while ( have_posts() ) :
 			<div class="prose-bia">
 				<?php
 				$bia_content = get_the_content();
-				$bia_is_elementor = isset( $_GET['elementor-preview'] ) || ( class_exists( '\Elementor\Plugin' ) && \Elementor\Plugin::$instance->preview->is_preview_mode() );
+				$bia_is_elementor = isset( $_GET['elementor-preview'] ) || ( class_exists( '\Elementor\Plugin' ) && \Elementor\Plugin::$instance->preview->is_preview_mode() ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only display/preview or navigation input; no state change.
 				if ( trim( $bia_content ) || $bia_is_elementor ) {
 					the_content();
 				} else {

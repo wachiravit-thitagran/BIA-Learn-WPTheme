@@ -16,7 +16,7 @@ $news = new WP_Query(
 	)
 );
 
-if ( ! $news->have_posts() ) {
+if ( $news->post_count < 3 ) {
 	return;
 }
 

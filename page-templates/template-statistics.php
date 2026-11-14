@@ -41,9 +41,9 @@ $cards = array(
 		<!-- Big stat cards -->
 		<div class="grid grid-cols-2 gap-6 lg:grid-cols-4">
 			<?php foreach ( $cards as $card ) : ?>
-				<div class="card flex flex-col items-center gap-3 p-8 text-center" x-data="countUp(<?php echo (int) $card[1]; ?>)">
+				<div class="card flex flex-col items-center gap-3 p-8 text-center">
 					<span class="grid h-16 w-16 place-items-center rounded-2xl <?php echo esc_attr( $card[3] ); ?>"><?php echo bia_learn_icon( $card[0], 'h-8 w-8' ); // phpcs:ignore ?></span>
-					<span class="font-serif text-4xl font-black text-ink sm:text-5xl" x-text="display">0</span>
+					<span class="font-serif text-4xl font-black text-ink sm:text-5xl"><?php echo esc_html( number_format_i18n( $card[1] ) ); ?></span>
 					<span class="text-sm font-medium text-ink-light"><?php echo esc_html( $card[2] ); ?></span>
 				</div>
 			<?php endforeach; ?>
@@ -51,7 +51,7 @@ $cards = array(
 
 		<!-- Page content (editable notes / charts shortcode) -->
 		<?php
-		$bia_is_elementor = isset( $_GET['elementor-preview'] ) || ( class_exists( '\Elementor\Plugin' ) && \Elementor\Plugin::$instance->preview->is_preview_mode() );
+		$bia_is_elementor = isset( $_GET['elementor-preview'] ) || ( class_exists( '\Elementor\Plugin' ) && \Elementor\Plugin::$instance->preview->is_preview_mode() ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only display/preview or navigation input; no state change.
 		if ( trim( $page_content ) || $bia_is_elementor ) : ?>
 			<div class="prose-bia mx-auto mt-16">
 				<?php

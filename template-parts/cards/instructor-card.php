@@ -34,7 +34,7 @@ $courses  = $tutils && method_exists( $tutils, 'get_course_count_by_instructor' 
 	<?php if ( $courses ) : ?>
 		<div class="mt-4 inline-flex items-center gap-1.5 text-xs font-medium text-crimson">
 			<?php echo bia_learn_icon( 'book', 'h-4 w-4' ); // phpcs:ignore ?>
-			<?php printf( esc_html__( '%d คอร์ส', 'bia-learn' ), $courses ); ?>
+			<?php printf( esc_html__( '%d คอร์ส', 'bia-learn' ), esc_html( $courses ) ); ?>
 		</div>
 	<?php endif; ?>
 </article>

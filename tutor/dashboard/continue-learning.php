@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 $user_id = get_current_user_id();
 
 $bia_max_cards = 6;
-$bia_page = max( 1, absint( $_GET['continue_page'] ?? 1 ) );
+$bia_page = max( 1, absint( $_GET['continue_page'] ?? 1 ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only display/preview or navigation input; no state change.
 $bia_candidates = BIA_Learn_Tutor_UX::get_continue_candidates( $user_id, $bia_page, $bia_max_cards );
 $bia_has_more = count( $bia_candidates ) > $bia_max_cards;
 $sorted_courses = array();
@@ -67,7 +67,7 @@ foreach ( array_slice( $bia_candidates, 0, $bia_max_cards ) as $candidate ) {
 						<?php BIA_Learn_Tutor_UX::render_segmented_progress_bar( $course_id, $user_id ); ?>
 
 						<div class="mt-auto pt-4">
-							<a href="<?php echo esc_url( $resume_url ); ?>" class="bia-tutor-btn w-full justify-center">
+							<a href="<?php echo esc_url( $resume_url ); ?>" class="btn-primary w-full justify-center">
 								<?php echo bia_learn_icon( 'play', 'h-4 w-4' ); // phpcs:ignore ?>
 								<?php esc_html_e( 'เรียนต่อ', 'bia-learn' ); ?>
 							</a>
@@ -83,7 +83,7 @@ foreach ( array_slice( $bia_candidates, 0, $bia_max_cards ) as $candidate ) {
 		<div class="tutor-dashboard-content-inner text-center py-12 bg-paper-50 rounded-xl border border-dashed border-paper-200">
 			<span class="icon-chip icon-chip-crimson mx-auto mb-4"><?php echo bia_learn_icon( 'book', 'h-5 w-5' ); // phpcs:ignore ?></span>
 			<p class="text-ink-light"><?php esc_html_e( 'ไม่มีคอร์สที่เรียนค้างไว้ในหน้านี้', 'bia-learn' ); ?></p>
-			<a href="<?php echo esc_url( bia_learn_courses_url() ); ?>" class="bia-tutor-btn mt-4 inline-flex">
+			<a href="<?php echo esc_url( bia_learn_courses_url() ); ?>" class="btn-primary mt-4 inline-flex">
 				<?php esc_html_e( 'สำรวจคอร์สเรียน', 'bia-learn' ); ?>
 			</a>
 		</div>

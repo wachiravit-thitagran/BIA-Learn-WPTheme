@@ -831,9 +831,62 @@
 
 
 
-/* Hide manual mark as complete buttons */
-.tutor-topbar-complete-btn,
-.tutor-spotlight-mobile-progress-right form,
-form:has(input[value="tutor_complete_lesson"]) {
-  display: none !important;
+/* Tutor owns manual completion controls and completion policy. */
+
+/* Keep Tutor's paired text/surface tokens together in both color modes. */
+:is(.tutor-dashboard, .tutor-dashboard-layout, .tutor-account-page-wrapper),
+:is(.tutor-dashboard, .tutor-dashboard-layout, .tutor-account-page-wrapper) [class~="text-ink"],
+:is(.tutor-dashboard, .tutor-dashboard-layout, .tutor-account-page-wrapper) [class~="text-ink-soft"],
+:is(.tutor-dashboard, .tutor-dashboard-layout, .tutor-account-page-wrapper) .tutor-dashboard-content-inner h3 {
+  color: var(--tutor-text-primary, #2f2b3d) !important;
+}
+:is(.tutor-dashboard, .tutor-dashboard-layout, .tutor-account-page-wrapper) [class~="text-ink-light"] {
+  color: var(--tutor-text-secondary, #444050) !important;
+}
+:is(.tutor-dashboard, .tutor-dashboard-layout, .tutor-account-page-wrapper) .tutor-card,
+:is(.tutor-dashboard, .tutor-dashboard-layout, .tutor-account-page-wrapper) .card,
+:is(.tutor-dashboard, .tutor-dashboard-layout, .tutor-account-page-wrapper) .tutor-profile-completion,
+:is(.tutor-dashboard, .tutor-dashboard-layout, .tutor-account-page-wrapper) .tutor-empty-state {
+  background: var(--tutor-surface-l1, #fff) !important;
+  color: var(--tutor-text-primary, #2f2b3d) !important;
+  border-color: var(--tutor-border-idle, #dfdfe3) !important;
+}
+:is(.tutor-dashboard, .tutor-dashboard-layout, .tutor-account-page-wrapper) .tutor-form-label,
+:is(.tutor-dashboard, .tutor-dashboard-layout, .tutor-account-page-wrapper) label {
+  color: var(--tutor-text-primary, #2f2b3d) !important;
+}
+:is(.tutor-dashboard, .tutor-dashboard-layout, .tutor-account-page-wrapper) .tutor-dashboard-permalinks a,
+:is(.tutor-dashboard, .tutor-dashboard-layout, .tutor-account-page-wrapper) .tutor-dashboard-menu-item a {
+  color: var(--tutor-text-primary, #2f2b3d) !important;
+}
+:is(.tutor-dashboard, .tutor-dashboard-layout, .tutor-account-page-wrapper) .tutor-dashboard-permalinks a:hover,
+:is(.tutor-dashboard, .tutor-dashboard-layout, .tutor-account-page-wrapper) .tutor-dashboard-menu-item a:hover {
+  background: var(--tutor-surface-l2, #f0f0f4) !important;
+}
+:is(.tutor-dashboard, .tutor-dashboard-layout, .tutor-account-page-wrapper) .tutor-form-control {
+  background: var(--tutor-surface-l1, #fff) !important;
+  color: var(--tutor-text-primary, #2f2b3d) !important;
+}
+[data-bia-review-error] {
+  padding: 1rem;
+  border: 2px solid currentColor;
+  border-radius: .75rem;
+  color: var(--tutor-text-primary, #2f2b3d);
+  background: var(--tutor-surface-l1, #fff);
+}
+
+
+:is(.tutor-dashboard, .tutor-dashboard-layout, .tutor-account-page-wrapper) .bia-certificates-empty {
+  background: var(--tutor-surface-l1, #fff) !important;
+  color: var(--tutor-text-primary, #2f2b3d) !important;
+  border-color: var(--tutor-border-idle, #dfdfe3) !important;
+}
+:is(.tutor-dashboard, .tutor-dashboard-layout, .tutor-account-page-wrapper) .tcb-dashboard {
+  --tcb-surface: var(--tutor-surface-l1, #fff);
+  --tcb-text: var(--tutor-text-primary, #2f2b3d);
+  --tcb-muted: var(--tutor-text-secondary, #444050);
+  --tcb-border: var(--tutor-border-idle, #dfdfe3);
+}
+:is(.tutor-dashboard, .tutor-dashboard-layout, .tutor-account-page-wrapper) .tcb-dashboard__title {
+  color: var(--tutor-text-primary, #2f2b3d);
 }

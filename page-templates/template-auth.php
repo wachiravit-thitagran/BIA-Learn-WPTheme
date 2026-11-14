@@ -25,8 +25,8 @@ if ( function_exists( 'tutor_utils' ) ) {
 }
 
 // Preserve the requested destination from gated Tutor pages.
-$bia_redirect = isset( $_GET['redirect_to'] )
-	? esc_url_raw( wp_unslash( $_GET['redirect_to'] ) )
+$bia_redirect = isset( $_GET['redirect_to'] ) // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only display/preview or navigation input; no state change.
+	? esc_url_raw( wp_unslash( $_GET['redirect_to'] ) ) // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only display/preview or navigation input; no state change.
 	: $bia_dashboard; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 
 $bia_is_register = isset( $_GET['tab'] ) && 'register' === sanitize_key( wp_unslash( $_GET['tab'] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended

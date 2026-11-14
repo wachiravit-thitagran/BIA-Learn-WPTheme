@@ -75,6 +75,8 @@ function bia_learn_require( $relative ) {
 bia_learn_require( 'setup' );          // Theme supports, menus, image sizes.
 bia_learn_require( 'enqueue' );        // Styles, scripts, fonts.
 bia_learn_require( 'template-tags' );  // Reusable presentation helpers.
+bia_learn_require( 'public-site' );    // Search visibility and browser protections.
+bia_learn_require( 'localization' );   // Reviewed learner-facing Thai fallbacks.
 bia_learn_require( 'widgets' );        // Sidebar + footer widget areas.
 bia_learn_require( 'customizer' );     // Brand / contact / social settings.
 bia_learn_require( 'structured-data' ); // JSON-LD (Organization, breadcrumb, article).

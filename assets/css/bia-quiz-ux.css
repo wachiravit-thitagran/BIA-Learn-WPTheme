@@ -94,7 +94,14 @@
 .tutor-quiz-submission .tutor-quiz-question-indicator {
   font-size: 0.95rem;
   font-weight: 600;
-  color: var(--bia-quiz-crimson);
+  color: var(--bia-quiz-ink);
+}
+
+.tutor-quiz-submission .tutor-quiz-question-title,
+.tutor-quiz-summary-page .tutor-quiz-question-title,
+.bia-quiz-review-dialog h2,
+.bia-quiz-review-dialog h3 {
+  color: var(--tutor-text-primary, #20212a) !important;
 }
 
 .tutor-quiz-submission .tutor-quiz-question {
@@ -134,7 +141,7 @@
 }
 
 .tutor-quiz-submission .tutor-quiz-question-option:has(input:checked):not([data-option]) {
-  border-color: var(--bia-quiz-crimson);
+  border-color: var(--bia-quiz-ink);
   background: color-mix(in srgb, var(--bia-quiz-crimson), transparent 95%);
 }
 

@@ -50,12 +50,12 @@ $stats = bia_learn_get_stats();
 			<div class="mt-8 flex flex-wrap items-center gap-4 text-sm text-paper-300 lg:hidden">
 				<span class="inline-flex items-center gap-2">
 					<?php echo bia_learn_icon( 'book', 'h-4 w-4 text-gold-light' ); // phpcs:ignore ?>
-					<strong class="text-white"><?php echo esc_html( number_format_i18n( $stats['courses'] ) ); ?>+</strong>
+					<strong class="text-white"><?php echo esc_html( number_format_i18n( $stats['courses'] ) ); ?></strong>
 					<?php esc_html_e( 'คอร์ส', 'bia-learn' ); ?>
 				</span>
 				<span class="inline-flex items-center gap-2">
 					<?php echo bia_learn_icon( 'users', 'h-4 w-4 text-gold-light' ); // phpcs:ignore ?>
-					<strong class="text-white"><?php echo esc_html( number_format_i18n( $stats['students'] ) ); ?>+</strong>
+					<strong class="text-white"><?php echo esc_html( number_format_i18n( $stats['students'] ) ); ?></strong>
 					<?php esc_html_e( 'ผู้เรียน', 'bia-learn' ); ?>
 				</span>
 				<span class="inline-flex items-center gap-2">
@@ -74,11 +74,11 @@ $stats = bia_learn_get_stats();
 
 			<div class="mt-6 grid grid-cols-2 gap-4">
 				<div class="rounded-2xl border border-white/15 bg-white/10 px-6 py-5">
-					<p class="font-serif text-3xl font-bold text-white"><?php echo esc_html( number_format_i18n( $stats['courses'] ) ); ?>+</p>
+					<p class="font-serif text-3xl font-bold text-white"><?php echo esc_html( number_format_i18n( $stats['courses'] ) ); ?></p>
 					<p class="mt-1 text-sm text-paper-300"><?php esc_html_e( 'คอร์สเรียน', 'bia-learn' ); ?></p>
 				</div>
 				<div class="rounded-2xl border border-white/15 bg-white/10 px-6 py-5">
-					<p class="font-serif text-3xl font-bold text-white"><?php echo esc_html( number_format_i18n( $stats['students'] ) ); ?>+</p>
+					<p class="font-serif text-3xl font-bold text-white"><?php echo esc_html( number_format_i18n( $stats['students'] ) ); ?></p>
 					<p class="mt-1 text-sm text-paper-300"><?php esc_html_e( 'ผู้เรียน', 'bia-learn' ); ?></p>
 				</div>
 			</div>

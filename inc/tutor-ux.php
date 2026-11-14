@@ -45,10 +45,12 @@ class BIA_Learn_Tutor_UX {
 
 	/** Reply only after Tutor authorized, saved and confirmed this exact lesson. */
 	public static function confirm_lesson_completion( $lesson_id, $user_id ) {
+		// phpcs:disable WordPress.Security.NonceVerification.Missing -- Tutor verifies its nonce before firing tutor_lesson_completed_after.
 		if ( empty( $_POST['bia_complete_and_next'] ) || (int) $user_id !== get_current_user_id()
 			|| (int) $lesson_id !== absint( $_POST['lesson_id'] ?? 0 ) ) {
 			return;
 		}
+		// phpcs:enable WordPress.Security.NonceVerification.Missing
 		if ( tutor_utils()->is_completed_lesson( $lesson_id, $user_id ) !== false ) {
 			wp_send_json_success( array( 'lesson_completed' => true ) );
 		}
@@ -62,6 +64,7 @@ class BIA_Learn_Tutor_UX {
 		$table = $wpdb->prefix . 'tutorlms_analytics_events';
 		$has_tracker = $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $wpdb->esc_like( $table ) ) ) === $table;
 		self::$analytics_table_exists = $has_tracker;
+		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table is the trusted WP prefix; join/order are closed literals, and learner IDs/limits use prepare().
 		$join = '';
 		$order = 'course.post_modified';
 		if ( $has_tracker ) {
@@ -76,6 +79,7 @@ class BIA_Learn_Tutor_UX {
 			ORDER BY {$order} DESC, course.ID DESC LIMIT %d OFFSET %d",
 			$user_id, $user_id, $limit + 1, ( $page - 1 ) * $limit
 		) );
+		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 	}
 
 	/**
@@ -143,7 +147,7 @@ class BIA_Learn_Tutor_UX {
 		?>
 		<div class="mt-4 flex items-center gap-2 text-sm text-ink-light bg-paper-50 px-3 py-2 rounded-lg border border-paper-100 inline-flex w-auto">
 			<?php echo bia_learn_icon( 'clock', 'h-5 w-5 text-primary-500' ); ?>
-			<span><?php printf( esc_html__( 'ใช้เวลาเรียนต่อประมาณ %s', 'bia-learn' ), $time_str ); ?></span>
+			<span><?php printf( esc_html__( 'ใช้เวลาเรียนต่อประมาณ %s', 'bia-learn' ), esc_html( $time_str ) ); ?></span>
 		</div>
 		<?php
 	}
@@ -167,6 +171,7 @@ class BIA_Learn_Tutor_UX {
 			return null;
 		}
 
+		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name is the trusted WP prefix plus a fixed plugin suffix; values are placeholders.
 		$lesson_id = (int) $wpdb->get_var( $wpdb->prepare( "
 			SELECT lesson_id 
 			FROM {$table_name} 
@@ -180,6 +185,7 @@ class BIA_Learn_Tutor_UX {
 			ORDER BY created_at DESC 
 			LIMIT 1
 		", $course_id, $user_id ) );
+		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 
 		if ( $lesson_id > 0 ) {
 			return get_permalink( $lesson_id );

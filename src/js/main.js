@@ -125,141 +125,34 @@ if (window.Alpine) {
   Alpine.start();
 }
 
-/* ---------------------------------------------------------------------------
- * Tutor LMS Auto-complete Lessons
- * ------------------------------------------------------------------------- */
-document.addEventListener('DOMContentLoaded', () => {
-  // Find the complete lesson form
-  const completeForm = document.querySelector('form input[value="tutor_complete_lesson"]')?.closest('form');
-  if (!completeForm) return;
+// Lesson completion belongs to Tutor LMS. Navigation and seeking a video must
+// never mark a lesson complete; Tutor applies the configured completion rules.
 
-  // Tutor 4.0 renders the lesson footer nav as:
-  //   [Previous <a>] [complete <form>] [Next <a>]
-  // The "Next" control is the anchor that follows the complete form. Older Tutor
-  // used a `.tutor-next-link` class that no longer exists in 4.0, which is why
-  // clicking "Next" stopped auto-completing the lesson. Find it structurally,
-  // with fallbacks for the legacy class and other layouts.
-  let nextBtn = null;
-  for (let sib = completeForm.nextElementSibling; sib; sib = sib.nextElementSibling) {
-    if (sib.tagName === 'A' && sib.getAttribute('href')) {
-      nextBtn = sib;
-      break;
-    }
-  }
-  if (!nextBtn) {
-    nextBtn = document.querySelector('.tutor-next-link');
-  }
-  if (!nextBtn) {
-    const footer = completeForm.closest('.tutor-learning-area-footer');
-    const anchors = footer ? footer.querySelectorAll('a[href]') : [];
-    if (anchors.length) {
-      nextBtn = anchors[anchors.length - 1];
-    }
-  }
-
-  let completing = false;
-  const completeAndNavigate = async (href) => {
-    if (completing) return;
-    completing = true;
-    const controller = new AbortController();
-    const timeout = window.setTimeout(() => controller.abort(), 15000);
-    let errorBox = completeForm.querySelector('[data-bia-completion-error]');
-    if (errorBox) errorBox.remove();
-    completeForm.setAttribute('aria-busy', 'true');
-    const formData = new FormData(completeForm);
-    formData.set('bia_complete_and_next', '1');
-    try {
-      const response = await fetch(window.location.href, {
-        method: 'POST', body: formData, credentials: 'same-origin', signal: controller.signal
-      });
-      if (!response.ok) throw new Error('Completion rejected');
-      const result = await response.json();
-      if (result.success !== true || result.data?.lesson_completed !== true) {
-        throw new Error('Completion not confirmed');
-      }
-      if (href) window.location.assign(href);
-    } catch (error) {
-      errorBox = document.createElement('p');
-      errorBox.dataset.biaCompletionError = '1';
-      errorBox.setAttribute('role', 'alert');
-      errorBox.textContent = document.documentElement.lang.startsWith('th')
-        ? 'บันทึกการเรียนไม่สำเร็จ กรุณาลองอีกครั้ง' : 'Could not save lesson completion. Please try again.';
-      completeForm.appendChild(errorBox);
-    } finally {
-      window.clearTimeout(timeout);
-      completing = false;
-      completeForm.removeAttribute('aria-busy');
-    }
-  };
-
-  // 1. Text Lessons: Intercept "Next" button click
-  if (nextBtn) {
-    nextBtn.addEventListener('click', (e) => {
-      e.preventDefault();
-      const href = nextBtn.getAttribute('href');
-      completeAndNavigate(href);
-    });
-  }
-
-  // 2. Video lessons: auto-complete when the video finishes.
-  // Tutor 4.0 wraps videos in a Plyr player (YouTube/Vimeo/HTML5) and no longer
-  // exposes window.tutor_plyr. Instead of relying on Plyr instance internals, we
-  // watch the Plyr seek control, which reports current time (aria-valuenow) and
-  // duration (aria-valuemax) as the video plays; when playback reaches the end we
-  // submit the lesson's complete form once. Native <video> elements are handled
-  // via their "ended" event. This also completes the final lesson, whose "Next"
-  // button is hidden.
-  const submitComplete = () => {
-    const btn = completeForm.querySelector('[name="complete_lesson_btn"]');
-    if (typeof completeForm.requestSubmit === 'function') {
-      completeForm.requestSubmit(btn || undefined);
-    } else {
-      completeForm.submit();
-    }
-  };
-
-  // Skip if this lesson is already completed.
-  let alreadyCompleted = false;
-  try {
-    const trackingEl = document.getElementById('tutor_video_tracking_information');
-    if (trackingEl) {
-      alreadyCompleted = !!JSON.parse(trackingEl.value || '{}').lesson_completed;
-    }
-  } catch (e) {}
-
-  if (!alreadyCompleted) {
-    let videoDone = false;
-    const finish = () => {
-      if (videoDone) return;
-      videoDone = true;
-      submitComplete();
-    };
-
-    // Plyr player (YouTube/Vimeo/HTML5): poll the seek control for end-of-video.
-    const seek = document.querySelector(
-      '.tutor-lesson-video-wrapper input[data-plyr="seek"], .tutor-video-player input[data-plyr="seek"]'
-    );
-    if (seek) {
-      const poll = setInterval(() => {
-        if (videoDone) {
-          clearInterval(poll);
-          return;
-        }
-        const now = parseFloat(seek.getAttribute('aria-valuenow'));
-        const max = parseFloat(seek.getAttribute('aria-valuemax'));
-        if (max > 5 && now >= 0 && now / max >= 0.97) {
-          clearInterval(poll);
-          finish();
-        }
-      }, 2000);
-    }
-
-    // Native HTML5 video fallback.
-    document
-      .querySelectorAll('.tutor-lesson-video-wrapper video, .tutor-video-player video')
-      .forEach((vid) => vid.addEventListener('ended', finish));
-  }
-});
+// Tutor 4.1's legacy review handler uses alert() for missing stars/content.
+// Validate before that delegated handler; valid reviews still use Tutor's save.
+function validateCourseReview(event) {
+  const target = event.target;
+  const form = target.closest?.('form.tutor-course-review-popup-form');
+  if (!form || (event.type === 'click' && !target.closest('.tutor_submit_review_btn'))) return;
+  const rating = Number(form.querySelector('[name="tutor_rating_gen_input"]')?.value);
+  const review = form.querySelector('[name="review"]');
+  const oldError = form.querySelector('[data-bia-review-error]');
+  if (oldError) oldError.remove();
+  if (rating >= 1 && rating <= 5 && review?.value.trim()) return;
+  event.preventDefault();
+  event.stopImmediatePropagation();
+  const error = document.createElement('p');
+  error.dataset.biaReviewError = '1';
+  error.setAttribute('role', 'alert');
+  error.tabIndex = -1;
+  error.textContent = document.documentElement.lang.startsWith('th')
+    ? 'กรุณาเลือกดาวและเขียนรีวิวก่อนส่ง แล้วลองอีกครั้ง'
+    : 'Please select a rating and write a review before submitting.';
+  form.appendChild(error);
+  error.focus();
+}
+document.addEventListener('click', validateCourseReview, true);
+document.addEventListener('submit', validateCourseReview, true);
 
 // Tutor owns accordion expansion; reflect its class changes for assistive tech.
 document.addEventListener('DOMContentLoaded', () => {

@@ -36,7 +36,7 @@ $bia_steps = array(
 	array(
 		'icon'  => 'search',
 		'title' => __( 'ค้นหาคอร์ส', 'bia-learn' ),
-		'desc'  => __( 'เลือกหมวดหมู่หรือค้นหาคอร์สที่สนใจจากคลังคอร์สทั้งหมด', 'bia-learn' ),
+		'desc'  => __( 'ค้นหาคอร์สที่สนใจจากคลังคอร์สทั้งหมด', 'bia-learn' ),
 		'chip'  => 'icon-chip-info',
 	),
 	array(
@@ -44,12 +44,6 @@ $bia_steps = array(
 		'title' => __( 'เริ่มเรียน', 'bia-learn' ),
 		'desc'  => __( 'เรียนบทเรียนและทำแบบทดสอบได้ทุกที่ทุกเวลา ตามจังหวะของคุณ', 'bia-learn' ),
 		'chip'  => 'icon-chip-warning',
-	),
-	array(
-		'icon'  => 'cert',
-		'title' => __( 'รับเกียรติบัตร', 'bia-learn' ),
-		'desc'  => __( 'ทำบทเรียนและแบบทดสอบให้ครบ รับเกียรติบัตรเพื่อยืนยันการเรียนรู้', 'bia-learn' ),
-		'chip'  => 'icon-chip-success',
 	),
 );
 
@@ -66,7 +60,7 @@ $bia_videos = apply_filters( 'bia_learn_tutorial_videos', array() );
 				<?php echo esc_html( get_the_title() ?: __( 'วิธีใช้งานแพลตฟอร์ม', 'bia-learn' ) ); ?>
 			</h1>
 			<p class="dashboard-hero__subtitle max-w-xl text-base">
-				<?php esc_html_e( 'เริ่มต้นเรียนรู้ได้ง่ายๆ ทำตามขั้นตอนและวิดีโอแนะนำด้านล่าง', 'bia-learn' ); ?>
+				<?php esc_html_e( 'เริ่มต้นเรียนรู้ได้ง่ายๆ ทำตามขั้นตอนด้านล่าง', 'bia-learn' ); ?>
 			</p>
 		</div>
 	</section>
@@ -78,7 +72,7 @@ $bia_videos = apply_filters( 'bia_learn_tutorial_videos', array() );
 			bia_learn_section_heading(
 				array(
 					'eyebrow' => __( 'เริ่มต้นง่ายๆ', 'bia-learn' ),
-					'title'   => __( 'เริ่มเรียนใน 4 ขั้นตอน', 'bia-learn' ),
+					'title'   => __( 'เริ่มเรียนใน 3 ขั้นตอน', 'bia-learn' ),
 				)
 			);
 			?>
@@ -87,7 +81,7 @@ $bia_videos = apply_filters( 'bia_learn_tutorial_videos', array() );
 					<div class="stat-card flex flex-col gap-3">
 						<div class="flex items-center gap-3">
 							<span class="icon-chip <?php echo esc_attr( $step['chip'] ); ?>"><?php echo bia_learn_icon( $step['icon'], 'h-5 w-5' ); // phpcs:ignore ?></span>
-							<span class="text-sm font-semibold text-crimson"><?php printf( esc_html__( 'ขั้นที่ %d', 'bia-learn' ), $i + 1 ); ?></span>
+							<span class="text-sm font-semibold text-crimson"><?php printf( esc_html__( 'ขั้นที่ %d', 'bia-learn' ), esc_html( $i + 1 ) ); ?></span>
 						</div>
 						<h3 class="font-sans text-lg font-bold text-ink"><?php echo esc_html( $step['title'] ); ?></h3>
 						<p class="text-sm leading-relaxed text-ink-light"><?php echo esc_html( $step['desc'] ); ?></p>
@@ -163,7 +157,7 @@ $bia_videos = apply_filters( 'bia_learn_tutorial_videos', array() );
 	while ( have_posts() ) :
 		the_post();
 		$bia_content = get_the_content();
-		$bia_is_elementor = isset( $_GET['elementor-preview'] ) || ( class_exists( '\Elementor\Plugin' ) && \Elementor\Plugin::$instance->preview->is_preview_mode() );
+		$bia_is_elementor = isset( $_GET['elementor-preview'] ) || ( class_exists( '\Elementor\Plugin' ) && \Elementor\Plugin::$instance->preview->is_preview_mode() ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only display/preview or navigation input; no state change.
 		if ( trim( $bia_content ) || $bia_is_elementor ) :
 			?>
 			<section class="section-tight">

@@ -301,7 +301,7 @@ add_action( 'admin_init', 'bia_learn_register_supporting_pages' );
  * authentication keeps working normally.
  */
 function bia_learn_redirect_wp_login() {
-	if ( 'GET' !== strtoupper( isset( $_SERVER['REQUEST_METHOD'] ) ? $_SERVER['REQUEST_METHOD'] : 'GET' ) ) {
+	if ( 'GET' !== strtoupper( isset( $_SERVER['REQUEST_METHOD'] ) ? sanitize_text_field( wp_unslash( $_SERVER['REQUEST_METHOD'] ) ) : 'GET' ) ) {
 		return;
 	}
 	// Authorizenter's administrator escape hatch (?external=wordpress) is the one
@@ -617,6 +617,11 @@ function bia_learn_flush_stats_cache() {
 	delete_transient( 'bia_learn_stats' );
 }
 add_action( 'save_post_courses', 'bia_learn_flush_stats_cache' );
+add_action( 'save_post_lesson', 'bia_learn_flush_stats_cache' );
+add_action( 'deleted_post', 'bia_learn_flush_stats_cache', 10, 0 );
+add_action( 'user_register', 'bia_learn_flush_stats_cache', 10, 0 );
+add_action( 'deleted_user', 'bia_learn_flush_stats_cache', 10, 0 );
+add_action( 'set_user_role', 'bia_learn_flush_stats_cache', 10, 0 );
 add_action( 'tutor_after_enroll', 'bia_learn_flush_stats_cache' );
 add_action( 'tutor_course_complete_after', 'bia_learn_flush_stats_cache' );
 
@@ -753,7 +758,7 @@ function bia_learn_render_course_reviews( $course_id ) {
 				<div class="mt-2 flex items-center gap-2">
 					<span class="font-sans text-2xl font-bold text-ink"><?php echo esc_html( number_format( $avg, 1 ) ); ?></span>
 					<?php echo bia_learn_star_row( $avg ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
-					<span class="text-xs text-ink-light"><?php printf( esc_html__( '(%d รีวิว)', 'bia-learn' ), $count ); ?></span>
+					<span class="text-xs text-ink-light"><?php printf( esc_html__( '(%d รีวิว)', 'bia-learn' ), esc_html( $count ) ); ?></span>
 				</div>
 
 				<ul class="mt-4 space-y-4">
@@ -777,7 +782,7 @@ function bia_learn_render_course_reviews( $course_id ) {
 				</ul>
 
 				<?php if ( $count > 5 ) : ?>
-					<p class="mt-4 text-xs text-ink-light"><?php printf( esc_html__( 'และอีก %d รีวิว', 'bia-learn' ), $count - 5 ); ?></p>
+					<p class="mt-4 text-xs text-ink-light"><?php printf( esc_html__( 'และอีก %d รีวิว', 'bia-learn' ), esc_html( $count - 5 ) ); ?></p>
 				<?php endif; ?>
 			<?php endif; ?>
 		</div>

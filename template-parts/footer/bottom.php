@@ -14,7 +14,7 @@ if ( ! $copyright ) {
 }
 ?>
 <div class="border-t border-white/10">
-	<div class="container-bia py-6 text-xs text-paper-400">
+	<div class="container-bia py-6 text-xs text-paper-300">
 
 		<!-- Institutional credit -->
 		<div class="space-y-1 text-center leading-relaxed [&_a]:text-paper-300 [&_a:hover]:text-gold-light">
@@ -27,7 +27,7 @@ if ( ! $copyright ) {
 			<p>
 				<?php esc_html_e( 'อีเมล:', 'bia-learn' ); ?>
 				<a href="mailto:bia@psu.ac.th">bia@psu.ac.th</a>
-				<span class="px-1 text-paper-500">&middot;</span>
+				<span class="px-1 text-paper-300">&middot;</span>
 				<?php esc_html_e( 'Line ID:', 'bia-learn' ); ?>
 				<a href="https://line.me/ti/p/@biaxpsu" target="_blank" rel="noopener noreferrer">@BIAxPSU</a>
 			</p>
@@ -49,7 +49,7 @@ if ( ! $copyright ) {
 					)
 				);
 			} else {
-				echo '<p class="text-paper-500">' . esc_html__( 'พัฒนาเพื่อการเรียนรู้และเผยแผ่ธรรม', 'bia-learn' ) . '</p>';
+				echo '<p class="text-paper-300">' . esc_html__( 'พัฒนาเพื่อการเรียนรู้และเผยแผ่ธรรม', 'bia-learn' ) . '</p>';
 			}
 			?>
 		</div>

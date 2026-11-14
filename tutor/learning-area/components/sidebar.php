@@ -82,7 +82,7 @@ $bia_passed_progress = BIA_Learn_Tutor_UX::get_course_passed_progress( $tutor_co
 		<div class="tutor-learning-progress">
 			<div class="tutor-learning-progress-content">
 				<div class="tutor-learning-progress-text tutor-py-2">
-					<?php printf( esc_html__( '%1$d/%2$d ผ่านแล้ว', 'bia-learn' ), $bia_passed_progress['completed'], $bia_passed_progress['total'] ); ?>
+					<?php printf( esc_html__( '%1$d/%2$d ผ่านแล้ว', 'bia-learn' ), esc_html( $bia_passed_progress['completed'] ), esc_html( $bia_passed_progress['total'] ) ); ?>
 				</div>
 				<div class="tutor-flex">
 					<?php

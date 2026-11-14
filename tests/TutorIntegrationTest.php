@@ -68,6 +68,7 @@ class TutorIntegrationTest extends TestCase {
 		$_GET                      = array( 'external' => 'wordpress' );
 
 		Monkey\Functions\when( 'sanitize_key' )->returnArg();
+		Monkey\Functions\when( 'sanitize_text_field' )->returnArg();
 		Monkey\Functions\when( 'wp_unslash' )->returnArg();
 		Monkey\Functions\expect( 'get_page_by_path' )->never();
 		Monkey\Functions\expect( 'wp_safe_redirect' )->never();

@@ -53,7 +53,7 @@ class BIA_Learn_Tutor_Social {
 			LIMIT %d
 		", $limit );
 
-		$results = $wpdb->get_results( $query );
+		$results = $wpdb->get_results( $query ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- $query is prepared immediately above with placeholders.
 		$activities = array();
 
 		foreach ( $results as $row ) {
@@ -174,7 +174,7 @@ class BIA_Learn_Tutor_Social {
 				<?php endforeach; ?>
 			</div>
 			<div class="text-sm text-ink-light">
-				<?php printf( wp_kses_post( __( 'เรียนร่วมกับเพื่อนอีก <strong>%d</strong> คน', 'bia-learn' ) ), $total_enrolled ); ?>
+				<?php printf( wp_kses_post( __( 'มีผู้ลงทะเบียนเรียน <strong>%d</strong> คน', 'bia-learn' ) ), esc_html( $total_enrolled ) ); ?>
 			</div>
 		</div>
 		<?php
@@ -245,7 +245,7 @@ class BIA_Learn_Tutor_Social {
 			LIMIT 1
 		", $course_id );
 
-		return $wpdb->get_row( $query );
+		return $wpdb->get_row( $query ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- $query is prepared immediately above with placeholders.
 	}
 }
 

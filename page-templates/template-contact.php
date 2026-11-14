@@ -3,7 +3,7 @@
  * Template Name: ติดต่อเรา (Contact)
  *
  * Renders a contact form (uses Contact Form 7 / WPForms shortcode if placed in
- * the page content; otherwise a native mailto-style form) alongside contact
+ * the page content; otherwise an explicit contact link) alongside contact
  * details and an optional Google Map embed from the Customizer.
  *
  * @package BIA_Learn
@@ -25,7 +25,7 @@ while ( have_posts() ) :
 		array(
 			'eyebrow'  => __( 'ติดต่อ', 'bia-learn' ),
 			'title'    => get_the_title(),
-			'subtitle' => __( 'มีคำถามเกี่ยวกับคอร์สเรียนหรือการใช้งาน? ส่งข้อความถึงเราได้เลย', 'bia-learn' ),
+			'subtitle' => __( 'มีคำถามเกี่ยวกับคอร์สเรียนหรือการใช้งาน? ติดต่อทีมงานผ่านช่องทางด้านล่าง', 'bia-learn' ),
 		)
 	);
 	?>
@@ -65,7 +65,7 @@ while ( have_posts() ) :
 				<div class="card p-8">
 					<?php
 					$bia_content = get_the_content();
-					$bia_is_elementor = isset( $_GET['elementor-preview'] ) || ( class_exists( '\Elementor\Plugin' ) && \Elementor\Plugin::$instance->preview->is_preview_mode() );
+					$bia_is_elementor = isset( $_GET['elementor-preview'] ) || ( class_exists( '\Elementor\Plugin' ) && \Elementor\Plugin::$instance->preview->is_preview_mode() ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only display/preview or navigation input; no state change.
 					if ( trim( $bia_content ) || $bia_is_elementor ) {
 						// Allow Contact Form 7 / WPForms shortcode placed in the page body.
 						echo '<div class="bia-contact-form [&_input]:field [&_textarea]:field [&_label]:field-label">';
@@ -73,16 +73,12 @@ while ( have_posts() ) :
 						echo '</div>';
 					} else {
 						?>
-						<form class="grid gap-5" method="post" action="<?php echo esc_url( $email ? 'mailto:' . antispambot( $email ) : '#' ); ?>" enctype="text/plain">
-							<div class="grid gap-5 sm:grid-cols-2">
-								<div><label class="field-label" for="cf-name"><?php esc_html_e( 'ชื่อ-นามสกุล', 'bia-learn' ); ?></label><input class="field" id="cf-name" name="name" type="text" required></div>
-								<div><label class="field-label" for="cf-email"><?php esc_html_e( 'อีเมล', 'bia-learn' ); ?></label><input class="field" id="cf-email" name="email" type="email" required></div>
-							</div>
-							<div><label class="field-label" for="cf-subject"><?php esc_html_e( 'หัวข้อ', 'bia-learn' ); ?></label><input class="field" id="cf-subject" name="subject" type="text"></div>
-							<div><label class="field-label" for="cf-message"><?php esc_html_e( 'ข้อความ', 'bia-learn' ); ?></label><textarea class="field" id="cf-message" name="message" rows="5" required></textarea></div>
-							<button type="submit" class="btn-primary justify-self-start btn-lg"><?php esc_html_e( 'ส่งข้อความ', 'bia-learn' ); ?><?php echo bia_learn_icon( 'arrow', 'h-5 w-5' ); // phpcs:ignore ?></button>
-							<p class="text-xs text-ink-light"><?php esc_html_e( 'เคล็ดลับ: ติดตั้งปลั๊กอินฟอร์ม เช่น Contact Form 7 แล้ววางช็อตโค้ดในหน้านี้เพื่อใช้งานฟอร์มเต็มรูปแบบ', 'bia-learn' ); ?></p>
-						</form>
+						<p class="text-ink-soft"><?php esc_html_e( 'สอบถามข้อมูลผ่านช่องทางติดต่อที่ระบุในหน้านี้', 'bia-learn' ); ?></p>
+						<?php if ( $email ) : ?>
+							<a class="btn-primary mt-5" href="<?php echo esc_url( 'mailto:' . $email ); ?>"><?php esc_html_e( 'ติดต่อทางอีเมล', 'bia-learn' ); ?></a>
+						<?php elseif ( ! $phone && ! $address ) : ?>
+							<p class="mt-4 text-ink-soft"><?php esc_html_e( 'ช่องทางติดต่อกำลังปรับปรุง กรุณากลับมาตรวจสอบอีกครั้ง', 'bia-learn' ); ?></p>
+						<?php endif; ?>
 						<?php
 					}
 					?>

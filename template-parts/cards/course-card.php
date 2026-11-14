@@ -167,7 +167,7 @@ $level_labels = array(
 				}
 				?>
 				<a href="<?php echo esc_url( $continue_url ); ?>" class="mt-3 inline-flex items-center gap-1.5 text-sm font-semibold text-crimson hover:text-crimson-dark">
-					<?php echo ( $progress > 0 ) ? esc_html__( 'เรียนต่อ', 'bia-learn' ) : esc_html__( 'เริ่มเรียน', 'bia-learn' ); ?>
+					<?php echo $episode_lock ? esc_html__( 'ดูเงื่อนไขการปลดล็อก', 'bia-learn' ) : ( ( $progress > 0 ) ? esc_html__( 'เรียนต่อ', 'bia-learn' ) : esc_html__( 'เริ่มเรียน', 'bia-learn' ) ); ?>
 					<?php echo bia_learn_icon( 'arrow', 'h-4 w-4 transition group-hover:translate-x-1' ); // phpcs:ignore ?>
 				</a>
 			</div>

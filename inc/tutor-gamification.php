@@ -46,7 +46,7 @@ class BIA_Learn_Tutor_Gamification {
 			ORDER BY active_date DESC
 		", $user_id, $wpdb->esc_like( '_tutor_completed_lesson_id_' ) . '%' );
 
-		$results = $wpdb->get_col( $query );
+		$results = $wpdb->get_col( $query ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- $query is prepared immediately above with placeholders.
 
 		if ( empty( $results ) ) {
 			return array( 'current_streak' => 0, 'active_today' => false, 'longest_streak' => 0 );
@@ -120,7 +120,7 @@ class BIA_Learn_Tutor_Gamification {
 				</div>
 				<div>
 					<h4 class="font-sans text-lg font-bold <?php echo esc_attr( $text_color ); ?> m-0 mb-1">
-						<?php printf( esc_html__( '%d Day Streak!', 'bia-learn' ), $streak['current_streak'] ); ?>
+						<?php printf( esc_html__( '%d Day Streak!', 'bia-learn' ), esc_html( $streak['current_streak'] ) ); ?>
 					</h4>
 					<p class="text-sm text-ink-light m-0">
 						<?php if ( $streak['active_today'] ) : ?>
@@ -160,7 +160,7 @@ class BIA_Learn_Tutor_Gamification {
 				</div>
 				<div>
 					<h4 class="font-sans text-sm font-bold text-ink m-0">
-						<?php printf( esc_html__( '%d Day Streak!', 'bia-learn' ), $streak['current_streak'] ); ?>
+						<?php printf( esc_html__( '%d Day Streak!', 'bia-learn' ), esc_html( $streak['current_streak'] ) ); ?>
 					</h4>
 					<p class="text-xs text-ink-light m-0 mt-0.5">
 						<?php echo $streak['active_today'] ? esc_html__( 'Streak secured today!', 'bia-learn' ) : esc_html__( 'Learn today to keep it!', 'bia-learn' ); ?>

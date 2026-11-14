@@ -280,11 +280,11 @@ add_filter(
  * Provides the [authorizenter_login] buttons above the disabled form.
  */
 function bia_learn_sso_login_message( $message ) {
-	$action = isset( $_GET['action'] ) ? sanitize_text_field( wp_unslash( $_GET['action'] ) ) : 'login';
+	$action = isset( $_GET['action'] ) ? sanitize_text_field( wp_unslash( $_GET['action'] ) ) : 'login'; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only display/preview or navigation input; no state change.
 
 	// The native WordPress screen is reserved for the administrator escape hatch.
 	// Do not mix SSO controls into that emergency credential-only surface.
-	$external = isset( $_GET['external'] ) ? sanitize_key( wp_unslash( $_GET['external'] ) ) : '';
+	$external = isset( $_GET['external'] ) ? sanitize_key( wp_unslash( $_GET['external'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only display/preview or navigation input; no state change.
 	if ( 'wordpress' === $external || 'login' !== $action ) {
 		return $message;
 	}

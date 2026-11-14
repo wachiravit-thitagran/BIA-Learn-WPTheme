@@ -25,13 +25,13 @@ get_template_part( 'template-parts/courses/catalog-header' );
 
 $get = array();
 if ( isset( $_GET['course_filter'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-	$get = array_map(
-		'sanitize_text_field',
-		wp_unslash( (array) $_GET ) // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-	);
+	$get = map_deep(
+		array_intersect_key( wp_unslash( $_GET ), array_flip( array( 'course_filter', 'course_order', 'keyword', 'current_page', 'tutor-course-filter-category', 'tutor-course-filter-tag', 'tutor-course-filter-level', 'tutor-course-filter-price' ) ) ), // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only filters are allowlisted and sanitized.
+		'sanitize_text_field'
+	); // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only filters.
 }
 
-if ( isset( $get['course_filter'] ) && class_exists( '\\Tutor\\Course_Filter' ) ) {
+if ( isset( $get['course_filter'] ) && class_exists( '\TUTOR\Course_Filter' ) ) {
 	$filter = ( new \Tutor\Course_Filter( false ) )->load_listing( $get, true );
 	query_posts( $filter ); // phpcs:ignore WordPress.WP.DiscouragedFunctions.query_posts_query_posts
 }

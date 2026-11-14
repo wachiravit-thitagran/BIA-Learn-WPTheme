@@ -7,7 +7,7 @@
   'use strict';
 
   const thai = {
-    intro: 'โปรดตรวจสอบจำนวนข้อ เวลาที่กำหนด และเกณฑ์ผ่านก่อนเริ่มทำแบบทดสอบ',
+    intro: 'โปรดตรวจสอบรายละเอียดและเกณฑ์ผ่านก่อนเริ่มทำแบบทดสอบ',
     reviewTitle: 'ตรวจทานก่อนส่งข้อสอบ',
     reviewDescription: 'คุณยังแก้ไขคำตอบได้ก่อนยืนยันส่งข้อสอบ',
     resultAttempt: 'ผลสอบครั้งนี้',
@@ -23,7 +23,7 @@
   };
 
   const english = {
-    intro: 'Check the question count, time limit and passing score before you begin.',
+    intro: 'Check the quiz details and passing score before you begin.',
     reviewTitle: 'Review before submitting',
     reviewDescription: 'You can still edit your answers before you confirm submission.',
     resultAttempt: 'This attempt',

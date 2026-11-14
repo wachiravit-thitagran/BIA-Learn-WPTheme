@@ -16,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 if ( empty( $certificates ) ) {
 	?>
-	<div class="mt-12 mx-auto max-w-md rounded-2xl border border-paper-200 bg-white p-8 text-center shadow-soft">
+	<div class="bia-certificates-empty mt-12 mx-auto max-w-md rounded-2xl border border-paper-200 bg-white p-8 text-center shadow-soft">
 		<span class="mx-auto grid h-16 w-16 place-items-center rounded-full bg-paper-100 text-ink-light">
 			<?php echo bia_learn_icon( 'cert', 'h-8 w-8' ); // phpcs:ignore ?>
 		</span>
@@ -63,7 +63,7 @@ if ( empty( $certificates ) ) {
 				
 				<?php if ( ! empty( $cert['certificate_url'] ) ) : ?>
 					<div class="mt-auto pt-5">
-						<a href="<?php echo esc_url( $cert['certificate_url'] ); ?>" target="_blank" rel="noopener noreferrer" class="bia-tutor-btn w-full justify-center">
+						<a href="<?php echo esc_url( $cert['certificate_url'] ); ?>" target="_blank" rel="noopener noreferrer" class="btn-primary w-full justify-center">
 							<?php esc_html_e( 'ดูใบประกาศนียบัตร', 'bia-learn' ); ?>
 						</a>
 					</div>

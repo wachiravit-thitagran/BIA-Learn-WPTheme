@@ -16,7 +16,7 @@ bia_learn_page_hero(
 	array(
 		'eyebrow'    => __( 'ค้นหา', 'bia-learn' ),
 		/* translators: %s: search term */
-		'title'      => sprintf( __( 'ผลการค้นหา “%s”', 'bia-learn' ), esc_html( get_search_query() ) ),
+		'title'      => sprintf( __( 'ผลการค้นหา “%s”', 'bia-learn' ), esc_html( get_search_query( false ) ) ),
 		/* translators: %d: result count */
 		'subtitle'   => sprintf( _n( 'พบ %d รายการ', 'พบ %d รายการ', $count, 'bia-learn' ), $count ),
 		'breadcrumb' => false,

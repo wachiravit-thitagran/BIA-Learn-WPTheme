@@ -10,13 +10,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 $user_id = get_current_user_id();
-if ( isset( $_GET['attempt_id'] ) ) {
+if ( isset( $_GET['attempt_id'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only display/preview or navigation input; no state change.
 	// Keep Tutor's own visibility and owner/instructor authorization checks.
 	include tutor()->path . 'templates/dashboard/my-quiz-attempts/attempts-details.php';
 	return;
 }
 global $wpdb;
-$bia_page = max( 1, absint( $_GET['attempt_page'] ?? 1 ) );
+$bia_page = max( 1, absint( $_GET['attempt_page'] ?? 1 ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only display/preview or navigation input; no state change.
 $bia_limit = 20;
 $attempts = $wpdb->get_results( $wpdb->prepare(
 	"SELECT * FROM {$wpdb->prefix}tutor_quiz_attempts WHERE user_id = %d AND attempt_status <> 'attempt_started' ORDER BY attempt_id DESC LIMIT %d OFFSET %d",

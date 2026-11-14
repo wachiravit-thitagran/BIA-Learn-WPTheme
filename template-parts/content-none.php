@@ -15,7 +15,7 @@ defined( 'ABSPATH' ) || exit;
 
 	<?php if ( is_search() ) : ?>
 		<p class="mt-3 text-ink-light"><?php esc_html_e( 'ไม่พบผลลัพธ์ที่ตรงกับคำค้นหา ลองใช้คำอื่นดูอีกครั้ง', 'bia-learn' ); ?></p>
-		<div class="mt-6"><?php get_search_form(); ?></div>
+
 	<?php else : ?>
 		<p class="mt-3 text-ink-light"><?php esc_html_e( 'ยังไม่มีเนื้อหาในส่วนนี้ โปรดกลับมาใหม่อีกครั้ง', 'bia-learn' ); ?></p>
 		<a href="<?php echo esc_url( home_url( '/' ) ); ?>" class="btn-primary mt-6"><?php esc_html_e( 'กลับหน้าแรก', 'bia-learn' ); ?></a>

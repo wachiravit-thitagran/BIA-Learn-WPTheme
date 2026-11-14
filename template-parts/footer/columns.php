@@ -25,8 +25,8 @@ $socials = array_filter(
 	<!-- Brand + about -->
 	<div class="lg:col-span-4">
 		<div class="flex items-center gap-3">
-			<span class="grid h-12 w-12 place-items-center rounded-xl bg-white/10">
-				<img src="<?php echo esc_url( BIA_LEARN_URI . '/assets/images/pagoda-logo.png' ); ?>" alt="<?php echo esc_attr( get_bloginfo( 'name' ) ); ?>" width="83" height="83" class="h-8 w-8 object-contain" loading="lazy" />
+			<span class="inline-flex h-12 shrink-0 items-center rounded-xl bg-white p-2">
+				<img src="<?php echo esc_url( BIA_LEARN_URI . '/assets/images/biaxpsu-logo.png' ); ?>" alt="<?php echo esc_attr( get_bloginfo( 'name' ) ); ?>" width="273" height="142" class="h-8 w-auto object-contain" loading="lazy" />
 			</span>
 			<span class="font-serif text-xl font-bold text-white"><?php bloginfo( 'name' ); ?></span>
 		</div>
@@ -63,6 +63,8 @@ $socials = array_filter(
 				printf( '<li><a href="%s">%s</a></li>', esc_url( bia_learn_courses_url() ), esc_html__( 'คอร์สเรียนทั้งหมด', 'bia-learn' ) );
 				printf( '<li><a href="%s">%s</a></li>', esc_url( bia_learn_page_url( 'instructors' ) ), esc_html__( 'ผู้สอน', 'bia-learn' ) );
 				printf( '<li><a href="%s">%s</a></li>', esc_url( bia_learn_news_url() ), esc_html__( 'ข่าวสาร', 'bia-learn' ) );
+				printf( '<li><a href="%s">%s</a></li>', esc_url( bia_learn_page_url( 'tutorial' ) ), esc_html__( 'วิธีใช้งาน', 'bia-learn' ) );
+				printf( '<li><a href="%s">%s</a></li>', esc_url( bia_learn_page_url( 'statistics' ) ), esc_html__( 'สถิติการเรียนรู้', 'bia-learn' ) );
 				printf( '<li><a href="%s">%s</a></li>', esc_url( bia_learn_page_url( 'faq' ) ), esc_html__( 'คำถามที่พบบ่อย', 'bia-learn' ) );
 				printf( '<li><a href="%s">%s</a></li>', esc_url( bia_learn_page_url( 'about' ) ), esc_html__( 'เกี่ยวกับเรา', 'bia-learn' ) );
 				printf( '<li><a href="%s">%s</a></li>', esc_url( bia_learn_page_url( 'contact' ) ), esc_html__( 'ติดต่อเรา', 'bia-learn' ) );
@@ -75,6 +77,9 @@ $socials = array_filter(
 	<!-- Contact -->
 	<div class="lg:col-span-3">
 		<h3 class="mb-4 font-serif text-base font-bold text-white/90"><?php esc_html_e( 'ติดต่อเรา', 'bia-learn' ); ?></h3>
+		<?php if ( ! $address && ! $phone && ! $email ) : ?>
+			<p class="text-sm text-paper-200"><?php esc_html_e( 'ช่องทางติดต่อกำลังปรับปรุง', 'bia-learn' ); ?></p>
+		<?php endif; ?>
 		<ul class="space-y-3 text-sm text-paper-300">
 			<?php if ( $address ) : ?>
 				<li class="flex gap-2.5"><?php echo bia_learn_icon( 'pin', 'mt-0.5 h-4 w-4 shrink-0 text-gold-light' ); // phpcs:ignore ?><span><?php echo wp_kses_post( $address ); ?></span></li>

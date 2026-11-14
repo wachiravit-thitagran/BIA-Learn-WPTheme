@@ -50,7 +50,10 @@ function bia_learn_breadcrumb() {
 	} elseif ( is_category() || is_tag() || is_tax() ) {
 		$items[] = '<span class="text-ink-soft">' . esc_html( single_term_title( '', false ) ) . '</span>';
 	} elseif ( is_search() ) {
-		$items[] = '<span class="text-ink-soft">' . sprintf( /* translators: %s: search term */ esc_html__( 'ผลการค้นหา: %s', 'bia-learn' ), esc_html( get_search_query() ) ) . '</span>';
+		$items[] = '<span class="text-ink-soft">' . sprintf( /* translators: %s: search term */ esc_html__( 'ผลการค้นหา: %s', 'bia-learn' ), esc_html( get_search_query( false ) ) ) . '</span>';
+	} elseif ( is_home() ) {
+		$blog_id = (int) get_option( 'page_for_posts' );
+		$items[] = '<span class="text-ink-soft">' . esc_html( $blog_id ? get_the_title( $blog_id ) : __( 'ข่าวสาร', 'bia-learn' ) ) . '</span>';
 	} elseif ( is_archive() ) {
 		$items[] = '<span class="text-ink-soft">' . esc_html( wp_strip_all_tags( get_the_archive_title() ) ) . '</span>';
 	} elseif ( is_404() ) {
@@ -310,7 +313,7 @@ function bia_learn_get_stats() {
 
 		$stats['students'] = isset( $user_counts['avail_roles']['subscriber'] )
 			? (int) $user_counts['avail_roles']['subscriber']
-			: (int) $user_counts['total_users'];
+			: 0;
 
 		if ( method_exists( $tutils, 'get_total_instructors' ) ) {
 			$instructor_count     = $tutils->get_total_instructors();
