@@ -26,7 +26,7 @@ if ( ! $copyright ) {
 			</p>
 			<p>
 				<?php esc_html_e( 'อีเมล:', 'bia-learn' ); ?>
-				<a href="mailto:bia@psu.ac.th">bia@psu.ac.th</a>
+				<a href="mailto:support@psu.ac.th">support@psu.ac.th</a>
 				<span class="px-1 text-paper-300">&middot;</span>
 				<?php esc_html_e( 'Line ID:', 'bia-learn' ); ?>
 				<a href="https://line.me/ti/p/@biaxpsu" target="_blank" rel="noopener noreferrer">@BIAxPSU</a>
