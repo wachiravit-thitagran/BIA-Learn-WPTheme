@@ -114,7 +114,7 @@ function bia_learn_course_readability_styles() {
 	}
 	?>
 	<style id="bia-learn-course-readability">
-	.bia-course-overview{max-width:72ch;margin-inline:auto;padding:clamp(8px,2vw,24px) 0 24px;color:#35303e;font-size:16px;line-height:1.9}
+	.bia-course-overview{max-width:none;width:100%;margin-inline:0;padding:16px 0 24px;color:#35303e;font-size:16px;line-height:1.9}
 	.bia-course-overview h2{font-size:clamp(23px,2.4vw,29px);font-weight:750;line-height:1.4;margin:0 0 18px;color:#2f2b3d}
 	.bia-course-overview h3{font-size:19px;font-weight:700;line-height:1.45;margin:30px 0 12px;color:#80202d}
 	.bia-course-overview p{margin:0 0 20px;line-height:1.95}
