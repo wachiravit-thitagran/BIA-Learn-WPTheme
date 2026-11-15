@@ -8,9 +8,11 @@
 defined( 'ABSPATH' ) || exit;
 
 $about   = bia_learn_option( 'bia_footer_about' );
-$address = bia_learn_option( 'bia_contact_address' );
-$phone   = bia_learn_option( 'bia_contact_phone' );
-$email   = bia_learn_option( 'bia_contact_email' );
+// Official DIIS contacts for the learning platform. Site-owner customizer values
+// remain available for other uses but the footer should always show the office.
+$address = 'สำนักนวัตกรรมดิจิทัลและระบบอัจฉริยะ มหาวิทยาลัยสงขลานครินทร์ 15 ถ.กาญจนวณิชย์ ต.คอหงส์ อ.หาดใหญ่ จ.สงขลา 90110';
+$phone   = '0-7428-2101';
+$email   = 'support@psu.ac.th';
 
 $socials = array_filter(
 	array(
@@ -77,9 +79,7 @@ $socials = array_filter(
 	<!-- Contact -->
 	<div class="lg:col-span-3">
 		<h3 class="mb-4 font-serif text-base font-bold text-white/90"><?php esc_html_e( 'ติดต่อเรา', 'bia-learn' ); ?></h3>
-		<?php if ( ! $address && ! $phone && ! $email ) : ?>
-			<p class="text-sm text-paper-200"><?php esc_html_e( 'ช่องทางติดต่อกำลังปรับปรุง', 'bia-learn' ); ?></p>
-		<?php endif; ?>
+		<p class="mb-4 text-sm leading-relaxed text-paper-300"><?php echo esc_html( 'สำนักนวัตกรรมดิจิทัลและระบบอัจฉริยะ มหาวิทยาลัยสงขลานครินทร์' ); ?></p>
 		<ul class="space-y-3 text-sm text-paper-300">
 			<?php if ( $address ) : ?>
 				<li class="flex gap-2.5"><?php echo bia_learn_icon( 'pin', 'mt-0.5 h-4 w-4 shrink-0 text-gold-light' ); // phpcs:ignore ?><span><?php echo wp_kses_post( $address ); ?></span></li>
@@ -90,6 +90,7 @@ $socials = array_filter(
 			<?php if ( $email ) : ?>
 				<li class="flex gap-2.5"><?php echo bia_learn_icon( 'mail', 'mt-0.5 h-4 w-4 shrink-0 text-gold-light' ); // phpcs:ignore ?><a href="mailto:<?php echo esc_attr( $email ); ?>"><?php echo esc_html( $email ); ?></a></li>
 			<?php endif; ?>
+			<li><a class="underline underline-offset-2 hover:text-gold-light" href="https://diis.psu.ac.th/" target="_blank" rel="noopener noreferrer"><?php esc_html_e( 'เว็บไซต์สำนักนวัตกรรมดิจิทัลและระบบอัจฉริยะ', 'bia-learn' ); ?></a></li>
 		</ul>
 	</div>
 </div>
