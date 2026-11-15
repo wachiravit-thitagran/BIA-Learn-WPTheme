@@ -1,0 +1,37 @@
+name: One-time branch cleanup
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/one-time-branch-cleanup.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  delete-merged-branches:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Remove all non-main branches
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          mapfile -t branches < <(gh api "repos/$REPO/branches?per_page=100" --paginate --jq '.[].name')
+          for branch in "${branches[@]}"; do
+            if [[ "$branch" == "main" ]]; then
+              continue
+            fi
+            printf 'Deleting branch: %s\n' "$branch"
+            gh api -X DELETE "repos/$REPO/git/refs/heads/$branch"
+          done
+          mapfile -t remaining < <(gh api "repos/$REPO/branches?per_page=100" --paginate --jq '.[].name')
+          printf 'Remaining branches:\n'
+          printf '%s\n' "${remaining[@]}"
+          if [[ "${#remaining[@]}" -ne 1 || "${remaining[0]}" != "main" ]]; then
+            echo 'Unexpected branches remain' >&2
+            exit 1
+          fi
