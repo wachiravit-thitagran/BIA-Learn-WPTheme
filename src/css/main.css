@@ -299,7 +299,7 @@
 
   /* Eyebrow / kicker label above section headings */
   .eyebrow {
-    @apply inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.2em] text-crimson;
+    @apply inline-flex items-center gap-2 text-sm font-medium normal-case tracking-normal text-crimson;
   }
   .eyebrow::before {
     content: "";
@@ -307,7 +307,7 @@
   }
 
   .section-title {
-    @apply font-sans text-3xl font-bold leading-tight text-ink sm:text-4xl;
+    @apply font-sans text-3xl font-semibold leading-tight text-ink sm:text-4xl;
   }
 
   .lead {
@@ -318,14 +318,14 @@
   /* bia.psu.ac.th uses 8px-radius solid buttons (not full pills). */
   .btn {
     @apply inline-flex items-center justify-center gap-2 rounded-lg px-6 py-3 text-sm font-semibold
-           transition-all duration-200 ease-out-expo focus-visible:ring-2 focus-visible:ring-offset-2;
+           transition-colors duration-200 ease-out-expo focus-visible:ring-2 focus-visible:ring-offset-2;
   }
   /* Optional fully-rounded pill variant (used for chips / small CTAs) */
   .btn-pill {
     @apply rounded-full;
   }
   .btn-primary {
-    @apply btn bg-crimson text-white shadow-soft hover:bg-crimson-600 hover:shadow-card-hover
+    @apply btn bg-crimson text-white hover:bg-crimson-600
            active:translate-y-px;
   }
   .btn-outline {
@@ -343,11 +343,11 @@
 
   /* --- Cards ----------------------------------------------------------- */
   .card {
-    @apply relative overflow-hidden rounded-2xl border border-paper-200 bg-white shadow-card
-           transition-all duration-300 ease-out-expo;
+    @apply relative overflow-hidden rounded-2xl border border-paper-200 bg-white shadow-soft
+           transition-[border-color,box-shadow] duration-200;
   }
   .card-hover {
-    @apply hover:-translate-y-1 hover:shadow-card-hover hover:border-paper-300;
+    @apply hover:shadow-soft hover:border-paper-300;
   }
 
   .badge {

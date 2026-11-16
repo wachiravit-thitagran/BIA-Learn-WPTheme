@@ -77,24 +77,24 @@ $level_labels = array(
 			the_post_thumbnail(
 				'bia-card',
 				array(
-					'class'   => 'h-full w-full object-cover transition duration-500 ease-out-expo group-hover:scale-105',
+					'class'   => 'h-full w-full object-cover transition-opacity duration-200 group-hover:opacity-95',
 					'loading' => 'lazy',
 					'alt'     => the_title_attribute( array( 'echo' => false ) ),
 				)
 			);
 			?>
 		<?php else : ?>
-			<span class="flex h-full w-full items-center justify-center bg-crimson-wash text-paper-50">
+			<span class="flex h-full w-full items-center justify-center bg-paper-100 text-ink-light">
 				<?php echo bia_learn_icon( 'book', 'h-12 w-12 opacity-60' ); // phpcs:ignore ?>
 			</span>
 		<?php endif; ?>
 
 		<?php if ( $category ) : ?>
-			<span class="absolute right-4 top-4 truncate badge bg-white/90 backdrop-blur" style="max-width:45%"><?php echo esc_html( $category->name ); ?></span>
+			<span class="absolute right-4 top-4 truncate badge border border-paper-200 bg-white" style="max-width:45%"><?php echo esc_html( $category->name ); ?></span>
 		<?php endif; ?>
 	</a>
 	<div class="bia-course-top-badges" aria-label="<?php esc_attr_e( 'สถานะหลักสูตร', 'bia-learn' ); ?>">
-		<span class="<?php echo $is_free ? 'badge-gold' : 'badge'; ?> bg-white/90 backdrop-blur">
+		<span class="<?php echo $is_free ? 'badge-gold' : 'badge'; ?>">
 			<?php echo $is_free ? esc_html__( 'เรียนฟรี', 'bia-learn' ) : wp_kses_post( $price_html ?: __( 'มีค่าใช้จ่าย', 'bia-learn' ) ); ?>
 		</span>
 		<?php if ( $episode_lock ) : ?>
@@ -110,14 +110,14 @@ $level_labels = array(
 		<!-- meta row -->
 		<div class="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-ink-light">
 			<?php if ( $lesson_count ) : ?>
-				<span class="inline-flex items-center gap-1.5"><?php echo bia_learn_icon( 'book', 'h-4 w-4 text-crimson' ); // phpcs:ignore ?><?php printf( esc_html__( '%d บทเรียน', 'bia-learn' ), $lesson_count ); ?></span>
+				<span class="inline-flex items-center gap-1.5"><?php echo bia_learn_icon( 'book', 'h-4 w-4 text-ink-light' ); // phpcs:ignore ?><?php printf( esc_html__( '%d บทเรียน', 'bia-learn' ), $lesson_count ); ?></span>
 			<?php endif; ?>
 			<?php if ( $duration ) : ?>
-				<span class="inline-flex items-center gap-1.5"><?php echo bia_learn_icon( 'clock', 'h-4 w-4 text-crimson' ); // phpcs:ignore ?><?php echo esc_html( $duration ); ?></span>
+				<span class="inline-flex items-center gap-1.5"><?php echo bia_learn_icon( 'clock', 'h-4 w-4 text-ink-light' ); // phpcs:ignore ?><?php echo esc_html( $duration ); ?></span>
 			<?php endif; ?>
 		</div>
 
-		<h3 class="line-clamp-2 font-serif text-xl font-bold leading-snug text-ink transition group-hover:text-crimson">
+		<h3 class="line-clamp-2 font-sans text-lg font-semibold leading-snug text-ink transition-colors group-hover:text-crimson">
 			<a href="<?php the_permalink(); ?>"><?php the_title(); ?></a>
 		</h3>
 
@@ -168,7 +168,7 @@ $level_labels = array(
 				?>
 				<a href="<?php echo esc_url( $continue_url ); ?>" class="mt-3 inline-flex items-center gap-1.5 text-sm font-semibold text-crimson hover:text-crimson-dark">
 					<?php echo $episode_lock ? esc_html__( 'ดูเงื่อนไขการปลดล็อก', 'bia-learn' ) : ( ( $progress > 0 ) ? esc_html__( 'เรียนต่อ', 'bia-learn' ) : esc_html__( 'เริ่มเรียน', 'bia-learn' ) ); ?>
-					<?php echo bia_learn_icon( 'arrow', 'h-4 w-4 transition group-hover:translate-x-1' ); // phpcs:ignore ?>
+					<?php echo bia_learn_icon( 'arrow', 'h-4 w-4' ); // phpcs:ignore ?>
 				</a>
 			</div>
 		<?php else : ?>
@@ -192,7 +192,7 @@ $level_labels = array(
 
 				<a href="<?php the_permalink(); ?>" class="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-crimson hover:text-crimson-dark">
 					<?php esc_html_e( 'ดูรายละเอียดคอร์ส', 'bia-learn' ); ?>
-					<?php echo bia_learn_icon( 'arrow', 'h-4 w-4 transition group-hover:translate-x-1' ); // phpcs:ignore ?>
+					<?php echo bia_learn_icon( 'arrow', 'h-4 w-4' ); // phpcs:ignore ?>
 				</a>
 			</div>
 		<?php endif; ?>

@@ -133,3 +133,15 @@ wp i18n make-pot . languages/bia-learn.pot --domain=bia-learn
 
 - ต้องเพิ่ม `screenshot.png` (1200×900) เองสำหรับภาพ preview ในหน้า Themes
 - ธีมนี้เป็น classic theme; theme.json ใช้กำหนด palette/ฟอนต์ให้ block editor กลมกลืนเท่านั้น
+
+## UI craft — ลดลักษณะ AI Slop
+
+แนวทาง: ความสงบ ความชัดเจน และความน่าเชื่อถือของแหล่งเรียนรู้พุทธธรรม ใช้สีแดงครั่ง/สเลตพลัมและฟอนต์ Anuphan ที่มีอยู่จริง ไม่เปลี่ยนเอกลักษณ์แบรนด์เพียงเพราะกระแสดีไซน์
+
+- ให้เนื้อหาคอร์ส ภาพปกจริง และข้อมูลความคืบหน้าเป็นจุดเด่น แทนการ์ดไอคอนตกแต่ง
+- ขนาด/ระยะห่างใช้สเกลที่สม่ำเสมอ และให้ความสำคัญกับการอ่านภาษาไทย
+- ใช้สีแดงครั่งกับ Action/สถานะที่มีความหมาย ไม่เพิ่ม Gradient, Glassmorphism หรือ Glow เพื่อแต่งพื้นที่ว่าง
+- หลีกเลี่ยง animation ที่ไม่สื่อสถานะ เช่น floating, hover scale, pulse และ transition-all
+- รักษา Tutor LMS, prerequisite/lock, enrollment, progress, price/free badge, course search และ accessibility ทุกครั้ง
+
+แนวทางนี้ประยุกต์จาก [Unslop](https://github.com/heydamir/unslop) โดย Damir Sokolovsky (CC BY 4.0) เพื่อใช้ประเมินและขัดเกลา UI ไม่ได้เพิ่ม third-party runtime dependency ให้ WordPress Theme

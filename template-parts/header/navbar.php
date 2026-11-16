@@ -22,7 +22,7 @@ $courses_url = bia_learn_courses_url();
 				</span>
 				<span class="leading-tight">
 					<span class="bia-site-title block font-serif text-lg font-bold text-crimson"><?php bloginfo( 'name' ); ?></span>
-					<span class="bia-site-description block text-2xs uppercase tracking-[0.18em] text-ink-light"><?php echo esc_html( get_bloginfo( 'description' ) ?: __( 'แพลตฟอร์มการเรียนรู้', 'bia-learn' ) ); ?></span>
+					<span class="bia-site-description block text-xs text-ink-light"><?php echo esc_html( get_bloginfo( 'description' ) ?: __( 'แพลตฟอร์มการเรียนรู้', 'bia-learn' ) ); ?></span>
 				</span>
 			</a>
 		<?php endif; ?>
@@ -93,7 +93,7 @@ $courses_url = bia_learn_courses_url();
 	x-show="open"
 	x-cloak
 	x-transition.opacity
-	class="border-t border-paper-200 bg-white/95 backdrop-blur"
+	class="border-t border-paper-200 bg-white"
 	style="display:none"
 >
 	<div class="container-bia py-4">
